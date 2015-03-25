@@ -9,11 +9,14 @@
 /* Begin PBXBuildFile section */
 		C33FCD6B1ABF55B900DDB8F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD6A1ABF55B900DDB8F0 /* AppDelegate.swift */; };
 		C33FCD6E1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD6C1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld */; };
-		C33FCD701ABF55B900DDB8F0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD6F1ABF55B900DDB8F0 /* ViewController.swift */; };
 		C33FCD731ABF55B900DDB8F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C33FCD711ABF55B900DDB8F0 /* Main.storyboard */; };
 		C33FCD751ABF55B900DDB8F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C33FCD741ABF55B900DDB8F0 /* Images.xcassets */; };
 		C33FCD781ABF55B900DDB8F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C33FCD761ABF55B900DDB8F0 /* LaunchScreen.xib */; };
 		C33FCD841ABF55B900DDB8F0 /* PodcasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD831ABF55B900DDB8F0 /* PodcasterTests.swift */; };
+		C33FCD8F1ABF5D6100DDB8F0 /* TMPodcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD8E1ABF5D6100DDB8F0 /* TMPodcast.swift */; };
+		C33FCD911ABF6B1000DDB8F0 /* TMPodcastEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD901ABF6B1000DDB8F0 /* TMPodcastEpisode.swift */; };
+		C33FCD9A1ABF8B5800DDB8F0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD991ABF8B5800DDB8F0 /* SwiftyJSON.swift */; };
+		C3E98BF21AC1082200A6D54E /* TMDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E98BF11AC1082200A6D54E /* TMDownloadManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,13 +34,16 @@
 		C33FCD691ABF55B900DDB8F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C33FCD6A1ABF55B900DDB8F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C33FCD6D1ABF55B900DDB8F0 /* Podcaster.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Podcaster.xcdatamodel; sourceTree = "<group>"; };
-		C33FCD6F1ABF55B900DDB8F0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		C33FCD721ABF55B900DDB8F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C33FCD741ABF55B900DDB8F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		C33FCD771ABF55B900DDB8F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		C33FCD7D1ABF55B900DDB8F0 /* PodcasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PodcasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C33FCD821ABF55B900DDB8F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C33FCD831ABF55B900DDB8F0 /* PodcasterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcasterTests.swift; sourceTree = "<group>"; };
+		C33FCD8E1ABF5D6100DDB8F0 /* TMPodcast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMPodcast.swift; sourceTree = "<group>"; };
+		C33FCD901ABF6B1000DDB8F0 /* TMPodcastEpisode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMPodcastEpisode.swift; sourceTree = "<group>"; };
+		C33FCD991ABF8B5800DDB8F0 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
+		C3E98BF11AC1082200A6D54E /* TMDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMDownloadManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +86,9 @@
 			isa = PBXGroup;
 			children = (
 				C33FCD6A1ABF55B900DDB8F0 /* AppDelegate.swift */,
-				C33FCD6F1ABF55B900DDB8F0 /* ViewController.swift */,
+				C3E98BF01AC107D200A6D54E /* Managers */,
+				C33FCD921ABF8A2600DDB8F0 /* Helpers */,
+				C33FCD8D1ABF5D5100DDB8F0 /* Models */,
 				C33FCD711ABF55B900DDB8F0 /* Main.storyboard */,
 				C33FCD741ABF55B900DDB8F0 /* Images.xcassets */,
 				C33FCD761ABF55B900DDB8F0 /* LaunchScreen.xib */,
@@ -113,6 +121,31 @@
 				C33FCD821ABF55B900DDB8F0 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		C33FCD8D1ABF5D5100DDB8F0 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C33FCD8E1ABF5D6100DDB8F0 /* TMPodcast.swift */,
+				C33FCD901ABF6B1000DDB8F0 /* TMPodcastEpisode.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		C33FCD921ABF8A2600DDB8F0 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C33FCD991ABF8B5800DDB8F0 /* SwiftyJSON.swift */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		C3E98BF01AC107D200A6D54E /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C3E98BF11AC1082200A6D54E /* TMDownloadManager.swift */,
+			);
+			name = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,8 +248,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C33FCD701ABF55B900DDB8F0 /* ViewController.swift in Sources */,
+				C33FCD8F1ABF5D6100DDB8F0 /* TMPodcast.swift in Sources */,
+				C33FCD911ABF6B1000DDB8F0 /* TMPodcastEpisode.swift in Sources */,
+				C3E98BF21AC1082200A6D54E /* TMDownloadManager.swift in Sources */,
 				C33FCD6B1ABF55B900DDB8F0 /* AppDelegate.swift in Sources */,
+				C33FCD9A1ABF8B5800DDB8F0 /* SwiftyJSON.swift in Sources */,
 				C33FCD6E1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,6 +447,7 @@
 				C33FCD891ABF55B900DDB8F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C33FCD8A1ABF55B900DDB8F0 /* Build configuration list for PBXNativeTarget "PodcasterTests" */ = {
 			isa = XCConfigurationList;
@@ -419,6 +456,7 @@
 				C33FCD8C1ABF55B900DDB8F0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
