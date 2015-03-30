@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C33FCD641ABF55B900DDB8F0"
+               BlueprintIdentifier = "C386EDC61A86BE8C000DE78F"
                BuildableName = "Podcaster.app"
                BlueprintName = "Podcaster"
                ReferencedContainer = "container:Podcaster.xcodeproj">
@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C33FCD7C1ABF55B900DDB8F0"
+               BlueprintIdentifier = "C386EDDF1A86BE8D000DE78F"
                BuildableName = "PodcasterTests.xctest"
                BlueprintName = "PodcasterTests"
                ReferencedContainer = "container:Podcaster.xcodeproj">
@@ -46,7 +46,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C33FCD7C1ABF55B900DDB8F0"
+               BlueprintIdentifier = "C386EDDF1A86BE8D000DE78F"
                BuildableName = "PodcasterTests.xctest"
                BlueprintName = "PodcasterTests"
                ReferencedContainer = "container:Podcaster.xcodeproj">
@@ -56,7 +56,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C33FCD641ABF55B900DDB8F0"
+            BlueprintIdentifier = "C386EDC61A86BE8C000DE78F"
             BuildableName = "Podcaster.app"
             BlueprintName = "Podcaster"
             ReferencedContainer = "container:Podcaster.xcodeproj">
@@ -75,7 +75,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C33FCD641ABF55B900DDB8F0"
+            BlueprintIdentifier = "C386EDC61A86BE8C000DE78F"
             BuildableName = "Podcaster.app"
             BlueprintName = "Podcaster"
             ReferencedContainer = "container:Podcaster.xcodeproj">
@@ -93,7 +93,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C33FCD641ABF55B900DDB8F0"
+            BlueprintIdentifier = "C386EDC61A86BE8C000DE78F"
             BuildableName = "Podcaster.app"
             BlueprintName = "Podcaster"
             ReferencedContainer = "container:Podcaster.xcodeproj">

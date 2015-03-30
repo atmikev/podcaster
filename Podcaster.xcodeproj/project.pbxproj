@@ -7,54 +7,89 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C33FCD6B1ABF55B900DDB8F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD6A1ABF55B900DDB8F0 /* AppDelegate.swift */; };
-		C33FCD6E1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD6C1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld */; };
-		C33FCD731ABF55B900DDB8F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C33FCD711ABF55B900DDB8F0 /* Main.storyboard */; };
-		C33FCD751ABF55B900DDB8F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C33FCD741ABF55B900DDB8F0 /* Images.xcassets */; };
-		C33FCD781ABF55B900DDB8F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C33FCD761ABF55B900DDB8F0 /* LaunchScreen.xib */; };
-		C33FCD841ABF55B900DDB8F0 /* PodcasterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD831ABF55B900DDB8F0 /* PodcasterTests.swift */; };
-		C33FCD8F1ABF5D6100DDB8F0 /* TMPodcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD8E1ABF5D6100DDB8F0 /* TMPodcast.swift */; };
-		C33FCD911ABF6B1000DDB8F0 /* TMPodcastEpisode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD901ABF6B1000DDB8F0 /* TMPodcastEpisode.swift */; };
-		C33FCD9A1ABF8B5800DDB8F0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33FCD991ABF8B5800DDB8F0 /* SwiftyJSON.swift */; };
-		C3E98BF21AC1082200A6D54E /* TMDownloadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E98BF11AC1082200A6D54E /* TMDownloadManager.swift */; };
+		C386EDCD1A86BE8D000DE78F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDCC1A86BE8D000DE78F /* main.m */; };
+		C386EDD01A86BE8D000DE78F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDCF1A86BE8D000DE78F /* AppDelegate.m */; };
+		C386EDD61A86BE8D000DE78F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C386EDD41A86BE8D000DE78F /* Main.storyboard */; };
+		C386EDD81A86BE8D000DE78F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C386EDD71A86BE8D000DE78F /* Images.xcassets */; };
+		C386EDDB1A86BE8D000DE78F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C386EDD91A86BE8D000DE78F /* LaunchScreen.xib */; };
+		C386EDE71A86BE8D000DE78F /* PodcasterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDE61A86BE8D000DE78F /* PodcasterTests.m */; };
+		C386EDF11A86C507000DE78F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C386EDF01A86C507000DE78F /* AVFoundation.framework */; };
+		C386EE001A86F563000DE78F /* TMMark.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDFF1A86F563000DE78F /* TMMark.m */; };
+		C3A47B0A1AACF7A200613E6F /* TMDownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A47B091AACF7A200613E6F /* TMDownloadManager.m */; };
+		C3A47B0D1AAFCF1E00613E6F /* TMAudioPlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A47B0C1AAFCF1E00613E6F /* TMAudioPlayerViewController.m */; };
+		C3A47B101AB3C06B00613E6F /* TMiTunesResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A47B0F1AB3C06B00613E6F /* TMiTunesResponse.m */; };
+		C3A47B131AB3D54700613E6F /* TMPodcastsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A47B121AB3D54700613E6F /* TMPodcastsTableViewController.m */; };
+		C3A47B161AB3D6F600613E6F /* TMPodcastTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C3A47B151AB3D6F600613E6F /* TMPodcastTableViewCell.m */; };
+		C3CE48541AAA71E900085513 /* TMAudioPlayerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48531AAA71E900085513 /* TMAudioPlayerManager.m */; };
+		C3CE48571AABEE2300085513 /* TMPodcastsManager.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48561AABEE2300085513 /* TMPodcastsManager.m */; };
+		C3CE485A1AABF16200085513 /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48591AABF16200085513 /* XMLReader.m */; };
+		C3CE485F1AABF94100085513 /* TMPodcast.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE485E1AABF94100085513 /* TMPodcast.m */; };
+		C3CE48621AABF95F00085513 /* TMPodcastEpisode.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48611AABF95F00085513 /* TMPodcastEpisode.m */; };
+		C3CE48651AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48641AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m */; };
+		C3CE48691AAC113800085513 /* TMPodcastEpisodesTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		C33FCD7E1ABF55B900DDB8F0 /* PBXContainerItemProxy */ = {
+		C386EDE11A86BE8D000DE78F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = C33FCD5D1ABF55B900DDB8F0 /* Project object */;
+			containerPortal = C386EDBF1A86BE8C000DE78F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C33FCD641ABF55B900DDB8F0;
+			remoteGlobalIDString = C386EDC61A86BE8C000DE78F;
 			remoteInfo = Podcaster;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C33FCD651ABF55B900DDB8F0 /* Podcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Podcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C33FCD691ABF55B900DDB8F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C33FCD6A1ABF55B900DDB8F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		C33FCD6D1ABF55B900DDB8F0 /* Podcaster.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Podcaster.xcdatamodel; sourceTree = "<group>"; };
-		C33FCD721ABF55B900DDB8F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		C33FCD741ABF55B900DDB8F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		C33FCD771ABF55B900DDB8F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		C33FCD7D1ABF55B900DDB8F0 /* PodcasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PodcasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		C33FCD821ABF55B900DDB8F0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C33FCD831ABF55B900DDB8F0 /* PodcasterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcasterTests.swift; sourceTree = "<group>"; };
-		C33FCD8E1ABF5D6100DDB8F0 /* TMPodcast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMPodcast.swift; sourceTree = "<group>"; };
-		C33FCD901ABF6B1000DDB8F0 /* TMPodcastEpisode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMPodcastEpisode.swift; sourceTree = "<group>"; };
-		C33FCD991ABF8B5800DDB8F0 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
-		C3E98BF11AC1082200A6D54E /* TMDownloadManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TMDownloadManager.swift; sourceTree = "<group>"; };
+		C386EDC71A86BE8D000DE78F /* Podcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Podcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C386EDCB1A86BE8D000DE78F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C386EDCC1A86BE8D000DE78F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		C386EDCE1A86BE8D000DE78F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		C386EDCF1A86BE8D000DE78F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		C386EDD51A86BE8D000DE78F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		C386EDD71A86BE8D000DE78F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		C386EDDA1A86BE8D000DE78F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		C386EDE01A86BE8D000DE78F /* PodcasterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PodcasterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		C386EDE51A86BE8D000DE78F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C386EDE61A86BE8D000DE78F /* PodcasterTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PodcasterTests.m; sourceTree = "<group>"; };
+		C386EDF01A86C507000DE78F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		C386EDFE1A86F563000DE78F /* TMMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMMark.h; sourceTree = "<group>"; };
+		C386EDFF1A86F563000DE78F /* TMMark.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMMark.m; sourceTree = "<group>"; };
+		C3A47B081AACF7A200613E6F /* TMDownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMDownloadManager.h; sourceTree = "<group>"; };
+		C3A47B091AACF7A200613E6F /* TMDownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMDownloadManager.m; sourceTree = "<group>"; };
+		C3A47B0B1AAFCF1E00613E6F /* TMAudioPlayerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMAudioPlayerViewController.h; sourceTree = "<group>"; };
+		C3A47B0C1AAFCF1E00613E6F /* TMAudioPlayerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMAudioPlayerViewController.m; sourceTree = "<group>"; };
+		C3A47B0E1AB3C06B00613E6F /* TMiTunesResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMiTunesResponse.h; sourceTree = "<group>"; };
+		C3A47B0F1AB3C06B00613E6F /* TMiTunesResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMiTunesResponse.m; sourceTree = "<group>"; };
+		C3A47B111AB3D54700613E6F /* TMPodcastsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastsTableViewController.h; sourceTree = "<group>"; };
+		C3A47B121AB3D54700613E6F /* TMPodcastsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastsTableViewController.m; sourceTree = "<group>"; };
+		C3A47B141AB3D6F600613E6F /* TMPodcastTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastTableViewCell.h; sourceTree = "<group>"; };
+		C3A47B151AB3D6F600613E6F /* TMPodcastTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastTableViewCell.m; sourceTree = "<group>"; };
+		C3CE48521AAA71E900085513 /* TMAudioPlayerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMAudioPlayerManager.h; sourceTree = "<group>"; };
+		C3CE48531AAA71E900085513 /* TMAudioPlayerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMAudioPlayerManager.m; sourceTree = "<group>"; };
+		C3CE48551AABEE2300085513 /* TMPodcastsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastsManager.h; sourceTree = "<group>"; };
+		C3CE48561AABEE2300085513 /* TMPodcastsManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastsManager.m; sourceTree = "<group>"; };
+		C3CE48581AABF16200085513 /* XMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLReader.h; sourceTree = "<group>"; };
+		C3CE48591AABF16200085513 /* XMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLReader.m; sourceTree = "<group>"; };
+		C3CE485D1AABF94100085513 /* TMPodcast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcast.h; sourceTree = "<group>"; };
+		C3CE485E1AABF94100085513 /* TMPodcast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcast.m; sourceTree = "<group>"; };
+		C3CE48601AABF95F00085513 /* TMPodcastEpisode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisode.h; sourceTree = "<group>"; };
+		C3CE48611AABF95F00085513 /* TMPodcastEpisode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisode.m; sourceTree = "<group>"; };
+		C3CE48631AAC0E0600085513 /* TMPodcastEpisodesTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodesTableViewController.h; sourceTree = "<group>"; };
+		C3CE48641AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisodesTableViewController.m; sourceTree = "<group>"; };
+		C3CE48671AAC113800085513 /* TMPodcastEpisodesTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodesTableViewCell.h; sourceTree = "<group>"; };
+		C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisodesTableViewCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		C33FCD621ABF55B900DDB8F0 /* Frameworks */ = {
+		C386EDC41A86BE8C000DE78F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C386EDF11A86C507000DE78F /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C33FCD7A1ABF55B900DDB8F0 /* Frameworks */ = {
+		C386EDDD1A86BE8D000DE78F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -64,86 +99,126 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C33FCD5C1ABF55B900DDB8F0 = {
+		C386EDBE1A86BE8C000DE78F = {
 			isa = PBXGroup;
 			children = (
-				C33FCD671ABF55B900DDB8F0 /* Podcaster */,
-				C33FCD801ABF55B900DDB8F0 /* PodcasterTests */,
-				C33FCD661ABF55B900DDB8F0 /* Products */,
+				C386EDF01A86C507000DE78F /* AVFoundation.framework */,
+				C386EDC91A86BE8D000DE78F /* Podcaster */,
+				C386EDE31A86BE8D000DE78F /* PodcasterTests */,
+				C386EDC81A86BE8D000DE78F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		C33FCD661ABF55B900DDB8F0 /* Products */ = {
+		C386EDC81A86BE8D000DE78F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD651ABF55B900DDB8F0 /* Podcaster.app */,
-				C33FCD7D1ABF55B900DDB8F0 /* PodcasterTests.xctest */,
+				C386EDC71A86BE8D000DE78F /* Podcaster.app */,
+				C386EDE01A86BE8D000DE78F /* PodcasterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C33FCD671ABF55B900DDB8F0 /* Podcaster */ = {
+		C386EDC91A86BE8D000DE78F /* Podcaster */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD6A1ABF55B900DDB8F0 /* AppDelegate.swift */,
-				C3E98BF01AC107D200A6D54E /* Managers */,
-				C33FCD921ABF8A2600DDB8F0 /* Helpers */,
-				C33FCD8D1ABF5D5100DDB8F0 /* Models */,
-				C33FCD711ABF55B900DDB8F0 /* Main.storyboard */,
-				C33FCD741ABF55B900DDB8F0 /* Images.xcassets */,
-				C33FCD761ABF55B900DDB8F0 /* LaunchScreen.xib */,
-				C33FCD6C1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld */,
-				C33FCD681ABF55B900DDB8F0 /* Supporting Files */,
+				C386EDCE1A86BE8D000DE78F /* AppDelegate.h */,
+				C386EDCF1A86BE8D000DE78F /* AppDelegate.m */,
+				C3CE485B1AABF16A00085513 /* Helpers */,
+				C386EDFD1A86F53A000DE78F /* ViewControllers */,
+				C386EDFC1A86F530000DE78F /* Models */,
+				C3E0493D1AA9335F00EB63E3 /* Managers */,
+				C3CE48661AAC10F900085513 /* Cells */,
+				C386EDD41A86BE8D000DE78F /* Main.storyboard */,
+				C386EDD71A86BE8D000DE78F /* Images.xcassets */,
+				C386EDD91A86BE8D000DE78F /* LaunchScreen.xib */,
+				C386EDCA1A86BE8D000DE78F /* Supporting Files */,
 			);
 			path = Podcaster;
 			sourceTree = "<group>";
 		};
-		C33FCD681ABF55B900DDB8F0 /* Supporting Files */ = {
+		C386EDCA1A86BE8D000DE78F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD691ABF55B900DDB8F0 /* Info.plist */,
+				C386EDCB1A86BE8D000DE78F /* Info.plist */,
+				C386EDCC1A86BE8D000DE78F /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		C33FCD801ABF55B900DDB8F0 /* PodcasterTests */ = {
+		C386EDE31A86BE8D000DE78F /* PodcasterTests */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD831ABF55B900DDB8F0 /* PodcasterTests.swift */,
-				C33FCD811ABF55B900DDB8F0 /* Supporting Files */,
+				C386EDE61A86BE8D000DE78F /* PodcasterTests.m */,
+				C386EDE41A86BE8D000DE78F /* Supporting Files */,
 			);
 			path = PodcasterTests;
 			sourceTree = "<group>";
 		};
-		C33FCD811ABF55B900DDB8F0 /* Supporting Files */ = {
+		C386EDE41A86BE8D000DE78F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD821ABF55B900DDB8F0 /* Info.plist */,
+				C386EDE51A86BE8D000DE78F /* Info.plist */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		C33FCD8D1ABF5D5100DDB8F0 /* Models */ = {
+		C386EDFC1A86F530000DE78F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD8E1ABF5D6100DDB8F0 /* TMPodcast.swift */,
-				C33FCD901ABF6B1000DDB8F0 /* TMPodcastEpisode.swift */,
+				C386EDFE1A86F563000DE78F /* TMMark.h */,
+				C386EDFF1A86F563000DE78F /* TMMark.m */,
+				C3CE485D1AABF94100085513 /* TMPodcast.h */,
+				C3CE485E1AABF94100085513 /* TMPodcast.m */,
+				C3CE48601AABF95F00085513 /* TMPodcastEpisode.h */,
+				C3CE48611AABF95F00085513 /* TMPodcastEpisode.m */,
+				C3A47B0E1AB3C06B00613E6F /* TMiTunesResponse.h */,
+				C3A47B0F1AB3C06B00613E6F /* TMiTunesResponse.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
 		};
-		C33FCD921ABF8A2600DDB8F0 /* Helpers */ = {
+		C386EDFD1A86F53A000DE78F /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				C33FCD991ABF8B5800DDB8F0 /* SwiftyJSON.swift */,
+				C3CE48631AAC0E0600085513 /* TMPodcastEpisodesTableViewController.h */,
+				C3CE48641AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m */,
+				C3A47B0B1AAFCF1E00613E6F /* TMAudioPlayerViewController.h */,
+				C3A47B0C1AAFCF1E00613E6F /* TMAudioPlayerViewController.m */,
+				C3A47B111AB3D54700613E6F /* TMPodcastsTableViewController.h */,
+				C3A47B121AB3D54700613E6F /* TMPodcastsTableViewController.m */,
+			);
+			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		C3CE485B1AABF16A00085513 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE48581AABF16200085513 /* XMLReader.h */,
+				C3CE48591AABF16200085513 /* XMLReader.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
 		};
-		C3E98BF01AC107D200A6D54E /* Managers */ = {
+		C3CE48661AAC10F900085513 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				C3E98BF11AC1082200A6D54E /* TMDownloadManager.swift */,
+				C3CE48671AAC113800085513 /* TMPodcastEpisodesTableViewCell.h */,
+				C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */,
+				C3A47B141AB3D6F600613E6F /* TMPodcastTableViewCell.h */,
+				C3A47B151AB3D6F600613E6F /* TMPodcastTableViewCell.m */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
+		C3E0493D1AA9335F00EB63E3 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				C3CE48521AAA71E900085513 /* TMAudioPlayerManager.h */,
+				C3CE48531AAA71E900085513 /* TMAudioPlayerManager.m */,
+				C3CE48551AABEE2300085513 /* TMPodcastsManager.h */,
+				C3CE48561AABEE2300085513 /* TMPodcastsManager.m */,
+				C3A47B081AACF7A200613E6F /* TMDownloadManager.h */,
+				C3A47B091AACF7A200613E6F /* TMDownloadManager.m */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -151,13 +226,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		C33FCD641ABF55B900DDB8F0 /* Podcaster */ = {
+		C386EDC61A86BE8C000DE78F /* Podcaster */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C33FCD871ABF55B900DDB8F0 /* Build configuration list for PBXNativeTarget "Podcaster" */;
+			buildConfigurationList = C386EDEA1A86BE8D000DE78F /* Build configuration list for PBXNativeTarget "Podcaster" */;
 			buildPhases = (
-				C33FCD611ABF55B900DDB8F0 /* Sources */,
-				C33FCD621ABF55B900DDB8F0 /* Frameworks */,
-				C33FCD631ABF55B900DDB8F0 /* Resources */,
+				C386EDC31A86BE8C000DE78F /* Sources */,
+				C386EDC41A86BE8C000DE78F /* Frameworks */,
+				C386EDC51A86BE8C000DE78F /* Resources */,
 			);
 			buildRules = (
 			);
@@ -165,46 +240,47 @@
 			);
 			name = Podcaster;
 			productName = Podcaster;
-			productReference = C33FCD651ABF55B900DDB8F0 /* Podcaster.app */;
+			productReference = C386EDC71A86BE8D000DE78F /* Podcaster.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C33FCD7C1ABF55B900DDB8F0 /* PodcasterTests */ = {
+		C386EDDF1A86BE8D000DE78F /* PodcasterTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C33FCD8A1ABF55B900DDB8F0 /* Build configuration list for PBXNativeTarget "PodcasterTests" */;
+			buildConfigurationList = C386EDED1A86BE8D000DE78F /* Build configuration list for PBXNativeTarget "PodcasterTests" */;
 			buildPhases = (
-				C33FCD791ABF55B900DDB8F0 /* Sources */,
-				C33FCD7A1ABF55B900DDB8F0 /* Frameworks */,
-				C33FCD7B1ABF55B900DDB8F0 /* Resources */,
+				C386EDDC1A86BE8D000DE78F /* Sources */,
+				C386EDDD1A86BE8D000DE78F /* Frameworks */,
+				C386EDDE1A86BE8D000DE78F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				C33FCD7F1ABF55B900DDB8F0 /* PBXTargetDependency */,
+				C386EDE21A86BE8D000DE78F /* PBXTargetDependency */,
 			);
 			name = PodcasterTests;
 			productName = PodcasterTests;
-			productReference = C33FCD7D1ABF55B900DDB8F0 /* PodcasterTests.xctest */;
+			productReference = C386EDE01A86BE8D000DE78F /* PodcasterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		C33FCD5D1ABF55B900DDB8F0 /* Project object */ = {
+		C386EDBF1A86BE8C000DE78F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Tyler Mikev";
 				TargetAttributes = {
-					C33FCD641ABF55B900DDB8F0 = {
-						CreatedOnToolsVersion = 6.1.1;
+					C386EDC61A86BE8C000DE78F = {
+						CreatedOnToolsVersion = 6.1;
+						DevelopmentTeam = U4FM6R6FKJ;
 					};
-					C33FCD7C1ABF55B900DDB8F0 = {
-						CreatedOnToolsVersion = 6.1.1;
-						TestTargetID = C33FCD641ABF55B900DDB8F0;
+					C386EDDF1A86BE8D000DE78F = {
+						CreatedOnToolsVersion = 6.1;
+						TestTargetID = C386EDC61A86BE8C000DE78F;
 					};
 				};
 			};
-			buildConfigurationList = C33FCD601ABF55B900DDB8F0 /* Build configuration list for PBXProject "Podcaster" */;
+			buildConfigurationList = C386EDC21A86BE8C000DE78F /* Build configuration list for PBXProject "Podcaster" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -212,29 +288,29 @@
 				en,
 				Base,
 			);
-			mainGroup = C33FCD5C1ABF55B900DDB8F0;
-			productRefGroup = C33FCD661ABF55B900DDB8F0 /* Products */;
+			mainGroup = C386EDBE1A86BE8C000DE78F;
+			productRefGroup = C386EDC81A86BE8D000DE78F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C33FCD641ABF55B900DDB8F0 /* Podcaster */,
-				C33FCD7C1ABF55B900DDB8F0 /* PodcasterTests */,
+				C386EDC61A86BE8C000DE78F /* Podcaster */,
+				C386EDDF1A86BE8D000DE78F /* PodcasterTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		C33FCD631ABF55B900DDB8F0 /* Resources */ = {
+		C386EDC51A86BE8C000DE78F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C33FCD731ABF55B900DDB8F0 /* Main.storyboard in Resources */,
-				C33FCD781ABF55B900DDB8F0 /* LaunchScreen.xib in Resources */,
-				C33FCD751ABF55B900DDB8F0 /* Images.xcassets in Resources */,
+				C386EDD61A86BE8D000DE78F /* Main.storyboard in Resources */,
+				C386EDDB1A86BE8D000DE78F /* LaunchScreen.xib in Resources */,
+				C386EDD81A86BE8D000DE78F /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C33FCD7B1ABF55B900DDB8F0 /* Resources */ = {
+		C386EDDE1A86BE8D000DE78F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -244,50 +320,59 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		C33FCD611ABF55B900DDB8F0 /* Sources */ = {
+		C386EDC31A86BE8C000DE78F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C33FCD8F1ABF5D6100DDB8F0 /* TMPodcast.swift in Sources */,
-				C33FCD911ABF6B1000DDB8F0 /* TMPodcastEpisode.swift in Sources */,
-				C3E98BF21AC1082200A6D54E /* TMDownloadManager.swift in Sources */,
-				C33FCD6B1ABF55B900DDB8F0 /* AppDelegate.swift in Sources */,
-				C33FCD9A1ABF8B5800DDB8F0 /* SwiftyJSON.swift in Sources */,
-				C33FCD6E1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld in Sources */,
+				C3A47B161AB3D6F600613E6F /* TMPodcastTableViewCell.m in Sources */,
+				C386EE001A86F563000DE78F /* TMMark.m in Sources */,
+				C3A47B131AB3D54700613E6F /* TMPodcastsTableViewController.m in Sources */,
+				C386EDD01A86BE8D000DE78F /* AppDelegate.m in Sources */,
+				C3A47B0A1AACF7A200613E6F /* TMDownloadManager.m in Sources */,
+				C3CE48651AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m in Sources */,
+				C3A47B101AB3C06B00613E6F /* TMiTunesResponse.m in Sources */,
+				C3CE48541AAA71E900085513 /* TMAudioPlayerManager.m in Sources */,
+				C386EDCD1A86BE8D000DE78F /* main.m in Sources */,
+				C3CE48621AABF95F00085513 /* TMPodcastEpisode.m in Sources */,
+				C3CE48691AAC113800085513 /* TMPodcastEpisodesTableViewCell.m in Sources */,
+				C3CE485F1AABF94100085513 /* TMPodcast.m in Sources */,
+				C3CE48571AABEE2300085513 /* TMPodcastsManager.m in Sources */,
+				C3CE485A1AABF16200085513 /* XMLReader.m in Sources */,
+				C3A47B0D1AAFCF1E00613E6F /* TMAudioPlayerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C33FCD791ABF55B900DDB8F0 /* Sources */ = {
+		C386EDDC1A86BE8D000DE78F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C33FCD841ABF55B900DDB8F0 /* PodcasterTests.swift in Sources */,
+				C386EDE71A86BE8D000DE78F /* PodcasterTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		C33FCD7F1ABF55B900DDB8F0 /* PBXTargetDependency */ = {
+		C386EDE21A86BE8D000DE78F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C33FCD641ABF55B900DDB8F0 /* Podcaster */;
-			targetProxy = C33FCD7E1ABF55B900DDB8F0 /* PBXContainerItemProxy */;
+			target = C386EDC61A86BE8C000DE78F /* Podcaster */;
+			targetProxy = C386EDE11A86BE8D000DE78F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		C33FCD711ABF55B900DDB8F0 /* Main.storyboard */ = {
+		C386EDD41A86BE8D000DE78F /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C33FCD721ABF55B900DDB8F0 /* Base */,
+				C386EDD51A86BE8D000DE78F /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		C33FCD761ABF55B900DDB8F0 /* LaunchScreen.xib */ = {
+		C386EDD91A86BE8D000DE78F /* LaunchScreen.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				C33FCD771ABF55B900DDB8F0 /* Base */,
+				C386EDDA1A86BE8D000DE78F /* Base */,
 			);
 			name = LaunchScreen.xib;
 			sourceTree = "<group>";
@@ -295,7 +380,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		C33FCD851ABF55B900DDB8F0 /* Debug */ = {
+		C386EDE81A86BE8D000DE78F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -333,12 +418,11 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		C33FCD861ABF55B900DDB8F0 /* Release */ = {
+		C386EDE91A86BE8D000DE78F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -374,27 +458,29 @@
 			};
 			name = Release;
 		};
-		C33FCD881ABF55B900DDB8F0 /* Debug */ = {
+		C386EDEB1A86BE8D000DE78F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Podcaster/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		C33FCD891ABF55B900DDB8F0 /* Release */ = {
+		C386EDEC1A86BE8D000DE78F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = Podcaster/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
-		C33FCD8B1ABF55B900DDB8F0 /* Debug */ = {
+		C386EDEE1A86BE8D000DE78F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -413,7 +499,7 @@
 			};
 			name = Debug;
 		};
-		C33FCD8C1ABF55B900DDB8F0 /* Release */ = {
+		C386EDEF1A86BE8D000DE78F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -431,47 +517,34 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		C33FCD601ABF55B900DDB8F0 /* Build configuration list for PBXProject "Podcaster" */ = {
+		C386EDC21A86BE8C000DE78F /* Build configuration list for PBXProject "Podcaster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C33FCD851ABF55B900DDB8F0 /* Debug */,
-				C33FCD861ABF55B900DDB8F0 /* Release */,
+				C386EDE81A86BE8D000DE78F /* Debug */,
+				C386EDE91A86BE8D000DE78F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C33FCD871ABF55B900DDB8F0 /* Build configuration list for PBXNativeTarget "Podcaster" */ = {
+		C386EDEA1A86BE8D000DE78F /* Build configuration list for PBXNativeTarget "Podcaster" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C33FCD881ABF55B900DDB8F0 /* Debug */,
-				C33FCD891ABF55B900DDB8F0 /* Release */,
+				C386EDEB1A86BE8D000DE78F /* Debug */,
+				C386EDEC1A86BE8D000DE78F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C33FCD8A1ABF55B900DDB8F0 /* Build configuration list for PBXNativeTarget "PodcasterTests" */ = {
+		C386EDED1A86BE8D000DE78F /* Build configuration list for PBXNativeTarget "PodcasterTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C33FCD8B1ABF55B900DDB8F0 /* Debug */,
-				C33FCD8C1ABF55B900DDB8F0 /* Release */,
+				C386EDEE1A86BE8D000DE78F /* Debug */,
+				C386EDEF1A86BE8D000DE78F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		C33FCD6C1ABF55B900DDB8F0 /* Podcaster.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				C33FCD6D1ABF55B900DDB8F0 /* Podcaster.xcdatamodel */,
-			);
-			currentVersion = C33FCD6D1ABF55B900DDB8F0 /* Podcaster.xcdatamodel */;
-			path = Podcaster.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
-	rootObject = C33FCD5D1ABF55B900DDB8F0 /* Project object */;
+	rootObject = C386EDBF1A86BE8C000DE78F /* Project object */;
 }
