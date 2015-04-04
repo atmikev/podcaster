@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6249" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Rmb-z2-z4K">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7528.3" systemVersion="14C1510" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Rmb-z2-z4K">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6243"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7518.3"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -11,6 +11,7 @@
             <objects>
                 <tableViewController id="iYL-1w-plq" customClass="TMPodcastsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="90" sectionHeaderHeight="22" sectionFooterHeight="22" id="ZT6-T0-r3G">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -19,66 +20,21 @@
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="D1h-3c-6Fs" id="PxM-3S-FzN">
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Jjb-8S-Es6">
-                                            <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="60" id="miT-uf-Q36"/>
-                                            </constraints>
-                                            <variation key="default">
-                                                <mask key="constraints">
-                                                    <exclude reference="miT-uf-Q36"/>
-                                                </mask>
-                                            </variation>
-                                            <variation key="heightClass=regular-widthClass=compact">
-                                                <mask key="constraints">
-                                                    <include reference="miT-uf-Q36"/>
-                                                </mask>
-                                            </variation>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WYs-sk-Aa4">
+                                            <rect key="frame" x="8" y="8" width="73" height="73"/>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DKD-Hp-IRK">
-                                            <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Mu-yR-e4r">
+                                            <rect key="frame" x="101" y="34" width="452" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <constraints>
-                                        <constraint firstItem="DKD-Hp-IRK" firstAttribute="trailing" secondItem="PxM-3S-FzN" secondAttribute="trailingMargin" id="9ho-W2-PrX"/>
-                                        <constraint firstItem="Jjb-8S-Es6" firstAttribute="leading" secondItem="PxM-3S-FzN" secondAttribute="leadingMargin" id="9kx-1f-PnO"/>
-                                        <constraint firstItem="Jjb-8S-Es6" firstAttribute="top" secondItem="PxM-3S-FzN" secondAttribute="topMargin" constant="7" id="SEk-Zf-qvf"/>
-                                        <constraint firstItem="DKD-Hp-IRK" firstAttribute="leading" secondItem="Jjb-8S-Es6" secondAttribute="trailing" constant="8" symbolic="YES" id="Si7-Cn-Ao6"/>
-                                        <constraint firstItem="DKD-Hp-IRK" firstAttribute="top" secondItem="PxM-3S-FzN" secondAttribute="topMargin" constant="27" id="Txn-Kp-r6U"/>
-                                        <constraint firstItem="DKD-Hp-IRK" firstAttribute="centerY" secondItem="Jjb-8S-Es6" secondAttribute="centerY" id="UY4-z0-4n8"/>
-                                    </constraints>
-                                    <variation key="default">
-                                        <mask key="subviews">
-                                            <exclude reference="Jjb-8S-Es6"/>
-                                            <exclude reference="DKD-Hp-IRK"/>
-                                        </mask>
-                                        <mask key="constraints">
-                                            <exclude reference="9kx-1f-PnO"/>
-                                            <exclude reference="SEk-Zf-qvf"/>
-                                            <exclude reference="9ho-W2-PrX"/>
-                                            <exclude reference="Si7-Cn-Ao6"/>
-                                            <exclude reference="Txn-Kp-r6U"/>
-                                            <exclude reference="UY4-z0-4n8"/>
-                                        </mask>
-                                    </variation>
-                                    <variation key="heightClass=regular-widthClass=compact">
-                                        <mask key="subviews">
-                                            <include reference="Jjb-8S-Es6"/>
-                                            <include reference="DKD-Hp-IRK"/>
-                                        </mask>
-                                        <mask key="constraints">
-                                            <include reference="9kx-1f-PnO"/>
-                                            <include reference="SEk-Zf-qvf"/>
-                                            <include reference="9ho-W2-PrX"/>
-                                            <include reference="Si7-Cn-Ao6"/>
-                                            <include reference="Txn-Kp-r6U"/>
-                                            <include reference="UY4-z0-4n8"/>
-                                        </mask>
-                                    </variation>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="podcastImage" destination="WYs-sk-Aa4" id="YqE-Es-itt"/>
+                                    <outlet property="titleLabel" destination="0Mu-yR-e4r" id="QKg-LP-X3E"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -87,10 +43,13 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="nWK-Wz-Ifz"/>
+                    <connections>
+                        <segue destination="ovy-uC-JdO" kind="show" identifier="episodesViewControllerSegue" id="yBh-28-CfD"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OaI-yl-wA2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="961.5" y="303.75"/>
+            <point key="canvasLocation" x="961" y="303"/>
         </scene>
         <!--Podcast Episodes Table View Controller-->
         <scene sceneID="TNf-ZA-kgv">
@@ -251,27 +210,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ghc-f5-zfS">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Play/Stop">
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7GU-c7-4sp">
+                                <rect key="frame" x="277" y="123" width="46" height="30"/>
+                                <state key="normal" title="Button">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <variation key="heightClass=regular-widthClass=compact" fixedFrame="YES">
-                                    <rect key="frame" x="41" y="345" width="319" height="110"/>
-                                </variation>
+                                <connections>
+                                    <action selector="playPause:" destination="NVZ-UN-u3u" eventType="touchUpInside" id="897-17-ObE"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <variation key="default">
-                            <mask key="subviews">
-                                <exclude reference="ghc-f5-zfS"/>
-                            </mask>
-                        </variation>
-                        <variation key="heightClass=regular-widthClass=compact">
-                            <mask key="subviews">
-                                <include reference="ghc-f5-zfS"/>
-                            </mask>
-                        </variation>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqX-pi-dcK" userLabel="First Responder" sceneMemberID="firstResponder"/>

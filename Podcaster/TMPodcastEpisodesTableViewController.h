@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
+@class TMPodcast;
+
 @interface TMPodcastEpisodesTableViewController : UITableViewController
 
-@property (strong, nonatomic) NSString *podcastEpisodesURL;
+@property (strong, nonatomic) TMPodcast *podcast;
 
 @end

@@ -19,7 +19,6 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 @interface TMPodcastEpisodesTableViewController ()
 
-@property (strong, nonatomic) TMPodcast *podcast;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @property (strong, nonatomic) NSIndexPath *downloadingIndex;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
@@ -31,24 +30,8 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [self retrieveEpisodes];
 }
 
-- (void)retrieveEpisodes {
-
-    __weak TMPodcastEpisodesTableViewController *weakSelf = self;
-    NSString *episodesURLString = @"http://feeds.feedburner.com/serialpodcast?fmt=xml";
-    [self.podcastsManager podcastEpisodesAtURL:episodesURLString
-                              withSuccessBlock:^(TMPodcast *podcast) {
-                                  weakSelf.podcast = podcast;
-                                  [weakSelf.tableView reloadData];
-                              }
-                               andFailureBlock:^(NSError *error) {
-#warning TODO
-                               }];
-
-}
 
 - (TMPodcastsManager *)podcastsManager {
     if (!_podcastsManager) {

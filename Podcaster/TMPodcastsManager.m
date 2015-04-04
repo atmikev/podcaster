@@ -103,7 +103,7 @@
                     NSError *xmlParserError;
                     //for some reason, if we pass in the raw data, the xml parser fails, so convert it to a string first
                     NSString *xmlString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                    NSDictionary *podcastDictionary = [XMLReader dictionaryForXMLString:xmlString error:xmlParserError];
+                    NSDictionary *podcastDictionary = [XMLReader dictionaryForXMLString:xmlString error:&xmlParserError];
                     TMPodcast *podcast = [TMPodcast initWithDictionary:podcastDictionary];
                     
                     if (xmlParserError || podcast.title == nil) {

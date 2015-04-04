@@ -7,8 +7,11 @@
 //
 
 #import "TMAudioPlayerViewController.h"
+#import <AVFoundation/AVFoundation.h>
 
 @interface TMAudioPlayerViewController ()
+
+@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 
 @end
 
@@ -16,13 +19,22 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    NSURL *fileURL = [NSURL URLWithString:self.episode.fileLocation];
+    NSError *fileError;
+    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&fileError];
+    
+    if (fileError) {
+        NSLog(@"error loading the file: %@",fileError.localizedDescription);
+    }
+
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)playPause:(id)sender {
+    if (self.audioPlayer.isPlaying) {
+        [self.audioPlayer stop];
+    } else {
+        [self.audioPlayer play];
+    }
 }
-
 
 @end

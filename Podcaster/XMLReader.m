@@ -54,29 +54,15 @@ NSString *const kXMLReaderAttributePrefix	= @"@";
     return [XMLReader dictionaryForXMLData:data options:options error:error];
 }
 
-+ (void)dictionaryForXMLString:(NSString *)string withSuccessBlock:(void(^)(NSDictionary *dictionary))successBlock andFailureBlock:(void(^)(NSError *error))failureBlock {
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-
-    NSError *error = nil;
-    XMLReader *reader = [[XMLReader alloc] initWithError:error];
-    NSDictionary *rootDictionary = [reader objectWithData:data options:0];
-    
-    if (rootDictionary && successBlock) {
-        successBlock(rootDictionary);
-    } else if (error && failureBlock) {
-        failureBlock(error);
-    }
-}
-
 
 #pragma mark - Parsing
 
-- (id)initWithError:(NSError *)error
+- (id)initWithError:(NSError **)error
 {
 	self = [super init];
     if (self)
     {
-        self.errorPointer = error;
+        self.errorPointer = *error;
     }
     return self;
 }

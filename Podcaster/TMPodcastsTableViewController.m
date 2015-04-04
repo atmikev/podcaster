@@ -9,8 +9,11 @@
 #import "TMPodcastsTableViewController.h"
 #import "TMPodcastsManager.h"
 #import "TMPodcastTableViewCell.h"
+#import "TMPodcast.h"
+#import "TMPodcastEpisodesTableViewController.h"
 
 static NSString * const kPodcastCellReuseIdentifier = @"podcastCell";
+static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 
 @interface TMPodcastsTableViewController ()
 
@@ -35,11 +38,6 @@ static NSString * const kPodcastCellReuseIdentifier = @"podcastCell";
     }];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -48,7 +46,6 @@ static NSString * const kPodcastCellReuseIdentifier = @"podcastCell";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
     return [self.podcastsArray count];
 }
 
@@ -56,19 +53,29 @@ static NSString * const kPodcastCellReuseIdentifier = @"podcastCell";
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
     
+    TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
     
+    cell.titleLabel.text = podcast.title;
     
     return cell;
 }
 
-/*
-#pragma mark - Navigation
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
+    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:podcast];
 }
-*/
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
+    //ugh, seriously, figure out a better way to pass the podcast...
+    TMPodcast *podcast = (TMPodcast *)sender;
+    
+    if ([segue.identifier isEqualToString:kEpisodesViewControllerSegue]) {
+        TMPodcastEpisodesTableViewController *vc = (TMPodcastEpisodesTableViewController *)segue.destinationViewController;
+        vc.podcast = podcast;
+    }
+    
+}
 
 @end

@@ -25,7 +25,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "105"
             endingLineNumber = "105"
-            landmarkName = "-parser:didStartElement:namespaceURI:qualifiedName:attributes:"
+            landmarkName = "-objectWithData:options:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,23 +41,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "173"
             endingLineNumber = "173"
-            landmarkName = "-parser:parseErrorOccurred:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Podcaster/TMDownloadManager.m"
-            timestampString = "447821445.698541"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "115"
-            endingLineNumber = "115"
-            landmarkName = "-saveData:withFileName:andError:"
+            landmarkName = "-parser:didEndElement:namespaceURI:qualifiedName:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -83,22 +67,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Podcaster/TMDownloadManager.m"
-            timestampString = "447821445.698541"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
-            landmarkName = "-URLSession:task:didCompleteWithError:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "Podcaster/AppDelegate.m"
             timestampString = "447992371.823696"
             startingColumnNumber = "9223372036854775807"
@@ -114,13 +82,14 @@
                   continueAfterRunningActions = "No"
                   symbolName = "__57-[AppDelegate application:didFinishLaunchingWithOptions:]_block_invoke"
                   moduleName = "Podcaster"
-                  urlString = "file:///Users/tylermikev/Desktop/Podcaster/Podcaster/AppDelegate.m"
-                  timestampString = "447996949.187442"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tylermikev/Podcaster/Podcaster/AppDelegate.m"
+                  timestampString = "449810590.282388"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "26"
                   endingLineNumber = "26"
-                  offsetFromSymbolStart = "58">
+                  offsetFromSymbolStart = "52">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
@@ -128,13 +97,14 @@
                   continueAfterRunningActions = "No"
                   symbolName = "__57-[AppDelegate application:didFinishLaunchingWithOptions:]_block_invoke_2"
                   moduleName = "Podcaster"
-                  urlString = "file:///Users/tylermikev/Desktop/Podcaster/Podcaster/AppDelegate.m"
-                  timestampString = "447996949.18761"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/tylermikev/Podcaster/Podcaster/AppDelegate.m"
+                  timestampString = "449810590.283523"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
                   startingLineNumber = "26"
                   endingLineNumber = "26"
-                  offsetFromSymbolStart = "50">
+                  offsetFromSymbolStart = "44">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -162,22 +132,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Podcaster/TMPodcastsManager.m"
-            timestampString = "447995863.795628"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
-            landmarkName = "-topPodcastsWithSuccessBlock:andFailureBlock:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Podcaster/TMPodcastsManager.m"
             timestampString = "447995825.744831"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
@@ -190,7 +144,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Podcaster/TMPodcastsManager.m"
@@ -216,6 +170,38 @@
             startingLineNumber = "112"
             endingLineNumber = "112"
             landmarkName = "-podcastEpisodesAtURL:withSuccessBlock:andFailureBlock:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Podcaster/TMPodcastsTableViewController.m"
+            timestampString = "449809508.636867"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
+            landmarkName = "-viewDidLoad"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Podcaster/TMPodcast.m"
+            timestampString = "449809493.930679"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
+            landmarkName = "-episodesFromXMLDictionary:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

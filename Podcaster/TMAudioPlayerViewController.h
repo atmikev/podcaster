@@ -13,4 +13,6 @@
 
 @property (strong, nonatomic) TMPodcastEpisode *episode;
 
+- (IBAction)playPause:(id)sender;
+
 @end
