@@ -10,7 +10,7 @@
 
 @interface TMPodcastTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UIImageView *podcastImage;
+@property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 
 @end

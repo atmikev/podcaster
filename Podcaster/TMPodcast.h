@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import <UIKit/UIKit.h>
 
 @interface TMPodcast : NSObject
 
@@ -20,6 +20,7 @@
 @property (strong, nonatomic) NSString *author;
 @property (strong, nonatomic) NSString *category;
 @property (strong, nonatomic) NSURL *imageURL;
+@property (strong, nonatomic) UIImage *podcastImage;
 @property (strong, nonatomic) NSArray *episodes;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;

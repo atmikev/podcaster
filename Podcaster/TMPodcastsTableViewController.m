@@ -19,6 +19,7 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
 
 @property (strong, nonatomic) NSArray *podcastsArray;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
+@property (strong, nonatomic) NSMutableArray *imagesArray;
 
 @end
 
@@ -36,6 +37,29 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     } andFailureBlock:^(NSError *error) {
 #warning TODO
     }];
+    
+}
+
+- (void)downloadImageForPodcast:(TMPodcast *)podcast forCell:(UITableViewCell *)originalCell atIndexPath:(NSIndexPath *)indexPath {
+
+    __weak TMPodcastsTableViewController *weakSelf = self;
+    //download the image
+    [[[NSURLSession sharedSession] dataTaskWithURL:podcast.imageURL
+                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                    if (error) {
+#warning Handle this error
+                                        NSLog(@"Error loading podcast image: %@", error.debugDescription);
+                                    } else if (data) {
+                                        UIImage *image = [UIImage imageWithData:data];
+                                        podcast.podcastImage = image;
+                                        
+                                        TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
+                                        if (cell == originalCell) {
+                                            cell.podcastImageView.image = image;
+                                        }
+                                    }
+                                }] resume];
+    
 }
 
 #pragma mark - Table view data source
@@ -54,8 +78,11 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
     
     TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
-    
+    [self downloadImageForPodcast:podcast forCell:cell atIndexPath:indexPath];
     cell.titleLabel.text = podcast.title;
+    if (podcast.podcastImage != nil) {
+        cell.podcastImageView.image = podcast.podcastImage;
+    }
     
     return cell;
 }

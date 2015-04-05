@@ -8,11 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@class TMPodcastEpisode;
+
 @interface TMPodcastEpisodesTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *durationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *publishDateLabel;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
+
+- (void)setupCellWithEpisode:(TMPodcastEpisode *)episode;
 
 @end

@@ -9,12 +9,14 @@
 #import "TMPodcastEpisodesTableViewController.h"
 #import "TMPodcastsManager.h"
 #import "TMPodcastEpisodesTableViewCell.h"
+#import "TMPodcastEpisodeHeaderTableViewCell.h"
 #import "TMPodcast.h"
 #import "TMPodcastEpisode.h"
 #import "TMAudioPlayerViewController.h"
 #import <AVFoundation/AVFoundation.h>
 
 static NSString * const kEpisodeCellReuseIdentifier = @"EpisodeCell";
+static NSString * const kEpisodeHeaderCellReuseIdentifier = @"EpisodeHeaderCell";
 static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 @interface TMPodcastEpisodesTableViewController ()
@@ -45,31 +47,47 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return self.podcast.episodes.count;
+    NSInteger rows = 0;
+    if (section == 0) {
+        rows = 1;
+    } else {
+        rows = self.podcast.episodes.count;
+    }
+    return rows;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TMPodcastEpisodesTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:kEpisodeCellReuseIdentifier forIndexPath:indexPath];
     
-    TMPodcastEpisode *episode = [self.podcast.episodes objectAtIndex:indexPath.row];
-    cell.titleLabel.text = episode.title;
+    UITableViewCell *cellToReturn = nil;
     
-    NSInteger minutes = episode.duration / 60;
-    cell.durationLabel.text = [NSString stringWithFormat:@"%ld min", (long)minutes];
+    if (indexPath.section == 0) {
+        TMPodcastEpisodeHeaderTableViewCell *episodeHeaderCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeHeaderCellReuseIdentifier forIndexPath:indexPath];
+        [episodeHeaderCell setupCellWithPodcast:self.podcast];
+        cellToReturn = episodeHeaderCell;
+    } else {
+        TMPodcastEpisodesTableViewCell *episodeCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeCellReuseIdentifier forIndexPath:indexPath];
+        TMPodcastEpisode *episode = [self.podcast.episodes objectAtIndex:indexPath.row];
+        [episodeCell setupCellWithEpisode:episode];
+        cellToReturn = episodeCell;
+    }
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MMMM d, YYYY"];
-    cell.publishDateLabel.text = [dateFormatter stringFromDate:episode.publishDate];
+    return cellToReturn;
+}
 
-    cell.progressView.hidden = YES;
-    
-    return cell;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat height = 0;
+    if (indexPath.section == 0) {
+        height = 120;
+    } else {
+        height = 92;
+    }
+    return height;
 }
 
 #pragma mark - TableViewDelegate methods
@@ -115,7 +133,6 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
                                              }
                                           andFailureBlock:^(NSError *error) {
                                               //do something else!
-                                              
                                               weakSelf.downloadingIndex = nil;
                                           }];
     }
@@ -132,6 +149,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     if ([[segue identifier] isEqualToString:kAudioPlayerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)[segue destinationViewController];
         vc.episode = self.episodeToPlay;
+        vc.podcastImage = self.podcast.podcastImage;
     }
 }
 

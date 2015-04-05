@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C37D27A91ACF8820009AE39A /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27A81ACF8820009AE39A /* XMLReader.m */; };
 		C37D27AB1ACF8E6B009AE39A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */; };
+		C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27AD1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m */; };
 		C386EDCD1A86BE8D000DE78F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDCC1A86BE8D000DE78F /* main.m */; };
 		C386EDD01A86BE8D000DE78F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDCF1A86BE8D000DE78F /* AppDelegate.m */; };
 		C386EDD61A86BE8D000DE78F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C386EDD41A86BE8D000DE78F /* Main.storyboard */; };
@@ -43,6 +44,8 @@
 		C37D27A71ACF8820009AE39A /* XMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLReader.h; sourceTree = "<group>"; };
 		C37D27A81ACF8820009AE39A /* XMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLReader.m; sourceTree = "<group>"; };
 		C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		C37D27AC1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodeHeaderTableViewCell.h; sourceTree = "<group>"; };
+		C37D27AD1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisodeHeaderTableViewCell.m; sourceTree = "<group>"; };
 		C386EDC71A86BE8D000DE78F /* Podcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Podcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C386EDCB1A86BE8D000DE78F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C386EDCC1A86BE8D000DE78F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -202,6 +205,8 @@
 		C3CE48661AAC10F900085513 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				C37D27AC1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.h */,
+				C37D27AD1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m */,
 				C3CE48671AAC113800085513 /* TMPodcastEpisodesTableViewCell.h */,
 				C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */,
 				C3A47B141AB3D6F600613E6F /* TMPodcastTableViewCell.h */,
@@ -328,6 +333,7 @@
 				C386EE001A86F563000DE78F /* TMMark.m in Sources */,
 				C3A47B131AB3D54700613E6F /* TMPodcastsTableViewController.m in Sources */,
 				C386EDD01A86BE8D000DE78F /* AppDelegate.m in Sources */,
+				C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */,
 				C3A47B0A1AACF7A200613E6F /* TMDownloadManager.m in Sources */,
 				C3CE48651AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m in Sources */,
 				C3A47B101AB3C06B00613E6F /* TMiTunesResponse.m in Sources */,

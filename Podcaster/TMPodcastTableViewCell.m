@@ -10,4 +10,9 @@
 
 @implementation TMPodcastTableViewCell
 
+- (void)prepareForReuse {
+    self.titleLabel.text = @"";
+    self.podcastImageView.image = nil;
+}
+
 @end
