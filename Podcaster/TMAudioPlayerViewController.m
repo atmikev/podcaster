@@ -7,12 +7,24 @@
 //
 
 #import "TMAudioPlayerViewController.h"
-#import <AVFoundation/AVFoundation.h>
+#import "TMAudioPlayerManager.h"
 
-@interface TMAudioPlayerViewController () <AVAudioPlayerDelegate>
+@interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate>
 
-@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+@property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
+
+@property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
+@property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
+@property (weak, nonatomic) IBOutlet UISlider *timeSlider;
+@property (weak, nonatomic) IBOutlet UILabel *timeElapsedLabel;
+@property (weak, nonatomic) IBOutlet UILabel *timeTotalLabel;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+
+- (IBAction)playPause:(id)sender;
+- (IBAction)timeSliderValueChanged:(id)sender;
+- (IBAction)seekBackHandler:(id)sender;
+- (IBAction)seekForwardHandler:(id)sender;
 
 @end
 
@@ -21,98 +33,80 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self setupAudioPlayer];
-
+    [self setupAudioPlayerManager];
+    
     [self setupSeekSlider];
     
-    [self setupTimeLabels];
+    //show the duration of the episode
+    self.timeTotalLabel.text = [self.audioPlayerManager fileDurationString];
     
     //show podcast image
     self.podcastImageView.image = self.podcastImage;
+    
+    //set episode title
+    self.titleLabel.text = self.episode.title;
 }
 
-- (void)setupTimeLabels {
-    self.timeElapsedLabel.text = [self formattedTimeForNSTimeInterval:0];
-    
-    self.timeTotalLabel.text = [self formattedTimeForNSTimeInterval:self.audioPlayer.duration];
+- (void)viewWillAppear:(BOOL)animated {
+    [self playAudio];
+}
+
+- (void)setupAudioPlayerManager {
+    self.audioPlayerManager = [TMAudioPlayerManager sharedInstance];
+    self.audioPlayerManager.delegate = self;
+    self.audioPlayerManager.episode = self.episode;
 }
 
 - (void)setupSeekSlider {
     self.timeSlider.value = 0;
-    //prevents continuous updates while dragging the seek slider
-//    [self.timeSlider setContinuous:NO];
 }
 
-- (void)setupAudioPlayer {
-    NSURL *fileURL = [NSURL URLWithString:self.episode.fileLocation];
-    NSError *fileError;
-    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&fileError];
-    
-    self.audioPlayer.delegate = self;
-    
-    if (fileError) {
-        NSLog(@"error loading the file: %@",fileError.localizedDescription);
-    }
-}
-
-- (NSString *)formattedTimeForNSTimeInterval:(NSTimeInterval)interval {
-    NSInteger minutes = floor(interval/60);
-    NSInteger seconds = (int)(interval)%60;
-    NSString *formattedString = [NSString stringWithFormat:@"%li:%.2li", (long)minutes, seconds];
-    
-    return formattedString;
-}
-
-- (void)stopAudio {
-    [self.audioPlayer stop];
+- (void)pauseAudio {
+    [self.audioPlayerManager pause];
     [self.playPauseButton setTitle:@"Play" forState:UIControlStateNormal];
-    
-    //stop timer
-    [self.timer invalidate];
-    
-    
 }
 
 - (void)playAudio {
-    [self.audioPlayer play];
+    [self.audioPlayerManager play];
     [self.playPauseButton setTitle:@"Pause" forState:UIControlStateNormal];
-    
-    //start timer
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:0.5
-                                                  target:self
-                                                selector:@selector(updateTimeInfo)
-                                                userInfo:nil
-                                                 repeats:YES];
 }
 
-- (void)updateTimeInfo {
-    NSTimeInterval currentTime = self.audioPlayer.currentTime;
-    self.timeElapsedLabel.text = [self formattedTimeForNSTimeInterval:currentTime];
-    self.timeSlider.value = currentTime/self.audioPlayer.duration;
-}
+#pragma mark - IBActions
 
 - (IBAction)playPause:(id)sender {
-    if (self.audioPlayer.isPlaying) {
-        [self stopAudio];
+    if (self.audioPlayerManager.isPlaying) {
+        [self pauseAudio];
     } else {
         [self playAudio];
     }
+    
 }
 
 - (IBAction)timerStartedSliding:(id)sender {
     //stop the audioplayer so the slider doesn't jerk around
-    [self stopAudio];
+    [self.audioPlayerManager pause];
 }
 
 - (IBAction)timeSliderValueChanged:(id)sender {
-    NSTimeInterval seekTime = floor(self.timeSlider.value * self.audioPlayer.duration);
-    
-    self.timeElapsedLabel.text = [self formattedTimeForNSTimeInterval:seekTime];
-    self.audioPlayer.currentTime = seekTime;
+    [self.audioPlayerManager seekToPosition:self.timeSlider.value];
 }
 
-#pragma mark - AVAudioPlayer delegates
+- (IBAction)seekBackHandler:(id)sender {
+    [self.audioPlayerManager seekWithInterval:-15];
+}
 
+- (IBAction)seekForwardHandler:(id)sender {
+    [self.audioPlayerManager seekWithInterval:15];
+}
 
+#pragma mark - TMAudioPlayerManagerDelegate methods
 
+- (void)displayMark:(TMMark *)mark {
+    
+}
+
+- (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value {
+    self.timeElapsedLabel.text = elapsedTime;
+    self.timeSlider.value = value;
+}
 @end

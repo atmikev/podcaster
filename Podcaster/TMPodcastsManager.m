@@ -184,6 +184,18 @@
     ];
 }
 
-
+- (NSString *)filePathForEpisode:(TMPodcastEpisode *)episode {
+    NSString *fileName = [episode.downloadURL lastPathComponent];
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];
+    
+    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:filePath];
+    if (!fileExists) {
+        filePath = nil;
+    }
+    
+    return filePath;
+}
 
 @end

@@ -7,8 +7,9 @@
 //
 
 #import "AppDelegate.h"
+#import <AVFoundation/AVFoundation.h>
+#import <AudioToolbox/AudioToolbox.h>
 
-#import "TMPodcastsManager.h"
 
 @interface AppDelegate ()
 
@@ -20,12 +21,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
-    TMPodcastsManager *manager = [TMPodcastsManager new];
-    [manager topPodcastsWithSuccessBlock:^(NSArray *podcasts) {
-        
-    } andFailureBlock:^(NSError *error) {
-        
-    }];
+    [self setupAudioSession];
     
     return YES;
 }
@@ -50,6 +46,23 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+- (void)setupAudioSession {
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    
+    NSError *setCategoryError = nil;
+    BOOL success = [audioSession setCategory:AVAudioSessionCategoryPlayback error:&setCategoryError];
+    if (!success) {
+#warning Handle this error
+    }
+    
+    NSError *activationError = nil;
+    success = [audioSession setActive:YES error:&activationError];
+    if (!success) {
+#warning Handle this error
+    }
+
 }
 
 @end

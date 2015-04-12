@@ -11,6 +11,7 @@
 
 
 @class TMPodcast;
+@class TMPodcastEpisode;
 
 @interface TMPodcastsManager : NSObject
 
@@ -26,5 +27,7 @@
 
 - (void)topPodcastsWithSuccessBlock:(void(^)(NSArray *podcasts))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock;
+
+- (NSString *)filePathForEpisode:(TMPodcastEpisode *)episode;
 
 @end

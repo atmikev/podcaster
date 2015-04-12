@@ -278,6 +278,11 @@
 					C386EDC61A86BE8C000DE78F = {
 						CreatedOnToolsVersion = 6.1;
 						DevelopmentTeam = U4FM6R6FKJ;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					C386EDDF1A86BE8D000DE78F = {
 						CreatedOnToolsVersion = 6.1;

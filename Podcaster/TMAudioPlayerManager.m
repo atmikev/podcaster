@@ -9,61 +9,150 @@
 #import "TMAudioPlayerManager.h"
 #import <AVFoundation/AVFoundation.h>
 #import "TMMark.h"
+#import "TMPodcastEpisode.h"
 
 @interface TMAudioPlayerManager () <AVAudioPlayerDelegate>
 
-@property (strong, nonatomic) AVAudioPlayer *audioPlayer;
+@property (strong, nonatomic) AVPlayer *audioPlayer;
+@property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) TMMark *currentMark;
 @property (strong, nonatomic) NSTimer *marksTimer;
 @property (strong, nonatomic) NSMutableArray *marksArray;
-
 
 @end
 
 @implementation TMAudioPlayerManager
 
-- (instancetype) initWithDelegate:(id<TMAudioPlayerManagerDelegate>)delegate {
-    self = [super init];
-    
-    if (self) {
-        self.delegate = delegate;
-    }
-    
-    return self;
++ (instancetype)sharedInstance {
+    static TMAudioPlayerManager *manager = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        manager = [[self alloc] init];
+    });
+    return manager;
 }
 
-- (void)playFileAtURL:(NSURL *)fileURL {
+- (AVPlayer *)audioPlayer {
+    if (!_audioPlayer) {
+        _audioPlayer = [[AVPlayer alloc] init];
+    }
+
+    return _audioPlayer;
+}
+
+- (void)setEpisode:(TMPodcastEpisode *)episode {
+    if (self.episode == episode) {
+        //if we're already playing the current episode,
+        //don't do anything
+        return;
+    }
+    _episode = episode;
     
-    //get the audioplayer ready
-    NSError *error;
-    self.audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:fileURL error:&error];
-    self.audioPlayer.delegate = self;
-    if (error) {
-        NSLog(@"Error initing audio player: %@", error);
+    NSURL *fileURL = nil;
+    if (episode.fileLocation) {
+        fileURL = [NSURL fileURLWithPath:episode.fileLocation];
+    } else if (episode.downloadURL) {
+        fileURL = [NSURL URLWithString:episode.downloadURL.absoluteString];
     }
     
-    //start the timer
+    self.playerItem = [AVPlayerItem playerItemWithURL:fileURL];
+    [self.audioPlayer replaceCurrentItemWithPlayerItem:self.playerItem];
+    [self.audioPlayer addObserver:self forKeyPath:@"status" options:0 context:nil];
+
+    if (self.delegate) {
+        //fire back the initial time info to the delegate
+        [self updateDelegateTimeInfo];
+    }
+}
+
+- (void)setDelegate:(id<TMAudioPlayerManagerDelegate>)delegate {
+    _delegate = delegate;
+    
+    if (self.episode && self.audioPlayer.rate != 0) {
+        //fire an update immediately so that we have audio info when the VC displays
+        [self updateDelegateTimeInfo];
+        
+        //start monitoring normally
+        [self startMonitoringAudioTime];
+    }
+    
+}
+
+- (void)play {
+    [self.audioPlayer play];
+    
+    //start the timer to monitor stuff
     [self startMonitoringAudioTime];
-
 }
 
-- (void)stopPlayingFile {
-    [self.audioPlayer stop];
+- (void)pause {
+    [self.audioPlayer pause];
 }
 
+- (BOOL)isPlaying {
+    return self.audioPlayer.rate > 0;
+}
+
+- (void)handlePlayPause {
+    if ([self isPlaying]) {
+        [self pause];
+    } else {
+        [self play];
+    }
+}
+
+- (void)seekWithInterval:(float)seekTime {
+    NSTimeInterval time = floor(seekTime + CMTimeGetSeconds(self.playerItem.currentTime));
+    
+    NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
+    if (time > duration) {
+        time = duration;
+    } else if (time < 0) {
+        time = 0;
+    }
+    
+    float sliderValue = time / CMTimeGetSeconds(self.playerItem.duration);
+    [self seekToPosition:sliderValue];
+}
+
+- (void)seekToPosition:(float)value {
+    int time = floor(value * CMTimeGetSeconds(self.playerItem.duration));
+    
+    CMTime seekTime = CMTimeMake(time, 1);
+    [self.audioPlayer seekToTime:seekTime];
+    [self.audioPlayer play];
+    
+    NSString *elapsedTime = [self formattedTimeForNSTimeInterval:time];
+    [self.delegate updateTimeInfoWithElapsedTime:elapsedTime andTimeSliderValue:value];
+}
+
+- (NSString *)formattedTimeForNSTimeInterval:(NSTimeInterval)interval {
+    NSInteger minutes = floor(interval/60);
+    NSInteger seconds = (int)(interval)%60;
+    NSString *formattedString = [NSString stringWithFormat:@"%li:%.2li", (long)minutes, seconds];
+    
+    return formattedString;
+}
+
+- (NSString *)fileDurationString {
+    return [self formattedTimeForNSTimeInterval:self.episode.duration];
+}
 
 #pragma mark - Marks methods
 
 - (void)startMonitoringAudioTime {
-    self.marksTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
-                                                  target:self
-                                                selector:@selector(checkForMark)
-                                                userInfo:nil
-                                                 repeats:YES];
+    if (!self.marksTimer) {
+        self.marksTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+                                                           target:self
+                                                         selector:@selector(monitorTimeRelatedInfo)
+                                                         userInfo:nil
+                                                          repeats:YES];
+    }
 }
 
 - (void)stopMonitoringAudioTime {
     [self.marksTimer invalidate];
+    self.marksArray = nil;
 }
 
 - (void)loadMarks {
@@ -90,19 +179,37 @@
     unsortedMarksArray = [[unsortedMarksArray sortedArrayUsingDescriptors:@[descriptor]] mutableCopy];
     for (NSDictionary *dictionary in unsortedMarksArray) {
         TMMark *mark = [[TMMark alloc] initWithDictionary:dictionary];
-        if (mark.time >= [self.audioPlayer currentTime]) {
+
+        if (mark.time >= [self currentTime]) {
             [self.marksArray addObject:mark];
         }
     }
     
 }
 
-- (void)checkForMark {
+- (void)monitorTimeRelatedInfo {
     
-    NSTimeInterval currentTime = [self.audioPlayer currentTime];
+    [self updateDelegateTimeInfo];
+    
+    if (self.marksArray) {
+        [self checkForNextMark];
+    }
+}
+
+- (void)updateDelegateTimeInfo {
+    
+    //update delegate
+    NSString *elapsedTime = [self formattedTimeForNSTimeInterval:[self currentTime]];
+    float value = [self currentTime] / [self duration];
+    [self.delegate updateTimeInfoWithElapsedTime:elapsedTime andTimeSliderValue:value];
+}
+
+- (void)checkForNextMark {
+
+    //check for mark
     TMMark *nextMark = [self.marksArray firstObject];
     
-    if (currentTime > nextMark.time) {
+    if ([self currentTime] > nextMark.time) {
         //show this mark, set it as the current mark
         self.currentMark = nextMark;
         
@@ -117,20 +224,29 @@
             [self.marksTimer invalidate];
         }
     }
+}
 
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     
+    if (object == self.audioPlayer && [keyPath isEqualToString:@"status"]) {
+        if (self.audioPlayer.status == AVPlayerStatusFailed) {
+            NSLog(@"AVPlayer Failed");
+        } else if (self.audioPlayer.status == AVPlayerStatusReadyToPlay) {
+            NSLog(@"AVPlayerStatusReadyToPlay");
+        } else if (self.audioPlayer.status == AVPlayerItemStatusUnknown) {
+            NSLog(@"AVPlayer Unknown");
+        }
+    }
 }
 
-#pragma AVAudioPlayerDelegate methods
-
-/* audioPlayerDidFinishPlaying:successfully: is called when a sound has finished playing. This method is NOT called if the player is stopped due to an interruption. */
-- (void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag {
-#warning TODO
+- (NSTimeInterval)currentTime {
+    NSTimeInterval currentTime = CMTimeGetSeconds(self.playerItem.currentTime);
+    return currentTime;
 }
 
-/* if an error occurs while decoding it will be reported to the delegate. */
-- (void)audioPlayerDecodeErrorDidOccur:(AVAudioPlayer *)player error:(NSError *)error {
-#warning TODO
+- (NSTimeInterval)duration {
+    NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
+    return duration;
 }
 
 @end

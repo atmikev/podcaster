@@ -32,6 +32,8 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    [self findDownloadedEpisodes];
 }
 
 
@@ -41,6 +43,16 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     }
     
     return _podcastsManager;
+}
+
+- (void)findDownloadedEpisodes {
+    //populate any potentially downloaded podcast episodes with their file locations
+    for (TMPodcastEpisode *episode in self.podcast.episodes) {
+        NSString *fileLocation = [self.podcastsManager filePathForEpisode:episode];
+        if (fileLocation) {
+            episode.fileLocation = fileLocation;
+        }
+    }
 }
 
 #pragma mark - Table view data source
@@ -96,46 +108,49 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
  
     //store the indexPath we're downloading
     self.downloadingIndex = indexPath;
-
-    //reset the progress indicator
-    TMPodcastEpisodesTableViewCell *cell = (TMPodcastEpisodesTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-    [cell.progressView setProgress:0];
-    cell.progressView.hidden = NO;
     
     //get the episode download link
     TMPodcastEpisode *episode = [self.podcast.episodes objectAtIndex:indexPath.row];
     
-    if (episode.fileLocation != nil) {
-        //TEMP: navigate to the audioPlayerVC
+//    if (episode.fileLocation != nil) {
+    
         self.episodeToPlay = episode;
         [self performSegueWithIdentifier:kAudioPlayerSegue sender:nil];
         
-    } else {
-        //download the podcast
-        NSString *fileName = [episode.downloadURL lastPathComponent];
-
-        __weak TMPodcastEpisodesTableViewController *weakSelf = self;
-        [self.podcastsManager downloadPodcastEpisodeAtURL:episode.downloadURL
-                                             withFileName:fileName
-                                              updateBlock:^(CGFloat downloadPercentage) {
-                                                  TMPodcastEpisodesTableViewCell *downloadingCell = (TMPodcastEpisodesTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
-
-                                                  //update the progress indicator
-                                                  [downloadingCell.progressView setProgress:downloadPercentage];
-                                                  
-                                              }
-                                             successBlock:^(NSString *filePath) {
-                                                 //store the file location
-                                                 episode.fileLocation = filePath;
-                                                 
-                                                 //get rid of the downloadingIndex
-                                                 weakSelf.downloadingIndex = nil;
-                                             }
-                                          andFailureBlock:^(NSError *error) {
-                                              //do something else!
-                                              weakSelf.downloadingIndex = nil;
-                                          }];
-    }
+//    } else {
+//        
+//        //reset the progress indicator
+//        TMPodcastEpisodesTableViewCell *cell = (TMPodcastEpisodesTableViewCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+//        [cell.progressView setProgress:0];
+//        cell.progressView.hidden = NO;
+//        
+//        //download the podcast
+//        NSString *fileName = [episode.downloadURL lastPathComponent];
+//        __weak TMPodcastEpisodesTableViewController *weakSelf = self;
+//        [self.podcastsManager downloadPodcastEpisodeAtURL:episode.downloadURL
+//                                             withFileName:fileName
+//                                              updateBlock:^(CGFloat downloadPercentage) {
+//                                                  TMPodcastEpisodesTableViewCell *downloadingCell = (TMPodcastEpisodesTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
+//
+//                                                  //update the progress indicator
+//                                                  [downloadingCell.progressView setProgress:downloadPercentage];
+//                                                  
+//                                              }
+//                                             successBlock:^(NSString *filePath) {
+//                                                 //store the file location
+//                                                 episode.fileLocation = filePath;
+//                                                 
+//                                                 //update the cell to show we're done downloading
+//                                                 [weakSelf.tableView reloadRowsAtIndexPaths:@[weakSelf.downloadingIndex] withRowAnimation:UITableViewRowAnimationAutomatic];
+//                                                 
+//                                                 //get rid of the downloadingIndex
+//                                                 weakSelf.downloadingIndex = nil;
+//                                             }
+//                                          andFailureBlock:^(NSError *error) {
+//#warning Handle this error
+//                                              weakSelf.downloadingIndex = nil;
+//                                          }];
+//    }
 }
 
 

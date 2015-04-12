@@ -14,12 +14,4 @@
 @property (strong, nonatomic) TMPodcastEpisode *episode;
 @property (strong, nonatomic) UIImage *podcastImage;
 
-@property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
-@property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
-@property (weak, nonatomic) IBOutlet UISlider *timeSlider;
-@property (weak, nonatomic) IBOutlet UILabel *timeElapsedLabel;
-@property (weak, nonatomic) IBOutlet UILabel *timeTotalLabel;
-
-- (IBAction)playPause:(id)sender;
-- (IBAction)timeSliderValueChanged:(id)sender;
 @end

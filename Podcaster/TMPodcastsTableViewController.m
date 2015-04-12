@@ -35,7 +35,7 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
         weakSelf.podcastsArray = podcasts;
         [weakSelf.tableView reloadData];
     } andFailureBlock:^(NSError *error) {
-#warning TODO
+#warning Handle this error
     }];
     
 }
@@ -53,10 +53,16 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
                                         UIImage *image = [UIImage imageWithData:data];
                                         podcast.podcastImage = image;
                                         
-                                        TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[weakSelf.tableView cellForRowAtIndexPath:indexPath];
-                                        if (cell == originalCell) {
-                                            cell.podcastImageView.image = image;
+                                        for (NSIndexPath *visibleIndexPath in [weakSelf.tableView indexPathsForVisibleRows]) {
+                                            if ([visibleIndexPath isEqual:indexPath]) {
+                                                dispatch_async(dispatch_get_main_queue(), ^{
+                                                    //Update our images on the main thread
+                                                    [weakSelf.tableView reloadRowsAtIndexPaths:@[visibleIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+                                                });
+                                                break;
+                                            }
                                         }
+
                                     }
                                 }] resume];
     
@@ -78,10 +84,13 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
     
     TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
-    [self downloadImageForPodcast:podcast forCell:cell atIndexPath:indexPath];
+    
     cell.titleLabel.text = podcast.title;
-    if (podcast.podcastImage != nil) {
+    
+    if (podcast.podcastImage) {
         cell.podcastImageView.image = podcast.podcastImage;
+    } else {
+        [self downloadImageForPodcast:podcast forCell:cell atIndexPath:indexPath];
     }
     
     return cell;

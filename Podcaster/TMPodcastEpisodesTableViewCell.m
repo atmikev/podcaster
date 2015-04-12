@@ -22,6 +22,12 @@
     self.publishDateLabel.text = [dateFormatter stringFromDate:episode.publishDate];
     
     self.progressView.hidden = YES;
+    
+    if (episode.fileLocation) {
+        self.downloadedImageView.hidden = NO;
+    } else {
+        self.downloadedImageView.hidden = YES;
+    }
 }
 
 @end

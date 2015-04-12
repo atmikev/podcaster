@@ -16,7 +16,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *durationLabel;
 @property (weak, nonatomic) IBOutlet UILabel *publishDateLabel;
 @property (weak, nonatomic) IBOutlet UIProgressView *progressView;
-
+@property (weak, nonatomic) IBOutlet UIImageView *downloadedImageView;
 - (void)setupCellWithEpisode:(TMPodcastEpisode *)episode;
 
 @end
