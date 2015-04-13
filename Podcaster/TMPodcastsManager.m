@@ -216,9 +216,6 @@
                                          
                                          for (NSIndexPath *visibleIndexPath in [tableView indexPathsForVisibleRows]) {
                                              
-                                             NSInteger rowCount = [tableView numberOfRowsInSection:visibleIndexPath.section];
-                                             
-                                             
                                              if ([visibleIndexPath isEqual:indexPath]) {
                                                  dispatch_async(dispatch_get_main_queue(), ^{
                                                      //reload the tableview
