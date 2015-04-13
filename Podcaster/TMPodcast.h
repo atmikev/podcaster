@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@class TMiTunesResponse;
+
 @interface TMPodcast : NSObject
 
 @property (strong, nonatomic) NSString *title;
@@ -24,6 +26,6 @@
 @property (strong, nonatomic) NSArray *episodes;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
-+ (instancetype)initWithiTunesResponseDictionary:(NSDictionary *)dictionary;
++ (instancetype)initWithiTunesResponse:(TMiTunesResponse *)iTunesResponse;
 
 @end

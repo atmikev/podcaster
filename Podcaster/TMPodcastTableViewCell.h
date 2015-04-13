@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+extern NSString *const kPodcastCellReuseIdentifier;
+
 @interface TMPodcastTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;

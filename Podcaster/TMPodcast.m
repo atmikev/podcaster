@@ -9,12 +9,26 @@
 #import "TMPodcast.h"
 #import "TMPodcastEpisode.h"
 
+#import "TMiTunesResponse.h"
+
 @implementation TMPodcast
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     TMPodcast *podcast = [TMPodcast new];
     [podcast populateFromXMLDictionary:dictionary];
     
+    return podcast;
+}
+
++ (instancetype) initWithiTunesResponse:(TMiTunesResponse *)iTunesResponse {
+    
+    TMPodcast *podcast = [TMPodcast new];
+    
+    podcast.title = iTunesResponse.collectionName;
+    podcast.linkURL = iTunesResponse.feedUrl;
+    podcast.author = iTunesResponse.artistName;
+    podcast.imageURL = iTunesResponse.artworkUrl100;
+
     return podcast;
 }
 
@@ -38,17 +52,21 @@
 
 - (NSArray *)episodesFromXMLDictionary:(NSDictionary *)xmlDictionary {
     id itemsElement = xmlDictionary[@"item"];
-
-    NSArray *itemsArray = nil;
-    if (itemsElement) {
-        if ([itemsElement isKindOfClass:[NSDictionary class]]) {
-            itemsArray = @[itemsElement];
-        } else if ([itemsElement isKindOfClass:[NSArray class]]) {
-            itemsArray = itemsElement;
-        }
-    }
+    NSArray *episodesArray = nil;
     
-    NSArray *episodesArray = [TMPodcastEpisode episodesFromDictionariesArray:itemsArray];
+    if (itemsElement) {
+        NSArray *itemsArray = nil;
+        if (itemsElement) {
+            if ([itemsElement isKindOfClass:[NSDictionary class]]) {
+                itemsArray = @[itemsElement];
+            } else if ([itemsElement isKindOfClass:[NSArray class]]) {
+                itemsArray = itemsElement;
+            }
+        }
+        
+        episodesArray = [TMPodcastEpisode episodesFromDictionariesArray:itemsArray];
+    }
+   
     return episodesArray;
 }
 

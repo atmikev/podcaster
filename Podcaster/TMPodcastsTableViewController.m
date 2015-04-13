@@ -11,12 +11,14 @@
 #import "TMPodcastTableViewCell.h"
 #import "TMPodcast.h"
 #import "TMPodcastEpisodesTableViewController.h"
+#import "TMSearchResultsTableViewController.h"
 
-static NSString * const kPodcastCellReuseIdentifier = @"podcastCell";
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 
-@interface TMPodcastsTableViewController ()
+@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating>
 
+@property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
+@property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) NSArray *podcastsArray;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @property (strong, nonatomic) NSMutableArray *imagesArray;
@@ -29,43 +31,31 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     [super viewDidLoad];
     
     self.podcastsManager = [TMPodcastsManager new];
-    
-    __weak TMPodcastsTableViewController *weakSelf = self;
-    [self.podcastsManager topPodcastsWithSuccessBlock:^(NSArray *podcasts) {
-        weakSelf.podcastsArray = podcasts;
-        [weakSelf.tableView reloadData];
-    } andFailureBlock:^(NSError *error) {
-#warning Handle this error
-    }];
-    
+        
+    [self setupSearchController];
 }
 
-- (void)downloadImageForPodcast:(TMPodcast *)podcast forCell:(UITableViewCell *)originalCell atIndexPath:(NSIndexPath *)indexPath {
+- (void)setupSearchController {
 
-    __weak TMPodcastsTableViewController *weakSelf = self;
-    //download the image
-    [[[NSURLSession sharedSession] dataTaskWithURL:podcast.imageURL
-                                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                    if (error) {
-#warning Handle this error
-                                        NSLog(@"Error loading podcast image: %@", error.debugDescription);
-                                    } else if (data) {
-                                        UIImage *image = [UIImage imageWithData:data];
-                                        podcast.podcastImage = image;
-                                        
-                                        for (NSIndexPath *visibleIndexPath in [weakSelf.tableView indexPathsForVisibleRows]) {
-                                            if ([visibleIndexPath isEqual:indexPath]) {
-                                                dispatch_async(dispatch_get_main_queue(), ^{
-                                                    //Update our images on the main thread
-                                                    [weakSelf.tableView reloadRowsAtIndexPaths:@[visibleIndexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                                                });
-                                                break;
-                                            }
-                                        }
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
 
-                                    }
-                                }] resume];
+    self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
     
+    self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
+    self.searchController.searchResultsUpdater = self;
+    [self.searchController.searchBar sizeToFit];
+    self.tableView.tableHeaderView = self.searchController.searchBar;
+    
+    // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
+    self.searchResultsController.tableView.delegate = self;
+    self.searchController.delegate = self;
+    self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
+    
+    // Search is now just presenting a view controller. As such, normal view controller
+    // presentation semantics apply. Namely that presentation will walk up the view controller
+    // hierarchy until it finds the root view controller or one that defines a presentation context.
+    //
+    self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
 }
 
 #pragma mark - Table view data source
@@ -79,7 +69,6 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     return [self.podcastsArray count];
 }
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
     
@@ -90,17 +79,35 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     if (podcast.podcastImage) {
         cell.podcastImageView.image = podcast.podcastImage;
     } else {
-        [self downloadImageForPodcast:podcast forCell:cell atIndexPath:indexPath];
+        [TMPodcastsManager downloadImageForPodcast:podcast
+                                           forCell:cell
+                                       atIndexPath:indexPath
+                                       inTableView:tableView];
     }
     
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
+    
+    TMPodcast *podcast = nil;
+    
+    if (self.tableView == tableView) {
+        podcast = [self.podcastsArray objectAtIndex:indexPath.row];
+    } else if (self.searchResultsController.tableView == tableView) {
+        podcast = [self.searchResultsController.podcastsArray objectAtIndex:indexPath.row];
+    }
+    
     [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:podcast];
 }
+
+#pragma mark - Table view delegates
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 90;
+}
+
+#pragma mark - Segue stuff
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
@@ -113,5 +120,33 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     }
     
 }
+
+#pragma mark - UISearchResultsUpdating
+
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    // update the filtered array based on the search text
+    NSString *searchText = searchController.searchBar.text;
+    
+    // strip out all the leading and trailing spaces
+    NSString *strippedString = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    if (strippedString) {
+        __weak TMPodcastsTableViewController *weakSelf = self;
+        [self.podcastsManager searchForPodcastsWithSearchString:strippedString
+                                                     maxResults:25
+                                                   successBlock:^(NSArray *podcasts) {
+                                                       weakSelf.searchResultsController.podcastsArray = podcasts;
+                                                       
+                                                       //UI stuff needs to be done on the main thread, you idiot.
+                                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                                           [weakSelf.searchResultsController.tableView reloadData];
+                                                       });
+                                                   } andFailureBlock:^(NSError *error) {
+#warning Handle error
+                                                   }];
+    }
+    
+}
+
 
 @end

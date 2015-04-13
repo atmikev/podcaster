@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C30E109E1ADB374D005A6DAE /* TMSearchResultsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30E109D1ADB374D005A6DAE /* TMSearchResultsTableViewController.m */; };
 		C37D27A91ACF8820009AE39A /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27A81ACF8820009AE39A /* XMLReader.m */; };
 		C37D27AB1ACF8E6B009AE39A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */; };
 		C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27AD1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m */; };
@@ -41,6 +42,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C30E109C1ADB374D005A6DAE /* TMSearchResultsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSearchResultsTableViewController.h; sourceTree = "<group>"; };
+		C30E109D1ADB374D005A6DAE /* TMSearchResultsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSearchResultsTableViewController.m; sourceTree = "<group>"; };
 		C37D27A71ACF8820009AE39A /* XMLReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLReader.h; sourceTree = "<group>"; };
 		C37D27A81ACF8820009AE39A /* XMLReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XMLReader.m; sourceTree = "<group>"; };
 		C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -189,6 +192,8 @@
 				C3A47B0C1AAFCF1E00613E6F /* TMAudioPlayerViewController.m */,
 				C3A47B111AB3D54700613E6F /* TMPodcastsTableViewController.h */,
 				C3A47B121AB3D54700613E6F /* TMPodcastsTableViewController.m */,
+				C30E109C1ADB374D005A6DAE /* TMSearchResultsTableViewController.h */,
+				C30E109D1ADB374D005A6DAE /* TMSearchResultsTableViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -349,6 +354,7 @@
 				C3CE48691AAC113800085513 /* TMPodcastEpisodesTableViewCell.m in Sources */,
 				C3CE485F1AABF94100085513 /* TMPodcast.m in Sources */,
 				C3CE48571AABEE2300085513 /* TMPodcastsManager.m in Sources */,
+				C30E109E1ADB374D005A6DAE /* TMSearchResultsTableViewController.m in Sources */,
 				C3A47B0D1AAFCF1E00613E6F /* TMAudioPlayerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

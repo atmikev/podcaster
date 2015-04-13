@@ -17,15 +17,26 @@
 @interface TMPodcastsManager ()<NSXMLParserDelegate>
 
 @property (strong, nonatomic) TMDownloadManager *downloadManager;
-
+@property (strong, nonatomic) NSURLSessionDataTask *searchTask;
 @end
 
 @implementation TMPodcastsManager
 
-- (void)topPodcastsWithSuccessBlock:(void(^)(NSArray *podcasts))successBlock
-                    andFailureBlock:(void(^)(NSError *error))failureBlock {
-    __weak TMPodcastsManager *weakSelf = self;
-    [[[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:@"https://itunes.apple.com/search?term=npr&entity=podcast&limit=25"] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+- (void)searchForPodcastsWithSearchString:(NSString *)searchString
+                               maxResults:(NSInteger)maxResults
+                             successBlock:(void(^)(NSArray *podcasts))successBlock
+                          andFailureBlock:(void(^)(NSError *error))failureBlock {
+    
+    if (self.searchTask) {
+        //make sure we cancel the last task if we're starting a new one
+        [self.searchTask cancel];
+    }
+    
+    //escape the string properly
+    searchString = [searchString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&entity=podcast&limit=%li",searchString, (long)maxResults];
+    self.searchTask = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:urlString] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error != nil && failureBlock) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -41,43 +52,33 @@
                         failureBlock(error);
                     });
                 } else {
-                    NSInteger resultCount = [[responseDictionary objectForKey:@"resultCount"] integerValue];
-                    __block NSInteger finishedCount = 0;
                     NSArray *resultsDictionariesArray = [responseDictionary objectForKey:@"results"];
                     NSMutableArray *podcastsArray = [NSMutableArray new];
                     
                     for (NSDictionary *dictionary in resultsDictionariesArray) {
-                        TMiTunesResponse *responseObject = [TMiTunesResponse iTunesResponseFromDictionary:dictionary];
-                        NSString *urlString = responseObject.feedUrl.absoluteString;
-                        [weakSelf podcastEpisodesAtURL:urlString withSuccessBlock:^(TMPodcast *podcast) {
-                            [podcastsArray addObject:podcast];
-                            finishedCount++;
-                            if (finishedCount == resultCount && successBlock) {
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    successBlock(podcastsArray);
-                                });
-                            }
-                        } andFailureBlock:^(NSError *error) {
-                            finishedCount++;
-                            if (failureBlock) {
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    failureBlock(error);
-                                });
-                            }
-                            //if the last one failed, we still need to call the successBlock for any podcasts in the podcastsArray
-                            if (finishedCount == resultCount && successBlock) {
-                                dispatch_async(dispatch_get_main_queue(), ^{
-                                    successBlock(podcastsArray);
-                                });
-                            }
-                        }];
+                        TMiTunesResponse *iTunesResponse = [TMiTunesResponse iTunesResponseFromDictionary:dictionary];
+                        
+                        TMPodcast *podcast = [TMPodcast initWithiTunesResponse:iTunesResponse];
+                        [podcastsArray addObject:podcast];
                     }
-
+                    if (successBlock) {
+                        successBlock(podcastsArray);
+                    }
                 }
             }
             
         }
-    }] resume];
+    }];
+    
+    [self.searchTask resume];
+}
+
+- (void)topPodcastsWithSuccessBlock:(void(^)(NSArray *podcasts))successBlock
+                    andFailureBlock:(void(^)(NSError *error))failureBlock {
+    [self searchForPodcastsWithSearchString:@"npr"
+                                 maxResults:25
+                               successBlock:successBlock
+                            andFailureBlock:failureBlock];
 }
 
 - (void)podcastEpisodesAtURL:(NSString *)urlString
@@ -196,6 +197,41 @@
     }
     
     return filePath;
+}
+
++ (void)downloadImageForPodcast:(TMPodcast *)podcast
+                        forCell:(UITableViewCell *)originalCell
+                    atIndexPath:(NSIndexPath *)indexPath
+                    inTableView:(UITableView *)tableView {
+    
+    //download the image
+    [[[NSURLSession sharedSession] dataTaskWithURL:podcast.imageURL
+                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                     if (error) {
+#warning Handle this error
+                                         NSLog(@"Error loading podcast image: %@", error.debugDescription);
+                                     } else if (data) {
+                                         UIImage *image = [UIImage imageWithData:data];
+                                         podcast.podcastImage = image;
+                                         
+                                         for (NSIndexPath *visibleIndexPath in [tableView indexPathsForVisibleRows]) {
+                                             
+                                             NSInteger rowCount = [tableView numberOfRowsInSection:visibleIndexPath.section];
+                                             
+                                             
+                                             if ([visibleIndexPath isEqual:indexPath]) {
+                                                 dispatch_async(dispatch_get_main_queue(), ^{
+                                                     //reload the tableview
+                                                     //(reloading a specific cell was causing a crash, but it was also not really unnecessary)
+                                                     [tableView reloadData];
+                                                 });
+                                                 break;
+                                             }
+                                         }
+                                         
+                                     }
+                                 }] resume];
+    
 }
 
 @end

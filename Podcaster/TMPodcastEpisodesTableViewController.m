@@ -33,9 +33,9 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self findDownloadedEpisodes];
+    [self retrievePodcastDetails];
+    
 }
-
 
 - (TMPodcastsManager *)podcastsManager {
     if (!_podcastsManager) {
@@ -43,6 +43,25 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     }
     
     return _podcastsManager;
+}
+
+- (void)retrievePodcastDetails {
+    __weak TMPodcastEpisodesTableViewController *weakSelf = self;
+    
+    [self.podcastsManager podcastEpisodesAtURL:self.podcast.linkURL.absoluteString withSuccessBlock:^(TMPodcast *podcast) {
+        //add our image to the podcast we got back (which came back without an image),
+        //and then store the podcast
+        podcast.podcastImage = weakSelf.podcast.podcastImage;
+        weakSelf.podcast = podcast;
+
+        //check if any of these are downloaded
+        [weakSelf findDownloadedEpisodes];
+        
+        //refresh that table
+        [weakSelf.tableView reloadData];
+    } andFailureBlock:^(NSError *error) {
+#warning Handle this error
+    }];
 }
 
 - (void)findDownloadedEpisodes {

@@ -9,13 +9,14 @@
         <!--Podcasts Table View Controller-->
         <scene sceneID="zUJ-Kl-qbF">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OaI-yl-wA2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="iYL-1w-plq" customClass="TMPodcastsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="90" sectionHeaderHeight="22" sectionFooterHeight="22" id="ZT6-T0-r3G">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="podcastCell" rowHeight="90" id="D1h-3c-6Fs" customClass="TMPodcastTableViewCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="podcastCell" rowHeight="90" id="D1h-3c-6Fs" customClass="TMPodcastTableViewCell">
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="D1h-3c-6Fs" id="PxM-3S-FzN">
                                     <autoresizingMask key="autoresizingMask"/>
@@ -56,12 +57,20 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="nWK-Wz-Ifz"/>
                     <connections>
+                        <outlet property="searchDisplayController" destination="4wH-EJ-apu" id="Bkg-z0-T15"/>
                         <segue destination="ovy-uC-JdO" kind="show" identifier="episodesViewControllerSegue" id="yBh-28-CfD"/>
                     </connections>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OaI-yl-wA2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <searchDisplayController id="4wH-EJ-apu">
+                    <connections>
+                        <outlet property="delegate" destination="iYL-1w-plq" id="tQk-mF-08j"/>
+                        <outlet property="searchContentsController" destination="iYL-1w-plq" id="J8v-uz-xPj"/>
+                        <outlet property="searchResultsDataSource" destination="iYL-1w-plq" id="f5R-g3-ENC"/>
+                        <outlet property="searchResultsDelegate" destination="iYL-1w-plq" id="n4C-EB-plT"/>
+                    </connections>
+                </searchDisplayController>
             </objects>
-            <point key="canvasLocation" x="961" y="303"/>
+            <point key="canvasLocation" x="876" y="306"/>
         </scene>
         <!--Podcast Episodes Table View Controller-->
         <scene sceneID="TNf-ZA-kgv">
@@ -478,10 +487,68 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="v8p-e2-vEn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="223.5" y="306.75"/>
+            <point key="canvasLocation" x="88.5" y="306"/>
+        </scene>
+        <!--Search Results Table View Controller-->
+        <scene sceneID="2u7-a5-R8q">
+            <objects>
+                <tableViewController storyboardIdentifier="TMSearchResultsTableViewController" id="Hfy-EB-iIy" customClass="TMSearchResultsTableViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Bpj-Ie-SBl">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="podcastCell" rowHeight="90" id="Tb5-4l-1sA" customClass="TMPodcastTableViewCell">
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Tb5-4l-1sA" id="8Eu-Kw-aZK">
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v4d-RO-Vg0">
+                                            <rect key="frame" x="89" y="8" width="503" height="73"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="RSG-69-hn4">
+                                            <rect key="frame" x="8" y="8" width="73" height="73"/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="73" id="Dhb-p7-KkN"/>
+                                                <constraint firstAttribute="height" constant="73" id="iNO-Mp-6cp"/>
+                                            </constraints>
+                                        </imageView>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="v4d-RO-Vg0" firstAttribute="top" secondItem="RSG-69-hn4" secondAttribute="top" id="7ZK-HJ-vhR"/>
+                                        <constraint firstItem="RSG-69-hn4" firstAttribute="top" secondItem="8Eu-Kw-aZK" secondAttribute="topMargin" id="LKY-IX-LyL"/>
+                                        <constraint firstItem="v4d-RO-Vg0" firstAttribute="trailing" secondItem="8Eu-Kw-aZK" secondAttribute="trailingMargin" id="QNu-ql-yEQ"/>
+                                        <constraint firstItem="v4d-RO-Vg0" firstAttribute="bottom" secondItem="RSG-69-hn4" secondAttribute="bottom" id="RrC-Xq-YYT"/>
+                                        <constraint firstItem="v4d-RO-Vg0" firstAttribute="leading" secondItem="RSG-69-hn4" secondAttribute="trailing" constant="8" id="ukd-uF-XVh"/>
+                                        <constraint firstItem="RSG-69-hn4" firstAttribute="leading" secondItem="8Eu-Kw-aZK" secondAttribute="leadingMargin" id="wjA-51-9ta"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="podcastImageView" destination="RSG-69-hn4" id="ZpZ-Yg-0i6"/>
+                                    <outlet property="titleLabel" destination="v4d-RO-Vg0" id="cqR-jj-CRF"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="Hfy-EB-iIy" id="TaR-Bt-qHD"/>
+                            <outlet property="delegate" destination="Hfy-EB-iIy" id="31i-dg-lDs"/>
+                        </connections>
+                    </tableView>
+                    <connections>
+                        <segue destination="ovy-uC-JdO" kind="show" identifier="searchToEpisodeSegue" id="Cn8-PX-1oX"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pWB-Uj-eXm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="931.5" y="975.75"/>
         </scene>
     </scenes>
     <resources>
         <image name="downloadIcon" width="504" height="506"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="yBh-28-CfD"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -8,6 +8,8 @@
 
 #import "TMPodcastTableViewCell.h"
 
+NSString * const kPodcastCellReuseIdentifier = @"podcastCell";
+
 @implementation TMPodcastTableViewCell
 
 - (void)prepareForReuse {

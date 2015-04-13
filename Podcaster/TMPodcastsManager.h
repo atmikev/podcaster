@@ -15,6 +15,12 @@
 
 @interface TMPodcastsManager : NSObject
 
++ (void)downloadImageForPodcast:(TMPodcast *)podcast
+                        forCell:(UITableViewCell *)originalCell
+                    atIndexPath:(NSIndexPath *)indexPath
+                    inTableView:(UITableView *)tableView;
+
+
 - (void)podcastEpisodesAtURL:(NSString *)urlString
                withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock
                 andFailureBlock:(void(^)(NSError *error))failureBlock;
@@ -24,6 +30,11 @@
                         updateBlock:(void(^)(CGFloat downloadPercentage))updateBlock
                        successBlock:(void(^)(NSString *filePath))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock;
+
+- (void)searchForPodcastsWithSearchString:(NSString *)searchString
+                               maxResults:(NSInteger)maxResults
+                             successBlock:(void(^)(NSArray *podcasts))successBlock
+                          andFailureBlock:(void(^)(NSError *error))failureBlock;
 
 - (void)topPodcastsWithSuccessBlock:(void(^)(NSArray *podcasts))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock;
