@@ -31,8 +31,20 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     [super viewDidLoad];
     
     self.podcastsManager = [TMPodcastsManager new];
-        
-    [self setupSearchController];
+    
+    //unecessary for the demo
+//    [self setupSearchController];
+    
+    [self createDemoPodcast];
+}
+
+- (void)createDemoPodcast {
+    TMPodcast *podcast = [TMPodcast new];
+    podcast.title = @"Reply All";
+    podcast.imageURL = [NSURL URLWithString:@"http://is1.mzstatic.com/image/pf/us/r30/Podcasts3/v4/cc/3f/13/cc3f13c2-e218-a50c-5999-1dc01c6920e4/mza_107882299047792687.60x60-50.jpg"];
+    podcast.linkURL = [NSURL URLWithString:@"http://www.replyall.limo"];
+    
+    self.podcastsArray = @[podcast];
 }
 
 - (void)setupSearchController {
@@ -51,10 +63,6 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     self.searchController.delegate = self;
     self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
     
-    // Search is now just presenting a view controller. As such, normal view controller
-    // presentation semantics apply. Namely that presentation will walk up the view controller
-    // hierarchy until it finds the root view controller or one that defines a presentation context.
-    //
     self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
 }
 

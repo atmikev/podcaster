@@ -8,11 +8,13 @@
 
 #import "TMAudioPlayerViewController.h"
 #import "TMAudioPlayerManager.h"
+#import "TMMark.h"
 
 @interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate>
 
 @property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) TMMark *currentMark;
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
@@ -20,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *timeElapsedLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeTotalLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+
 
 - (IBAction)playPause:(id)sender;
 - (IBAction)timeSliderValueChanged:(id)sender;
@@ -45,6 +48,10 @@
     
     //set episode title
     self.titleLabel.text = self.episode.title;
+    
+    //add gestureRecognizer to imageView
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tappedCurrentMark)];
+    [self.podcastImageView addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -99,9 +106,19 @@
     [self.audioPlayerManager seekWithInterval:15];
 }
 
+- (void)tappedCurrentMark {
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:self.currentMark.link]];
+}
+
 #pragma mark - TMAudioPlayerManagerDelegate methods
 
 - (void)displayMark:(TMMark *)mark {
+    
+    //store the current mark incase the user interacts with it
+    self.currentMark = mark;
+    
+    UIImage *markImage = [UIImage imageNamed:mark.imageLocation];
+    self.podcastImageView.image = markImage;
     
 }
 
@@ -109,4 +126,6 @@
     self.timeElapsedLabel.text = elapsedTime;
     self.timeSlider.value = value;
 }
+
+
 @end

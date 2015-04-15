@@ -9,7 +9,6 @@
         <!--Podcasts Table View Controller-->
         <scene sceneID="zUJ-Kl-qbF">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OaI-yl-wA2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="iYL-1w-plq" customClass="TMPodcastsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="90" sectionHeaderHeight="22" sectionFooterHeight="22" id="ZT6-T0-r3G">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
@@ -61,6 +60,7 @@
                         <segue destination="ovy-uC-JdO" kind="show" identifier="episodesViewControllerSegue" id="yBh-28-CfD"/>
                     </connections>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OaI-yl-wA2" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <searchDisplayController id="4wH-EJ-apu">
                     <connections>
                         <outlet property="delegate" destination="iYL-1w-plq" id="tQk-mF-08j"/>
@@ -287,7 +287,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OH5-YF-jVd">
+                            <imageView contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OH5-YF-jVd">
                                 <rect key="frame" x="0.0" y="90" width="193" height="163"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="400" id="XqW-ru-YVe"/>
@@ -396,26 +396,26 @@
                                 <exclude reference="fsm-Ay-mWc"/>
                             </mask>
                             <mask key="constraints">
-                                <exclude reference="X4I-ac-Fwh"/>
-                                <exclude reference="bey-oY-SsX"/>
+                                <exclude reference="bbh-6h-P1h"/>
+                                <exclude reference="6nq-Sm-HzC"/>
+                                <exclude reference="a3F-Jy-o6X"/>
                                 <exclude reference="BeU-cs-xZb"/>
                                 <exclude reference="GGy-3e-gck"/>
                                 <exclude reference="YvE-en-yPy"/>
-                                <exclude reference="bbh-6h-P1h"/>
                                 <exclude reference="D2T-L8-CmB"/>
                                 <exclude reference="DYk-VI-AcB"/>
                                 <exclude reference="p2Q-ck-hYa"/>
                                 <exclude reference="zFW-Fl-4uw"/>
+                                <exclude reference="51e-8Z-f3m"/>
+                                <exclude reference="NWx-T6-VYi"/>
+                                <exclude reference="sWv-EM-zUL"/>
                                 <exclude reference="3G8-02-aSM"/>
                                 <exclude reference="Dqy-sG-dRr"/>
                                 <exclude reference="SaM-Qf-MAo"/>
                                 <exclude reference="rES-DG-5Nm"/>
-                                <exclude reference="6nq-Sm-HzC"/>
-                                <exclude reference="a3F-Jy-o6X"/>
-                                <exclude reference="51e-8Z-f3m"/>
-                                <exclude reference="NWx-T6-VYi"/>
-                                <exclude reference="sWv-EM-zUL"/>
                                 <exclude reference="inL-5L-lqH"/>
+                                <exclude reference="X4I-ac-Fwh"/>
+                                <exclude reference="bey-oY-SsX"/>
                             </mask>
                         </variation>
                         <variation key="widthClass=compact">
@@ -425,15 +425,15 @@
                                 <include reference="tsB-Wo-FAW"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="X4I-ac-Fwh"/>
-                                <include reference="bey-oY-SsX"/>
+                                <include reference="51e-8Z-f3m"/>
+                                <include reference="sWv-EM-zUL"/>
                                 <include reference="3G8-02-aSM"/>
                                 <include reference="Dqy-sG-dRr"/>
                                 <include reference="SaM-Qf-MAo"/>
                                 <include reference="rES-DG-5Nm"/>
-                                <include reference="51e-8Z-f3m"/>
-                                <include reference="sWv-EM-zUL"/>
                                 <include reference="inL-5L-lqH"/>
+                                <include reference="X4I-ac-Fwh"/>
+                                <include reference="bey-oY-SsX"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -444,16 +444,16 @@
                                 <include reference="fsm-Ay-mWc"/>
                             </mask>
                             <mask key="constraints">
+                                <include reference="bbh-6h-P1h"/>
+                                <include reference="6nq-Sm-HzC"/>
+                                <include reference="a3F-Jy-o6X"/>
                                 <include reference="BeU-cs-xZb"/>
                                 <include reference="GGy-3e-gck"/>
                                 <include reference="YvE-en-yPy"/>
-                                <include reference="bbh-6h-P1h"/>
                                 <include reference="D2T-L8-CmB"/>
                                 <include reference="DYk-VI-AcB"/>
                                 <include reference="p2Q-ck-hYa"/>
                                 <include reference="zFW-Fl-4uw"/>
-                                <include reference="6nq-Sm-HzC"/>
-                                <include reference="a3F-Jy-o6X"/>
                                 <include reference="NWx-T6-VYi"/>
                             </mask>
                         </variation>
@@ -494,6 +494,7 @@
             <objects>
                 <tableViewController storyboardIdentifier="TMSearchResultsTableViewController" id="Hfy-EB-iIy" customClass="TMSearchResultsTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Bpj-Ie-SBl">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>

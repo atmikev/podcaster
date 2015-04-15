@@ -11,6 +11,8 @@
 		C37D27A91ACF8820009AE39A /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27A81ACF8820009AE39A /* XMLReader.m */; };
 		C37D27AB1ACF8E6B009AE39A /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */; };
 		C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27AD1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m */; };
+		C38476241ADDED6D00399610 /* marks.json in Resources */ = {isa = PBXBuildFile; fileRef = C38476231ADDED6C00399610 /* marks.json */; };
+		C38476261ADDF1AC00399610 /* Underdog.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = C38476251ADDF1AC00399610 /* Underdog.mp3 */; };
 		C386EDCD1A86BE8D000DE78F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDCC1A86BE8D000DE78F /* main.m */; };
 		C386EDD01A86BE8D000DE78F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C386EDCF1A86BE8D000DE78F /* AppDelegate.m */; };
 		C386EDD61A86BE8D000DE78F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C386EDD41A86BE8D000DE78F /* Main.storyboard */; };
@@ -49,6 +51,8 @@
 		C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		C37D27AC1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodeHeaderTableViewCell.h; sourceTree = "<group>"; };
 		C37D27AD1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisodeHeaderTableViewCell.m; sourceTree = "<group>"; };
+		C38476231ADDED6C00399610 /* marks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = marks.json; sourceTree = "<group>"; };
+		C38476251ADDF1AC00399610 /* Underdog.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = Underdog.mp3; sourceTree = "<group>"; };
 		C386EDC71A86BE8D000DE78F /* Podcaster.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Podcaster.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C386EDCB1A86BE8D000DE78F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C386EDCC1A86BE8D000DE78F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -108,6 +112,7 @@
 		C386EDBE1A86BE8C000DE78F = {
 			isa = PBXGroup;
 			children = (
+				C38476251ADDF1AC00399610 /* Underdog.mp3 */,
 				C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */,
 				C386EDC91A86BE8D000DE78F /* Podcaster */,
 				C386EDE31A86BE8D000DE78F /* PodcasterTests */,
@@ -147,6 +152,7 @@
 			children = (
 				C386EDCB1A86BE8D000DE78F /* Info.plist */,
 				C386EDCC1A86BE8D000DE78F /* main.m */,
+				C38476231ADDED6C00399610 /* marks.json */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -319,9 +325,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C38476241ADDED6D00399610 /* marks.json in Resources */,
 				C386EDD61A86BE8D000DE78F /* Main.storyboard in Resources */,
 				C386EDDB1A86BE8D000DE78F /* LaunchScreen.xib in Resources */,
 				C386EDD81A86BE8D000DE78F /* Images.xcassets in Resources */,
+				C38476261ADDF1AC00399610 /* Underdog.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

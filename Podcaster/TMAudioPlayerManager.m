@@ -15,7 +15,7 @@
 
 @property (strong, nonatomic) AVPlayer *audioPlayer;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
-@property (strong, nonatomic) TMMark *currentMark;
+@property (strong, nonatomic) TMMark *nextMark;
 @property (strong, nonatomic) NSTimer *marksTimer;
 @property (strong, nonatomic) NSMutableArray *marksArray;
 
@@ -62,6 +62,12 @@
     if (self.delegate) {
         //fire back the initial time info to the delegate
         [self updateDelegateTimeInfo];
+    }
+    
+    
+    if (YES) {
+        //if theres a marks file, parse it
+        [self loadMarks];
     }
 }
 
@@ -158,7 +164,7 @@
 - (void)loadMarks {
     
     NSError *jsonError;
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"markers" ofType:@"json"];
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"marks" ofType:@"json"];
     NSURL *fileURL = [[NSURL alloc] initFileURLWithPath:filePath];
     NSData *objectData = [NSData dataWithContentsOfURL:fileURL];
     NSMutableArray *unsortedMarksArray = [[[NSJSONSerialization JSONObjectWithData:objectData
@@ -192,7 +198,7 @@
     [self updateDelegateTimeInfo];
     
     if (self.marksArray) {
-        [self checkForNextMark];
+        [self checkToDisplayNextMark];
     }
 }
 
@@ -204,26 +210,42 @@
     [self.delegate updateTimeInfoWithElapsedTime:elapsedTime andTimeSliderValue:value];
 }
 
-- (void)checkForNextMark {
-
-    //check for mark
-    TMMark *nextMark = [self.marksArray firstObject];
+- (TMMark *)findNextMark {
+    //remove marks that are in the past
+    //super inefficient, but an easy way to deal w/ the slider issue
+    NSMutableArray *mutableMarks = [self.marksArray mutableCopy];
     
-    if ([self currentTime] > nextMark.time) {
-        //show this mark, set it as the current mark
-        self.currentMark = nextMark;
+    TMMark *currentMark = nil;
+    
+    for (int i = 0; i < self.marksArray.count; i++) {
         
-        //send the mark to the delegate
-        [self.delegate displayMark:self.currentMark];
-        
-        //remove this object since we've displayed it
-        [self.marksArray removeObject:self.currentMark];
-        
-        if (self.marksArray.count == 0) {
-            //if we've ran out of marks, stop the timer
-            [self.marksTimer invalidate];
+        TMMark *mark = self.marksArray[i];
+        if (mark.time - [self currentTime] > 0) {
+            //the current mark is the last one to have negative time (i.e. more recent one in the past)
+            currentMark = mutableMarks[i-1];
+
+            break;
         }
     }
+    
+    if (!currentMark) {
+        //we're at the last mark
+        currentMark = [self.marksArray lastObject];
+    }
+
+    return currentMark;
+}
+
+- (void)checkToDisplayNextMark {
+    
+    TMMark *markToDisplay = [self findNextMark];
+    
+    if (markToDisplay) {
+        //display the mark
+        NSLog(@"link = %@", markToDisplay.link);
+        [self.delegate displayMark:markToDisplay];
+    }
+    
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {

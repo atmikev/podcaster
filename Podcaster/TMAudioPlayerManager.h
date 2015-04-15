@@ -25,7 +25,6 @@
 
 + (instancetype)sharedInstance;
 
-
 - (NSString *)fileDurationString;
 
 - (void)seekWithInterval:(float)seekTime;

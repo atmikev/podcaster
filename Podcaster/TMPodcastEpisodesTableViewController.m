@@ -33,8 +33,20 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self retrievePodcastDetails];
+    [self createDemoPodcastEpisode];
     
+//    [self retrievePodcastDetails];
+    
+}
+
+- (void)createDemoPodcastEpisode {
+    TMPodcastEpisode *episode = [TMPodcastEpisode new];
+    
+    episode.title = @"#19 Underdog";
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"Underdog" ofType:@"mp3"];
+    episode.fileLocation = path;
+
+    self.podcast.episodes = @[episode];
 }
 
 - (TMPodcastsManager *)podcastsManager {
