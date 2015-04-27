@@ -14,12 +14,14 @@
 #import "TMPodcastEpisode.h"
 #import "TMAudioPlayerViewController.h"
 #import <AVFoundation/AVFoundation.h>
+#import "TMPodcastSubscriptionDelegate.h"
+#import "TMSubscribedPodcast.h"
 
 static NSString * const kEpisodeCellReuseIdentifier = @"EpisodeCell";
 static NSString * const kEpisodeHeaderCellReuseIdentifier = @"EpisodeHeaderCell";
 static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
-@interface TMPodcastEpisodesTableViewController ()
+@interface TMPodcastEpisodesTableViewController () <TMPodcastSubscriptionDelegate>
 
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @property (strong, nonatomic) NSIndexPath *downloadingIndex;
@@ -46,19 +48,18 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 }
 
 - (void)retrievePodcastDetails {
-    __weak TMPodcastEpisodesTableViewController *weakSelf = self;
     
-    [self.podcastsManager podcastEpisodesAtURL:self.podcast.linkURL.absoluteString withSuccessBlock:^(TMPodcast *podcast) {
+    [self.podcastsManager podcastEpisodesAtURL:self.podcast.feedURLString withSuccessBlock:^(TMPodcast *podcast) {
         //add our image to the podcast we got back (which came back without an image),
         //and then store the podcast
-        podcast.podcastImage = weakSelf.podcast.podcastImage;
-        weakSelf.podcast = podcast;
+        podcast.podcastImage = self.podcast.podcastImage;
+        self.podcast = podcast;
 
         //check if any of these are downloaded
-        [weakSelf findDownloadedEpisodes];
+        [self findDownloadedEpisodes];
         
         //refresh that table
-        [weakSelf.tableView reloadData];
+        [self.tableView reloadData];
     } andFailureBlock:^(NSError *error) {
 #warning Handle this error
     }];
@@ -100,6 +101,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     if (indexPath.section == 0) {
         TMPodcastEpisodeHeaderTableViewCell *episodeHeaderCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeHeaderCellReuseIdentifier forIndexPath:indexPath];
         [episodeHeaderCell setupCellWithPodcast:self.podcast];
+        episodeHeaderCell.subscriptionDelegate = self;
         cellToReturn = episodeHeaderCell;
     } else {
         TMPodcastEpisodesTableViewCell *episodeCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeCellReuseIdentifier forIndexPath:indexPath];
@@ -185,6 +187,22 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
         vc.episode = self.episodeToPlay;
         vc.podcastImage = self.podcast.podcastImage;
     }
+}
+
+#pragma mark - TMPodcastSubscriptionDelegate
+
+
+- (void)subscribeToPodcast:(TMPodcast *)podcast {
+    
+    TMSubscribedPodcast *subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:podcast inContext:self.managedObjectContext];
+    
+    NSError *saveError;
+    if ([self.managedObjectContext hasChanges] && [self.managedObjectContext save:&saveError] == NO) {
+        NSLog(@"Error saving subscribedPodcast named %@ : %@", subscribedPodcast.title, saveError.localizedDescription);
+    }
+    
+    [[[UIAlertView alloc] initWithTitle:@"Subscribed" message:@"Subscribed!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+    
 }
 
 

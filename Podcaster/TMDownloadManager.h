@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+@class TMPodcast;
+
 @interface TMDownloadManager : NSObject
 
 - (void)downloadPodcastAtURL:(NSURL *)downloadURL
@@ -17,5 +19,16 @@
                 successBlock:(void (^)(NSString *filePath))successBlock
              andFailureBlock:(void (^)(NSError *downloadError))failureBlock;
 
++ (void)downloadImageAtURL:(NSURL *)imageURL
+            withCompletionBlock:(void(^)(UIImage *image))completionBlock;
+
++ (void)downloadImageForPodcast:(TMPodcast *)podcast
+                        forCell:(UITableViewCell *)originalCell
+                    atIndexPath:(NSIndexPath *)indexPath
+                    inTableView:(UITableView *)tableView;
+
++ (NSString *)saveData:(NSData *)fileData
+          withFileName:(NSString *)fileName
+              andError:(NSError *)fileWritingError;
 @end
 

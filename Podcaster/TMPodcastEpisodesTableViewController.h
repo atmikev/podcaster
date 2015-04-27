@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@class TMPodcast;
+#import "TMPodcastProtocol.h"
 
 @interface TMPodcastEpisodesTableViewController : UITableViewController
 
-@property (strong, nonatomic) TMPodcast *podcast;
+@property (strong, nonatomic) id<TMPodcastDelegate> podcast;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end

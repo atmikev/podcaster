@@ -25,7 +25,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "105"
             endingLineNumber = "105"
-            landmarkName = "-objectWithData:options:"
+            landmarkName = "-parser:didStartElement:namespaceURI:qualifiedName:attributes:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,7 +41,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "173"
             endingLineNumber = "173"
-            landmarkName = "-parser:didEndElement:namespaceURI:qualifiedName:"
+            landmarkName = "-parser:parseErrorOccurred:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -52,11 +52,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Podcaster/TMDownloadManager.m"
-            timestampString = "447821445.698541"
+            timestampString = "451613497.268276"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "-URLSession:didBecomeInvalidWithError:"
             landmarkType = "5">
          </BreakpointContent>
@@ -68,11 +68,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Podcaster/TMPodcast.m"
-            timestampString = "450571326.319896"
+            timestampString = "451695521.185383"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "70"
-            endingLineNumber = "70"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
             landmarkName = "-episodesFromXMLDictionary:"
             landmarkType = "5">
          </BreakpointContent>
@@ -148,11 +148,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Podcaster/TMPodcastEpisodesTableViewController.m"
-            timestampString = "450579836.873091"
+            timestampString = "451696966.639625"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "61"
-            endingLineNumber = "61"
+            startingLineNumber = "55"
+            endingLineNumber = "55"
             landmarkName = "-retrievePodcastDetails"
             landmarkType = "5">
          </BreakpointContent>
@@ -163,28 +163,74 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Podcaster/TMPodcastEpisodesTableViewController.m"
-            timestampString = "450579836.873091"
+            filePath = "Podcaster/TMPodcast.m"
+            timestampString = "451697071.02063"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
-            landmarkName = "-retrievePodcastDetails"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "-populateFromXMLDictionary:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Podcaster/TMSubscribedPodcast.m"
+            timestampString = "451697083.773999"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "+instanceFromTMPodcast:inContext:"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "+[TMSubscribedPodcast instanceFromTMPodcast:inContext:]"
+                  moduleName = "Podcaster"
+                  urlString = "file:///Users/tylermikev/Desktop/Podcaster/Podcaster/TMSubscribedPodcast.m"
+                  timestampString = "451699002.545446"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "684">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__55+[TMSubscribedPodcast instanceFromTMPodcast:inContext:]_block_invoke"
+                  moduleName = "Podcaster"
+                  urlString = "file:///Users/tylermikev/Desktop/Podcaster/Podcaster/TMSubscribedPodcast.m"
+                  timestampString = "451699002.545666"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "52">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Podcaster/TMPodcastsManager.m"
-            timestampString = "450579080.128178"
+            timestampString = "451697796.874832"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "104"
-            endingLineNumber = "104"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
             landmarkName = "-podcastEpisodesAtURL:withSuccessBlock:andFailureBlock:"
             landmarkType = "5">
          </BreakpointContent>
@@ -192,16 +238,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Podcaster/TMPodcastsManager.m"
-            timestampString = "450579089.720226"
+            filePath = "Podcaster/TMSubscribedPodcast.m"
+            timestampString = "451698865.055399"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "97"
-            endingLineNumber = "97"
-            landmarkName = "-podcastEpisodesAtURL:withSuccessBlock:andFailureBlock:"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
+            landmarkName = "-saveImageToDisk:forPodcast:withCompletion:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

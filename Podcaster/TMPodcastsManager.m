@@ -82,8 +82,8 @@
 }
 
 - (void)podcastEpisodesAtURL:(NSString *)urlString
-               withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock
-                andFailureBlock:(void(^)(NSError *error))failureBlock {
+            withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock
+             andFailureBlock:(void(^)(NSError *error))failureBlock {
     
     //TMDownloadManager might be useful here, but for now its more for just downloading individual podcast episodes
     
@@ -106,7 +106,8 @@
                     NSString *xmlString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
                     NSDictionary *podcastDictionary = [XMLReader dictionaryForXMLString:xmlString error:&xmlParserError];
                     TMPodcast *podcast = [TMPodcast initWithDictionary:podcastDictionary];
-                    
+                    //save the feedURLString
+                    podcast.feedURLString = urlString;
                     if (xmlParserError || podcast.title == nil) {
                         //uh oh, xml parsing error
                         NSLog(@"Error parsing xml: %@",xmlParserError.localizedDescription);
@@ -199,36 +200,8 @@
     return filePath;
 }
 
-+ (void)downloadImageForPodcast:(TMPodcast *)podcast
-                        forCell:(UITableViewCell *)originalCell
-                    atIndexPath:(NSIndexPath *)indexPath
-                    inTableView:(UITableView *)tableView {
-    
-    //download the image
-    [[[NSURLSession sharedSession] dataTaskWithURL:podcast.imageURL
-                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
-                                     if (error) {
-#warning Handle this error
-                                         NSLog(@"Error loading podcast image: %@", error.debugDescription);
-                                     } else if (data) {
-                                         UIImage *image = [UIImage imageWithData:data];
-                                         podcast.podcastImage = image;
-                                         
-                                         for (NSIndexPath *visibleIndexPath in [tableView indexPathsForVisibleRows]) {
-                                             
-                                             if ([visibleIndexPath isEqual:indexPath]) {
-                                                 dispatch_async(dispatch_get_main_queue(), ^{
-                                                     //reload the tableview
-                                                     //(reloading a specific cell was causing a crash, but it was also not really unnecessary)
-                                                     [tableView reloadData];
-                                                 });
-                                                 break;
-                                             }
-                                         }
-                                         
-                                     }
-                                 }] resume];
-    
-}
+
+
+
 
 @end
