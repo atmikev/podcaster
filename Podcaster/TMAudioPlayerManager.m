@@ -41,7 +41,7 @@
 }
 
 - (void)setEpisode:(TMPodcastEpisode *)episode {
-    if (self.episode == episode) {
+    if ([episode isEqual:self.episode]) {
         //if we're already playing the current episode,
         //don't do anything
         return;
@@ -83,6 +83,9 @@
     
     //start the timer to monitor stuff
     [self startMonitoringAudioTime];
+    
+    //pay attention to when the player has reached the end to let our owner know
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
 }
 
 - (void)pause {
@@ -136,6 +139,15 @@
 
 - (NSString *)fileDurationString {
     return [self formattedTimeForNSTimeInterval:self.episode.duration];
+}
+
+- (void)itemDidFinishPlaying:(id)sender {
+    
+    //unregister for the notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    //tell the delegate we're done
+    [self.delegate didFinishPlaying];
 }
 
 #pragma mark - Marks methods

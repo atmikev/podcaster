@@ -15,12 +15,6 @@
 
 @interface TMPodcastsManager : NSObject
 
-+ (void)downloadImageForPodcast:(TMPodcast *)podcast
-                        forCell:(UITableViewCell *)originalCell
-                    atIndexPath:(NSIndexPath *)indexPath
-                    inTableView:(UITableView *)tableView;
-
-
 - (void)podcastEpisodesAtURL:(NSString *)urlString
                withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock
                 andFailureBlock:(void(^)(NSError *error))failureBlock;

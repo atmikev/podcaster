@@ -12,16 +12,22 @@
 #import "TMPodcast.h"
 #import "TMPodcastEpisodesTableViewController.h"
 #import "TMSearchResultsTableViewController.h"
+#import "TMSubscribedPodcast.h"
+#import "AppDelegate.h"
+#import "TMDownloadManager.h"
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 
-@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating>
+@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
 @property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) NSArray *podcastsArray;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @property (strong, nonatomic) NSMutableArray *imagesArray;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) id<TMPodcastDelegate> selectedPodcast;
 
 @end
 
@@ -33,7 +39,28 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     self.podcastsManager = [TMPodcastsManager new];
         
     [self setupSearchController];
+    
+    //poor form, come back to this
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = [appDelegate managedObjectContext];
+
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    //fetch any subscribed podcasts
+    NSError *error;
+    if (![[self fetchedResultsController] performFetch:&error]) {
+        // Update to handle the error appropriately.
+        NSLog(@"Fetching error %@, %@", error, [error userInfo]);
+    } else {
+        self.podcastsArray = [[self fetchedResultsController] fetchedObjects];
+    }
+    
+    [self.tableView reloadData];
+}
+
 
 - (void)setupSearchController {
 
@@ -58,6 +85,34 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
 }
 
+- (NSFetchedResultsController *)fetchedResultsController {
+    
+    if (_fetchedResultsController != nil) {
+        return _fetchedResultsController;
+    }
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription
+                                   entityForName:[TMSubscribedPodcast entityName] inManagedObjectContext:self.managedObjectContext];
+    [fetchRequest setEntity:entity];
+    
+    NSSortDescriptor *sort = [[NSSortDescriptor alloc]
+                              initWithKey:@"title" ascending:YES];
+    [fetchRequest setSortDescriptors:[NSArray arrayWithObject:sort]];
+    
+    [fetchRequest setFetchBatchSize:20];
+    
+    NSFetchedResultsController *theFetchedResultsController =
+    [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
+                                        managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil
+                                                   cacheName:@"Root"];
+    self.fetchedResultsController = theFetchedResultsController;
+    _fetchedResultsController.delegate = self;
+    
+    return _fetchedResultsController;
+    
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -66,23 +121,19 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [self.podcastsArray count];
+    id  sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
+    return [sectionInfo numberOfObjects];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
     
-    TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
+    TMSubscribedPodcast *subscribedPodcast = [_fetchedResultsController objectAtIndexPath:indexPath];
     
-    cell.titleLabel.text = podcast.title;
+    cell.titleLabel.text = subscribedPodcast.title;
     
-    if (podcast.podcastImage) {
-        cell.podcastImageView.image = podcast.podcastImage;
-    } else {
-        [TMPodcastsManager downloadImageForPodcast:podcast
-                                           forCell:cell
-                                       atIndexPath:indexPath
-                                       inTableView:tableView];
+    if (subscribedPodcast.podcastImage) {
+        cell.podcastImageView.image = subscribedPodcast.podcastImage;
     }
     
     return cell;
@@ -90,15 +141,14 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    TMPodcast *podcast = nil;
     
     if (self.tableView == tableView) {
-        podcast = [self.podcastsArray objectAtIndex:indexPath.row];
+        self.selectedPodcast = (id<TMPodcastDelegate>)[self.podcastsArray objectAtIndex:indexPath.row];
     } else if (self.searchResultsController.tableView == tableView) {
-        podcast = [self.searchResultsController.podcastsArray objectAtIndex:indexPath.row];
+        self.selectedPodcast = (id<TMPodcastDelegate>)[self.searchResultsController.podcastsArray objectAtIndex:indexPath.row];
     }
-    
-    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:podcast];
+
+    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
 
 #pragma mark - Table view delegates
@@ -111,12 +161,11 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     
-    //ugh, seriously, figure out a better way to pass the podcast...
-    TMPodcast *podcast = (TMPodcast *)sender;
-    
     if ([segue.identifier isEqualToString:kEpisodesViewControllerSegue]) {
         TMPodcastEpisodesTableViewController *vc = (TMPodcastEpisodesTableViewController *)segue.destinationViewController;
-        vc.podcast = podcast;
+        vc.managedObjectContext = self.managedObjectContext;
+        vc.podcast = self.selectedPodcast;
+        self.selectedPodcast = nil;
     }
     
 }

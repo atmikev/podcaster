@@ -7,6 +7,7 @@
 //
 
 #import "TMDownloadManager.h"
+#import "TMPodcast.h"
 
 @interface TMDownloadManager ()<NSURLSessionDownloadDelegate>
 
@@ -94,21 +95,21 @@ didFinishDownloadingToURL:(NSURL *)location {
 
         //write the file to our Documents directory
         NSError *fileWritingError;
-        NSString *savedFileLocation = [self saveData:fileData withFileName:self.fileName andError:fileWritingError];
+        NSString *savedFileName = [TMDownloadManager saveData:fileData withFileName:self.fileName andError:fileWritingError];
 
         //tell the delegate we're done
         if (fileWritingError && self.failureBlock) {
             //if we failed, pass back the error
             self.failureBlock(fileWritingError);
-        } else if (savedFileLocation && self.successBlock) {
+        } else if (savedFileName && self.successBlock) {
             //otherwise pass back the file location
-            self.successBlock(savedFileLocation);
+            self.successBlock(savedFileName);
         }
     }
     
 }
 
-- (NSString *)saveData:(NSData *)fileData
++ (NSString *)saveData:(NSData *)fileData
           withFileName:(NSString *)fileName
               andError:(NSError *)fileWritingError {
     
@@ -119,8 +120,49 @@ didFinishDownloadingToURL:(NSURL *)location {
     //save file
     [fileData writeToFile:filePath options:0 error:&fileWritingError];
 
-    return filePath;
+    return fileName;
 }
 
++ (void)downloadImageAtURL:(NSURL *)imageURL
+            withCompletionBlock:(void(^)(UIImage *image))completionBlock {
+    
+    //download the image
+    [[[NSURLSession sharedSession] dataTaskWithURL:imageURL
+                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                                     if (error) {
+#warning Handle this error
+                                         NSLog(@"Error loading podcast image: %@", error.debugDescription);
+                                     } else if (data) {
+                                         UIImage *image = [UIImage imageWithData:data];
+                                         
+                                         if (completionBlock) {
+                                             completionBlock(image);
+                                         }
+                                         
+                                     }
+                                 }] resume];
+    
+}
+
++ (void)downloadImageForPodcast:(TMPodcast *)podcast
+                        forCell:(UITableViewCell *)originalCell
+                    atIndexPath:(NSIndexPath *)indexPath
+                    inTableView:(UITableView *)tableView {
+    
+    [self downloadImageAtURL:podcast.imageURL withCompletionBlock:^(UIImage *image) {
+        podcast.podcastImage = image;
+        for (NSIndexPath *visibleIndexPath in [tableView indexPathsForVisibleRows]) {
+            if ([visibleIndexPath isEqual:indexPath]) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    //reload the tableview
+                    //(reloading a specific cell was causing a crash, but it was also not really unnecessary)
+                    [tableView reloadData];
+                });
+                break;
+            }
+        }
+    }];
+    
+}
 
 @end

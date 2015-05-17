@@ -7,15 +7,23 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TMPodcastSubscriptionDelegate.h"
 
 @class TMPodcast;
+
+@protocol TMPodcastEpisodeHeaderProtocol;
 
 @interface TMPodcastEpisodeHeaderTableViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITextView *descriptionTextView;
+@property (weak, nonatomic) IBOutlet UIButton *subscribeButton;
+@property (weak, nonatomic) id<TMPodcastSubscriptionDelegate> subscriptionDelegate;
 
 - (void)setupCellWithPodcast:(TMPodcast *)podcast;
+
+- (IBAction)subscribeButtonHandler:(id)sender;
+
 
 @end

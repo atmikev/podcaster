@@ -50,4 +50,10 @@
     return episode;
 }
 
+- (BOOL)isEqual:(id)object {
+    TMPodcastEpisode *episode = (TMPodcastEpisode *)object;
+    BOOL isEqual = [self.downloadURL.absoluteString isEqualToString:episode.downloadURL.absoluteString];
+    return isEqual;
+}
+
 @end

@@ -8,15 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import "TMPodcastProtocol.h"
 
 @class TMiTunesResponse;
 
-@interface TMPodcast : NSObject
+@interface TMPodcast : NSObject <TMPodcastDelegate>
 
 @property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSString *subtitle;
-@property (strong, nonatomic) NSURL *linkURL;
-@property (strong, nonatomic) NSString *podcastDescription;
 @property (strong, nonatomic) NSString *language;
 @property (strong, nonatomic) NSString *copyright;
 @property (strong, nonatomic) NSString *author;
