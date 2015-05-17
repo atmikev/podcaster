@@ -68,12 +68,12 @@
 
 - (void)pauseAudio {
     [self.audioPlayerManager pause];
-    [self.playPauseButton setTitle:@"Play" forState:UIControlStateNormal];
+    [self.playPauseButton setBackgroundImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
 }
 
 - (void)playAudio {
     [self.audioPlayerManager play];
-    [self.playPauseButton setTitle:@"Pause" forState:UIControlStateNormal];
+    [self.playPauseButton setBackgroundImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
     self.navController.currentAudioPlayerViewController = self;
 }
 

@@ -122,14 +122,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C301B7E21B0929E100FBB668 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C3E628611AE9DB6600664BC4 /* CoreData.framework */,
+				C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		C386EDBE1A86BE8C000DE78F = {
 			isa = PBXGroup;
 			children = (
 				C386EDC91A86BE8D000DE78F /* Podcaster */,
-				C3E628611AE9DB6600664BC4 /* CoreData.framework */,
-				C37D27AA1ACF8E6B009AE39A /* AVFoundation.framework */,
 				C386EDE31A86BE8D000DE78F /* PodcasterTests */,
 				C386EDC81A86BE8D000DE78F /* Products */,
+				C301B7E21B0929E100FBB668 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
