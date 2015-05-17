@@ -94,7 +94,7 @@
                                                 <constraint firstAttribute="height" constant="100" id="WFA-4W-GM9"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="&lt;title&gt;" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0UM-BV-oYA">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="&lt;title&gt;" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0UM-BV-oYA">
                                             <rect key="frame" x="121" y="8" width="471" height="21"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -126,11 +126,11 @@
                                             <exclude reference="Qi4-WV-C3j"/>
                                         </mask>
                                         <mask key="constraints">
-                                            <exclude reference="kAG-N9-W4M"/>
                                             <exclude reference="ChU-Eb-XIJ"/>
                                             <exclude reference="eXE-P6-7uO"/>
                                             <exclude reference="oYO-hv-rzN"/>
                                             <exclude reference="tOk-kt-tOt"/>
+                                            <exclude reference="kAG-N9-W4M"/>
                                         </mask>
                                     </variation>
                                     <variation key="heightClass=regular-widthClass=compact">
@@ -138,11 +138,11 @@
                                             <include reference="Qi4-WV-C3j"/>
                                         </mask>
                                         <mask key="constraints">
-                                            <include reference="kAG-N9-W4M"/>
                                             <include reference="ChU-Eb-XIJ"/>
                                             <include reference="eXE-P6-7uO"/>
                                             <include reference="oYO-hv-rzN"/>
                                             <include reference="tOk-kt-tOt"/>
+                                            <include reference="kAG-N9-W4M"/>
                                         </mask>
                                     </variation>
                                 </tableViewCellContentView>
@@ -501,7 +501,7 @@
         <!--Navigation Controller-->
         <scene sceneID="4oD-tW-MJD">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rmb-z2-z4K" sceneMemberID="viewController">
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rmb-z2-z4K" customClass="TMNavigationController" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aLo-9x-aeS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>

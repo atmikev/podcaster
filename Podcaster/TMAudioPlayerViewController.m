@@ -8,11 +8,13 @@
 
 #import "TMAudioPlayerViewController.h"
 #import "TMAudioPlayerManager.h"
+#import "TMNavigationController.h"
 
 @interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate>
 
 @property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) TMNavigationController *navController;
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
@@ -45,6 +47,9 @@
     
     //set episode title
     self.titleLabel.text = self.episode.title;
+    
+    //store the custom navigation controller
+    self.navController = (TMNavigationController *)self.navigationController;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,6 +74,7 @@
 - (void)playAudio {
     [self.audioPlayerManager play];
     [self.playPauseButton setTitle:@"Pause" forState:UIControlStateNormal];
+    self.navController.currentAudioPlayerViewController = self;
 }
 
 #pragma mark - IBActions
@@ -108,5 +114,10 @@
 - (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value {
     self.timeElapsedLabel.text = elapsedTime;
     self.timeSlider.value = value;
+}
+
+- (void)didFinishPlaying {
+    //tell the nav controller we're not currently playing anything
+    self.navController.currentAudioPlayerViewController = nil;
 }
 @end

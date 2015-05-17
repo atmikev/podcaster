@@ -32,6 +32,7 @@
 		C3CE48621AABF95F00085513 /* TMPodcastEpisode.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48611AABF95F00085513 /* TMPodcastEpisode.m */; };
 		C3CE48651AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48641AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m */; };
 		C3CE48691AAC113800085513 /* TMPodcastEpisodesTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */; };
+		C3DA5F1C1AF6A34C00505A94 /* TMNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = C3DA5F1B1AF6A34C00505A94 /* TMNavigationController.m */; };
 		C3E628601AE9DA8200664BC4 /* Podcaster.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C3E6285E1AE9DA8200664BC4 /* Podcaster.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
@@ -96,6 +97,8 @@
 		C3CE48641AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisodesTableViewController.m; sourceTree = "<group>"; };
 		C3CE48671AAC113800085513 /* TMPodcastEpisodesTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodesTableViewCell.h; sourceTree = "<group>"; };
 		C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastEpisodesTableViewCell.m; sourceTree = "<group>"; };
+		C3DA5F1A1AF6A34C00505A94 /* TMNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMNavigationController.h; sourceTree = "<group>"; };
+		C3DA5F1B1AF6A34C00505A94 /* TMNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMNavigationController.m; sourceTree = "<group>"; };
 		C3E6285F1AE9DA8200664BC4 /* Podcaster.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Podcaster.xcdatamodel; sourceTree = "<group>"; };
 		C3E628611AE9DB6600664BC4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -235,6 +238,8 @@
 			children = (
 				C37D27A71ACF8820009AE39A /* XMLReader.h */,
 				C37D27A81ACF8820009AE39A /* XMLReader.m */,
+				C3DA5F1A1AF6A34C00505A94 /* TMNavigationController.h */,
+				C3DA5F1B1AF6A34C00505A94 /* TMNavigationController.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -377,6 +382,7 @@
 				C3A47B131AB3D54700613E6F /* TMPodcastsTableViewController.m in Sources */,
 				C3E628601AE9DA8200664BC4 /* Podcaster.xcdatamodeld in Sources */,
 				C386EDD01A86BE8D000DE78F /* AppDelegate.m in Sources */,
+				C3DA5F1C1AF6A34C00505A94 /* TMNavigationController.m in Sources */,
 				C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */,
 				C3B8B5E41AEAC9B200192328 /* TMSubscribedPodcast.m in Sources */,
 				C3A47B0A1AACF7A200613E6F /* TMDownloadManager.m in Sources */,
