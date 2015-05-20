@@ -9,6 +9,7 @@
 #import "AppDelegate.h"
 #import <AVFoundation/AVFoundation.h>
 #import <AudioToolbox/AudioToolbox.h>
+#import <Parse/Parse.h>
 
 
 @interface AppDelegate ()
@@ -19,9 +20,15 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
     
     [self setupAudioSession];
+    
+    // Initialize Parse.
+    [Parse setApplicationId:@"didt7yjPADOjehfHCTXo2rfl8DfJ1a8fdxqtgUDK"
+                  clientKey:@"Sef1i7qzIj1zapJl7iusnVqBk5AWIXk6QIWf46pN"];
+    
+    // [Optional] Track statistics around application opens.
+    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
     
     return YES;
 }

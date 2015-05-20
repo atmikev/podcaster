@@ -18,6 +18,9 @@
 @property (strong, nonatomic) TMMark *currentMark;
 @property (strong, nonatomic) NSTimer *marksTimer;
 @property (strong, nonatomic) NSMutableArray *marksArray;
+@property (assign, nonatomic, readwrite) BOOL isPlaying;
+@property (assign, nonatomic, readwrite) NSTimeInterval currentTime;
+@property (assign, nonatomic, readwrite) NSTimeInterval duration;
 
 @end
 
@@ -81,19 +84,27 @@
 - (void)play {
     [self.audioPlayer play];
     
+    //update isPlaying
+    self.isPlaying = YES;
+    
     //start the timer to monitor stuff
     [self startMonitoringAudioTime];
     
-    //pay attention to when the player has reached the end to let our owner know
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(itemDidFinishPlaying:) name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //pay attention to when the player has reached the end to let our owner know
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFinishPlaying:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:self.playerItem];
+
+    });
 }
 
 - (void)pause {
     [self.audioPlayer pause];
-}
-
-- (BOOL)isPlaying {
-    return self.audioPlayer.rate > 0;
+    
+    //update isPlaying
+    self.isPlaying = NO;
 }
 
 - (void)handlePlayPause {
@@ -115,15 +126,20 @@
     }
     
     float sliderValue = time / CMTimeGetSeconds(self.playerItem.duration);
-    [self seekToPosition:sliderValue];
+    [self seekToPosition:sliderValue andPlay:YES];
 }
 
-- (void)seekToPosition:(float)value {
+- (void)seekToPosition:(float)value andPlay:(BOOL)shouldPlay {
     int time = floor(value * CMTimeGetSeconds(self.playerItem.duration));
     
     CMTime seekTime = CMTimeMake(time, 1);
     [self.audioPlayer seekToTime:seekTime];
-    [self.audioPlayer play];
+    
+    if (shouldPlay) {
+        [self play];
+    } else {
+        [self pause];
+    }
     
     NSString *elapsedTime = [self formattedTimeForNSTimeInterval:time];
     [self.delegate updateTimeInfoWithElapsedTime:elapsedTime andTimeSliderValue:value];
@@ -145,6 +161,9 @@
     
     //unregister for the notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    //update isPlaying
+    self.isPlaying = NO;
     
     //tell the delegate we're done
     [self.delegate didFinishPlaying];
