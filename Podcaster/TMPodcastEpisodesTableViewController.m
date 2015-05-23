@@ -27,6 +27,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 @property (strong, nonatomic) NSIndexPath *downloadingIndex;
 @property (strong, nonatomic) AVAudioPlayer *audioPlayer;
 @property (strong, nonatomic) TMPodcastEpisode *episodeToPlay;
+@property (strong, nonatomic) NSArray *episodes;
 
 @end
 
@@ -57,6 +58,10 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
         //check if any of these are downloaded
         [self findDownloadedEpisodes];
+        
+        //store the episodes as an array
+        NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"releaseDate" ascending:NO];
+        self.episodes = [[self.podcast.episodes allObjects] sortedArrayUsingDescriptors:@[dateDescriptor]];
         
         //refresh that table
         [self.tableView reloadData];
@@ -105,7 +110,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
         cellToReturn = episodeHeaderCell;
     } else {
         TMPodcastEpisodesTableViewCell *episodeCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeCellReuseIdentifier forIndexPath:indexPath];
-        TMPodcastEpisode *episode = [self.podcast.episodes objectAtIndex:indexPath.row];
+        TMPodcastEpisode *episode = [self.episodes objectAtIndex:indexPath.row];
         [episodeCell setupCellWithEpisode:episode];
         cellToReturn = episodeCell;
     }
@@ -131,7 +136,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     self.downloadingIndex = indexPath;
     
     //get the episode download link
-    TMPodcastEpisode *episode = [self.podcast.episodes objectAtIndex:indexPath.row];
+    TMPodcastEpisode *episode = [self.episodes objectAtIndex:indexPath.row];
     
 //    if (episode.fileLocation != nil) {
     

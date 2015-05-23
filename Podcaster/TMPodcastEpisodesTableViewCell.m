@@ -14,12 +14,9 @@
 - (void)setupCellWithEpisode:(TMPodcastEpisode *)episode {
     self.titleLabel.text = episode.title;
     
-    NSInteger minutes = episode.duration / 60;
-    self.durationLabel.text = [NSString stringWithFormat:@"%ld min", (long)minutes];
+    self.durationLabel.text = episode.durationString;
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MMMM d, YYYY"];
-    self.publishDateLabel.text = [dateFormatter stringFromDate:episode.publishDate];
+    self.publishDateLabel.text = episode.publishDateString;
     
     self.progressView.hidden = YES;
     

@@ -9,25 +9,30 @@
 #import "TMPodcastsTableViewController.h"
 #import "TMPodcastsManager.h"
 #import "TMPodcastTableViewCell.h"
+#import "TMPodcastLatestEpisodeTableViewCell.h"
 #import "TMPodcast.h"
+#import "TMPodcastEpisode.h"
 #import "TMPodcastEpisodesTableViewController.h"
+#import "TMAudioPlayerViewController.h"
 #import "TMSearchResultsTableViewController.h"
 #import "TMSubscribedPodcast.h"
 #import "AppDelegate.h"
 #import "TMDownloadManager.h"
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
+static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
 
 @interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
 @property (strong, nonatomic) UISearchController *searchController;
-@property (strong, nonatomic) NSArray *podcastsArray;
+@property (strong, nonatomic) NSArray *subscribedEpisodesArray;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @property (strong, nonatomic) NSMutableArray *imagesArray;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
-@property (strong, nonatomic) id<TMPodcastDelegate> selectedPodcast;
+//ATM UGH FIX THIS TOO
+@property (strong, nonatomic) id selectedItem;
 
 @end
 
@@ -54,13 +59,53 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     if (![[self fetchedResultsController] performFetch:&error]) {
         // Update to handle the error appropriately.
         NSLog(@"Fetching error %@, %@", error, [error userInfo]);
-    } else {
-        self.podcastsArray = [[self fetchedResultsController] fetchedObjects];
     }
     
-    [self.tableView reloadData];
+    //get the latest episode for each podcast
+    NSArray *subscribedPodcastsArray = [[self fetchedResultsController] fetchedObjects];
+    __block NSInteger finishedCalls = 0;
+    for (TMSubscribedPodcast *subscribedPodcast in subscribedPodcastsArray) {
+        [self.podcastsManager podcastEpisodesAtURL:subscribedPodcast.feedURLString withSuccessBlock:^(TMPodcast *podcast) {
+            //increment the retrievedCount
+            finishedCalls++;
+            
+            //ATM FIX THIS: I screwed this us. Too tired. Do I still need TMPodcast to have an NSSet or not??
+            subscribedPodcast.episodes = podcast.episodes.allObjects;
+            
+            if (finishedCalls == subscribedPodcastsArray.count) {
+                [self handleRetrievedEpisodes:subscribedPodcastsArray];
+            }
+        } andFailureBlock:^(NSError *error) {
+            NSLog(@"Error getting episodes for subscribed podcasts: %@", error.localizedDescription);
+            
+            finishedCalls++;
+            
+            //increment the retrievedCount
+            if (finishedCalls == subscribedPodcastsArray.count) {
+                [self handleRetrievedEpisodes:subscribedPodcastsArray];
+            }
+        }];
+    }
+    
 }
 
+- (void)handleRetrievedEpisodes:(NSArray *)subscribedPodcastsArray{
+    //sort the data by latest podcast episode in descending order
+    NSMutableArray *latestEpisodes = [NSMutableArray new];
+    NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO];
+    for (TMSubscribedPodcast *subscribedPodcast in subscribedPodcastsArray) {
+        TMPodcastEpisode *latestEpisode = [subscribedPodcast.episodes sortedArrayUsingDescriptors:@[dateDescriptor]].firstObject;
+        //replace this with our subscribed podcast so we can have access to any saved info for the podcast (i.e. the image)
+        latestEpisode.podcast = subscribedPodcast;
+        [latestEpisodes addObject:latestEpisode];
+    }
+    
+    self.subscribedEpisodesArray = [latestEpisodes sortedArrayUsingDescriptors:@[dateDescriptor]];
+    
+    //reload the data
+    [self.tableView reloadData];
+
+}
 
 - (void)setupSearchController {
 
@@ -104,7 +149,8 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     
     NSFetchedResultsController *theFetchedResultsController =
     [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                        managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil
+                                        managedObjectContext:self.managedObjectContext
+                                          sectionNameKeyPath:nil
                                                    cacheName:@"Root"];
     self.fetchedResultsController = theFetchedResultsController;
     _fetchedResultsController.delegate = self;
@@ -121,19 +167,20 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    id  sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo numberOfObjects];
+    return self.subscribedEpisodesArray.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
+    TMPodcastLatestEpisodeTableViewCell *cell = (TMPodcastLatestEpisodeTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kLatestEpisodeCellReuseIdentifier forIndexPath:indexPath];
     
-    TMSubscribedPodcast *subscribedPodcast = [_fetchedResultsController objectAtIndexPath:indexPath];
+    TMPodcastEpisode *podcastEpisode = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
+                                        
+    cell.titleLabel.text = podcastEpisode.title;
+    cell.durationLabel.text = podcastEpisode.durationString;
+    cell.publishDateLabel.text = podcastEpisode.publishDateString;
     
-    cell.titleLabel.text = subscribedPodcast.title;
-    
-    if (subscribedPodcast.podcastImage) {
-        cell.podcastImageView.image = subscribedPodcast.podcastImage;
+    if (podcastEpisode.podcast.podcastImage) {
+        cell.podcastImageView.image = podcastEpisode.podcast.podcastImage;
     }
     
     return cell;
@@ -141,14 +188,14 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    
     if (self.tableView == tableView) {
-        self.selectedPodcast = (id<TMPodcastDelegate>)[self.podcastsArray objectAtIndex:indexPath.row];
+       self.selectedItem = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
+        [self performSegueWithIdentifier:kAudioPlayerViewControllerSegue sender:self];
     } else if (self.searchResultsController.tableView == tableView) {
-        self.selectedPodcast = (id<TMPodcastDelegate>)[self.searchResultsController.podcastsArray objectAtIndex:indexPath.row];
+        self.selectedItem = [self.searchResultsController.podcastsArray objectAtIndex:indexPath.row];
+        [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
     }
 
-    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
 
 #pragma mark - Table view delegates
@@ -164,10 +211,14 @@ static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerS
     if ([segue.identifier isEqualToString:kEpisodesViewControllerSegue]) {
         TMPodcastEpisodesTableViewController *vc = (TMPodcastEpisodesTableViewController *)segue.destinationViewController;
         vc.managedObjectContext = self.managedObjectContext;
-        vc.podcast = self.selectedPodcast;
-        self.selectedPodcast = nil;
+        vc.podcast = (TMPodcast *)self.selectedItem;
+    } else if ([segue.identifier isEqualToString:kAudioPlayerViewControllerSegue]) {
+        TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)segue.destinationViewController;
+        vc.episode = (TMPodcastEpisode *)self.selectedItem;
+        vc.podcastImage = vc.episode.podcast.podcastImage;
     }
-    
+
+    self.selectedItem = nil;
 }
 
 #pragma mark - UISearchResultsUpdating

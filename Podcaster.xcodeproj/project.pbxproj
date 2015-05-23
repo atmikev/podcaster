@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1CCC73BFC10CF483FF48350 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0AE600B3F6DBB56BFCDB25E4 /* libPods.a */; };
+		C3010DB31B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = C3010DB21B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.m */; };
 		C30E109E1ADB374D005A6DAE /* TMSearchResultsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C30E109D1ADB374D005A6DAE /* TMSearchResultsTableViewController.m */; };
 		C34E81C01B0AC3B200144CB5 /* TMReviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C34E81BF1B0AC3B200144CB5 /* TMReviewViewController.m */; };
 		C37D27A91ACF8820009AE39A /* XMLReader.m in Sources */ = {isa = PBXBuildFile; fileRef = C37D27A81ACF8820009AE39A /* XMLReader.m */; };
@@ -54,6 +55,8 @@
 		C3010DAA1B0C11040005BD5E /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		C3010DAC1B0C11080005BD5E /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		C3010DAF1B0C11920005BD5E /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "usr/lib/libstdc++.6.dylib"; sourceTree = SDKROOT; };
+		C3010DB11B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMPodcastLatestEpisodeTableViewCell.h; sourceTree = "<group>"; };
+		C3010DB21B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMPodcastLatestEpisodeTableViewCell.m; sourceTree = "<group>"; };
 		C30E109C1ADB374D005A6DAE /* TMSearchResultsTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMSearchResultsTableViewController.h; sourceTree = "<group>"; };
 		C30E109D1ADB374D005A6DAE /* TMSearchResultsTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMSearchResultsTableViewController.m; sourceTree = "<group>"; };
 		C34E81BE1B0AC3B200144CB5 /* TMReviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMReviewViewController.h; sourceTree = "<group>"; };
@@ -322,6 +325,8 @@
 				C3CE48681AAC113800085513 /* TMPodcastEpisodesTableViewCell.m */,
 				C3A47B141AB3D6F600613E6F /* TMPodcastTableViewCell.h */,
 				C3A47B151AB3D6F600613E6F /* TMPodcastTableViewCell.m */,
+				C3010DB11B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.h */,
+				C3010DB21B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.m */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -496,6 +501,7 @@
 				C37D27A91ACF8820009AE39A /* XMLReader.m in Sources */,
 				C3CE48541AAA71E900085513 /* TMAudioPlayerManager.m in Sources */,
 				C386EDCD1A86BE8D000DE78F /* main.m in Sources */,
+				C3010DB31B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.m in Sources */,
 				C3CE48621AABF95F00085513 /* TMPodcastEpisode.m in Sources */,
 				C3CE48691AAC113800085513 /* TMPodcastEpisodesTableViewCell.m in Sources */,
 				C3B8B5E11AEAC9B100192328 /* TMSubscribedEpisode.m in Sources */,

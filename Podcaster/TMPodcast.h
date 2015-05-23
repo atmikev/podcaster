@@ -22,7 +22,7 @@
 @property (strong, nonatomic) NSString *category;
 @property (strong, nonatomic) NSURL *imageURL;
 @property (strong, nonatomic) UIImage *podcastImage;
-@property (strong, nonatomic) NSArray *episodes;
+@property (strong, nonatomic) NSSet *episodes;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (instancetype)initWithiTunesResponse:(TMiTunesResponse *)iTunesResponse;
