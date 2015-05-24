@@ -11,6 +11,7 @@
 #import "TMPodcast.h"
 #import "TMPodcastTableViewCell.h"
 #import "TMDownloadManager.h"
+#import "TMSelectPodcastProtocol.h"
 
 @implementation TMSearchResultsTableViewController
 
@@ -35,6 +36,13 @@
     }
 
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
+    [self.delegate didSelectPodcast:podcast];
+    
 }
 
 @end

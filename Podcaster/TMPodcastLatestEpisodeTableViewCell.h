@@ -15,6 +15,5 @@ static NSString * const kLatestEpisodeCellReuseIdentifier = @"latestEpisodeCell"
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
 @property (weak, nonatomic) IBOutlet UIButton *allEpisodesButton;
 
-- (IBAction)allEpisodesButtonHandler:(id)sender;
 
 @end

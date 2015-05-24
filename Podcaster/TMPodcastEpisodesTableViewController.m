@@ -60,7 +60,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
         [self findDownloadedEpisodes];
         
         //store the episodes as an array
-        NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"releaseDate" ascending:NO];
+        NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO];
         self.episodes = [[self.podcast.episodes allObjects] sortedArrayUsingDescriptors:@[dateDescriptor]];
         
         //refresh that table

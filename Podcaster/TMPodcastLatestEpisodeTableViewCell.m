@@ -10,8 +10,4 @@
 
 @implementation TMPodcastLatestEpisodeTableViewCell
 
-- (IBAction)allEpisodesButtonHandler:(id)sender {
-
-}
-
 @end

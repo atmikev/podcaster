@@ -8,7 +8,6 @@
 
 #import "TMPodcast.h"
 #import "TMPodcastEpisode.h"
-
 #import "TMiTunesResponse.h"
 
 @implementation TMPodcast

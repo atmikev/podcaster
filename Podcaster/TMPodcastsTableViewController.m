@@ -9,7 +9,6 @@
 #import "TMPodcastsTableViewController.h"
 #import "TMPodcastsManager.h"
 #import "TMPodcastTableViewCell.h"
-#import "TMPodcastLatestEpisodeTableViewCell.h"
 #import "TMPodcast.h"
 #import "TMPodcastEpisode.h"
 #import "TMPodcastEpisodesTableViewController.h"
@@ -18,21 +17,33 @@
 #import "TMSubscribedPodcast.h"
 #import "AppDelegate.h"
 #import "TMDownloadManager.h"
+#import "TMLatestEpisodesTableViewDataSourceAndDelegate.h"
+#import "TMSelectPodcastProtocol.h"
+#import "TMSelectPodcastEpisodeProtocol.h"
+#import "TMAllEpisodesTableViewDataSourceAndDelegate.h"
+
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
 
-@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate>
+@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
+
+@property (weak, nonatomic) IBOutlet UISegmentedControl *episodesSegmentedControl;
+@property (weak, nonatomic) IBOutlet UIView *headerView;
 
 @property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
 @property (strong, nonatomic) UISearchController *searchController;
-@property (strong, nonatomic) NSArray *subscribedEpisodesArray;
+@property (strong, nonatomic) TMLatestEpisodesTableViewDataSourceAndDelegate *latestEpisodesTableViewDataSourceAndDelegate;
+@property (strong, nonatomic) TMAllEpisodesTableViewDataSourceAndDelegate *allEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @property (strong, nonatomic) NSMutableArray *imagesArray;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+
 //ATM UGH FIX THIS TOO
 @property (strong, nonatomic) id selectedItem;
+
+- (IBAction)episodesSegmentedControlHandler:(id)sender;
 
 @end
 
@@ -41,9 +52,18 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //setup the data sources/delegates
     self.podcastsManager = [TMPodcastsManager new];
-        
+    self.latestEpisodesTableViewDataSourceAndDelegate = [[TMLatestEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
+    self.latestEpisodesTableViewDataSourceAndDelegate.headerView = self.headerView;
+    self.allEpisodesTableViewDataSourceAndDelegate = [[TMAllEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
+    self.allEpisodesTableViewDataSourceAndDelegate.headerView = self.headerView;
+    
     [self setupSearchController];
+    
+    //start out on the latestEpisodesTableViewDataSource
+    self.tableView.dataSource = self.latestEpisodesTableViewDataSourceAndDelegate;
+    self.tableView.delegate = self.latestEpisodesTableViewDataSourceAndDelegate;
     
     //poor form, come back to this
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -63,13 +83,24 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     
     //get the latest episode for each podcast
     NSArray *subscribedPodcastsArray = [[self fetchedResultsController] fetchedObjects];
+    
+    //give the subscribedPodcastsArray to our allEpisodesTableViewDataSource
+    self.allEpisodesTableViewDataSourceAndDelegate.subscribedPodcasts = subscribedPodcastsArray;
+    
+    //retrieve the latest episodes for our subscribed podcasts
+    [self retrieveLatestEpisodesForPodcastsArray:subscribedPodcastsArray];
+    
+}
+
+- (void)retrieveLatestEpisodesForPodcastsArray:(NSArray *)subscribedPodcastsArray {
+    
     __block NSInteger finishedCalls = 0;
     for (TMSubscribedPodcast *subscribedPodcast in subscribedPodcastsArray) {
         [self.podcastsManager podcastEpisodesAtURL:subscribedPodcast.feedURLString withSuccessBlock:^(TMPodcast *podcast) {
             //increment the retrievedCount
             finishedCalls++;
             
-            //ATM FIX THIS: I screwed this us. Too tired. Do I still need TMPodcast to have an NSSet or not??
+            //ATM FIX THIS: I think I screwed this us. Too tired. Do I still need TMPodcast to have an NSSet or not??
             subscribedPodcast.episodes = podcast.episodes.allObjects;
             
             if (finishedCalls == subscribedPodcastsArray.count) {
@@ -86,7 +117,6 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
             }
         }];
     }
-    
 }
 
 - (void)handleRetrievedEpisodes:(NSArray *)subscribedPodcastsArray{
@@ -100,7 +130,8 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
         [latestEpisodes addObject:latestEpisode];
     }
     
-    self.subscribedEpisodesArray = [latestEpisodes sortedArrayUsingDescriptors:@[dateDescriptor]];
+    //give the podcast episodes to our latest episode data source
+    self.latestEpisodesTableViewDataSourceAndDelegate.subscribedEpisodesArray = [latestEpisodes sortedArrayUsingDescriptors:@[dateDescriptor]];
     
     //reload the data
     [self.tableView reloadData];
@@ -112,6 +143,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
 
     self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
+    self.searchResultsController.delegate = self;
     
     self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
     self.searchController.searchResultsUpdater = self;
@@ -119,7 +151,6 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     self.tableView.tableHeaderView = self.searchController.searchBar;
     
     // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
-    self.searchResultsController.tableView.delegate = self;
     self.searchController.delegate = self;
     self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
     
@@ -159,49 +190,22 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     
 }
 
-#pragma mark - Table view data source
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.subscribedEpisodesArray.count;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TMPodcastLatestEpisodeTableViewCell *cell = (TMPodcastLatestEpisodeTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kLatestEpisodeCellReuseIdentifier forIndexPath:indexPath];
+- (void)switchDataSourcesAndDelegates {
     
-    TMPodcastEpisode *podcastEpisode = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
-                                        
-    cell.titleLabel.text = podcastEpisode.title;
-    cell.durationLabel.text = podcastEpisode.durationString;
-    cell.publishDateLabel.text = podcastEpisode.publishDateString;
+    id newDataSourceAndDelegate = nil;
     
-    if (podcastEpisode.podcast.podcastImage) {
-        cell.podcastImageView.image = podcastEpisode.podcast.podcastImage;
+    //figure out which datasource and delegate we should switch to
+    if (self.tableView.dataSource == self.latestEpisodesTableViewDataSourceAndDelegate) {
+        newDataSourceAndDelegate = self.allEpisodesTableViewDataSourceAndDelegate;
+    } else {
+        newDataSourceAndDelegate = self.latestEpisodesTableViewDataSourceAndDelegate;
     }
     
-    return cell;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    //set the new datasource and delegate
+    self.tableView.dataSource = (id<UITableViewDataSource>)newDataSourceAndDelegate;
+    self.tableView.delegate = (id<UITableViewDelegate>)newDataSourceAndDelegate;
     
-    if (self.tableView == tableView) {
-       self.selectedItem = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
-        [self performSegueWithIdentifier:kAudioPlayerViewControllerSegue sender:self];
-    } else if (self.searchResultsController.tableView == tableView) {
-        self.selectedItem = [self.searchResultsController.podcastsArray objectAtIndex:indexPath.row];
-        [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
-    }
-
-}
-
-#pragma mark - Table view delegates
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 90;
+    [self.tableView reloadData];
 }
 
 #pragma mark - Segue stuff
@@ -246,6 +250,28 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
                                                    }];
     }
     
+}
+
+#pragma IBActions
+
+- (void)episodesSegmentedControlHandler:(id)sender {
+    
+    //switch out the data source and reload
+    [self switchDataSourcesAndDelegates];
+}
+
+#pragma TMSelectPodcastProtocol methods
+
+- (void)didSelectPodcast:(TMPodcast *)podcast {
+    self.selectedItem = podcast;
+    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
+}
+
+#pragma TMSelectPodcastEpisodeProtocol methods
+
+- (void)didSelectEpisode:(TMPodcastEpisode *)episode {
+    self.selectedItem = episode;
+    [self performSegueWithIdentifier:kAudioPlayerViewControllerSegue sender:self];
 }
 
 
