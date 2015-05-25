@@ -23,15 +23,17 @@
 
 @property (weak, nonatomic) id<TMAudioPlayerManagerDelegate> delegate;
 @property (strong, nonatomic) TMPodcastEpisode *episode;
+@property (assign, nonatomic, readonly) BOOL isPlaying;
+@property (assign, nonatomic, readonly) NSTimeInterval currentTime;
+@property (assign, nonatomic, readonly) NSTimeInterval duration;
 
 + (instancetype)sharedInstance;
-
 
 - (NSString *)fileDurationString;
 
 - (void)seekWithInterval:(float)seekTime;
 
-- (void)seekToPosition:(float)value;
+- (void)seekToPosition:(float)value andPlay:(BOOL)shouldPlay;
 
 - (void)handlePlayPause;
 
@@ -39,6 +41,5 @@
 
 - (void)play;
 
-- (BOOL)isPlaying;
 
 @end

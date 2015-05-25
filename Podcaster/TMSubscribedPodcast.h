@@ -18,8 +18,6 @@
 
 @property (strong, nonatomic) UIImage *podcastImage;
 @property (strong, nonatomic) NSString *imageURLRemote;
-@property (strong, nonatomic) NSString *title;
-@property (strong, nonatomic) NSArray *episodes;
 
 + (instancetype)instanceFromTMPodcast:(TMPodcast *)podcast inContext:(NSManagedObjectContext *)context;
 

@@ -7,15 +7,18 @@
 //
 
 #import "TMPodcastEpisode.h"
+#import "TMPodcast.h"
+#import "TMPodcastProtocol.h"
 
 @implementation TMPodcastEpisode
 
-+ (NSArray *)episodesFromDictionariesArray:(NSArray *)dictionariesArray {
++ (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast {
     
-    NSMutableArray *episodesArray = [NSMutableArray new];
+    NSMutableSet *episodesArray = [NSMutableSet new];
     
     for (NSDictionary *dictionary in dictionariesArray) {
         TMPodcastEpisode *episode = [self initWithDictionary:dictionary];
+        episode.podcast = podcast;
         [episodesArray addObject:episode];
     }
     
@@ -54,6 +57,17 @@
     TMPodcastEpisode *episode = (TMPodcastEpisode *)object;
     BOOL isEqual = [self.downloadURL.absoluteString isEqualToString:episode.downloadURL.absoluteString];
     return isEqual;
+}
+
+- (NSString *)publishDateString {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"MMMM d, YYYY"];
+    return [dateFormatter stringFromDate:self.publishDate];
+}
+
+- (NSString *)durationString {
+    NSInteger minutes = self.duration / 60;
+    return [NSString stringWithFormat:@"%ld min", (long)minutes];
 }
 
 @end

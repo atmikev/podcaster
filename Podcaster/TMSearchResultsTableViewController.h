@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol TMSelectPodcastDelegate;
+
 @interface TMSearchResultsTableViewController : UITableViewController
 
 @property (strong, nonatomic) NSArray *podcastsArray;
+@property (weak, nonatomic) id<TMSelectPodcastDelegate> delegate;
 
 @end
+

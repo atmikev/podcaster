@@ -14,7 +14,6 @@
 
 @interface TMPodcast : NSObject <TMPodcastDelegate>
 
-@property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSString *subtitle;
 @property (strong, nonatomic) NSString *language;
 @property (strong, nonatomic) NSString *copyright;
@@ -22,7 +21,7 @@
 @property (strong, nonatomic) NSString *category;
 @property (strong, nonatomic) NSURL *imageURL;
 @property (strong, nonatomic) UIImage *podcastImage;
-@property (strong, nonatomic) NSArray *episodes;
+@property (strong, nonatomic) NSSet *episodes;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (instancetype)initWithiTunesResponse:(TMiTunesResponse *)iTunesResponse;

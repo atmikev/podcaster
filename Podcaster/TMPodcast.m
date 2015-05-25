@@ -8,7 +8,6 @@
 
 #import "TMPodcast.h"
 #import "TMPodcastEpisode.h"
-
 #import "TMiTunesResponse.h"
 
 @implementation TMPodcast
@@ -17,6 +16,7 @@
 @synthesize feedURLString;
 @synthesize podcastImage;
 @synthesize episodes;
+@synthesize title;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     TMPodcast *podcast = [TMPodcast new];
@@ -42,7 +42,6 @@
     NSDictionary *podcastDictionary = xmlDictionary[@"rss"][@"channel"];
     
     self.title = podcastDictionary[@"title"][@"text"];
-//    self.feedURLString = [podcastDictionary[@"atom10:link"] firstObject][@"href"];
     self.podcastDescription = podcastDictionary[@"description"][@"text"];
     self.language = podcastDictionary[@"language"][@"text"];
     self.copyright = podcastDictionary[@"copyright"][@"text"];
@@ -54,9 +53,9 @@
 }
 
 
-- (NSArray *)episodesFromXMLDictionary:(NSDictionary *)xmlDictionary {
+- (NSSet *)episodesFromXMLDictionary:(NSDictionary *)xmlDictionary {
     id itemsElement = xmlDictionary[@"item"];
-    NSArray *episodesArray = nil;
+    NSSet *episodesSet = nil;
     
     if (itemsElement) {
         NSArray *itemsArray = nil;
@@ -68,10 +67,10 @@
             }
         }
         
-        episodesArray = [TMPodcastEpisode episodesFromDictionariesArray:itemsArray];
+        episodesSet = [TMPodcastEpisode episodesFromDictionariesArray:itemsArray forPodcast:self];
     }
    
-    return episodesArray;
+    return episodesSet;
 }
 
 

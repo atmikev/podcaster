@@ -17,11 +17,6 @@
 
 @implementation TMPodcastEpisodeHeaderTableViewCell
 
-- (void)awakeFromNib {
-    //make sure the textview starts at the top
-    [self.descriptionTextView scrollRangeToVisible:NSMakeRange(0, 1)];
-}
-
 - (void)setupCellWithPodcast:(TMPodcast *)podcast {
     self.podcast = podcast;
     self.podcastImageView.image = podcast.podcastImage;
@@ -33,6 +28,12 @@
 
 - (IBAction)subscribeButtonHandler:(id)sender {
     [self.subscriptionDelegate subscribeToPodcast:self.podcast];
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.titleLabel.preferredMaxLayoutWidth = 200;
+    [super layoutSubviews];
 }
 
 

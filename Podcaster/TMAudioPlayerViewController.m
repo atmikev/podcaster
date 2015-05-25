@@ -9,8 +9,15 @@
 #import "TMAudioPlayerViewController.h"
 #import "TMAudioPlayerManager.h"
 #import "TMNavigationController.h"
+#import "TMReviewViewController.h"
+#import "TMPodcastProtocol.h"
+#import <Parse/Parse.h>
 
-@interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate>
+static NSString * const kPlayImageString = @"play";
+static NSString * const kPauseImageString = @"pause";
+static NSString * const kIsPlayingString = @"isPlaying";
+
+@interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
@@ -22,6 +29,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *timeElapsedLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeTotalLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UIButton *rateButton;
 
 - (IBAction)playPause:(id)sender;
 - (IBAction)timeSliderValueChanged:(id)sender;
@@ -50,31 +58,71 @@
     
     //store the custom navigation controller
     self.navController = (TMNavigationController *)self.navigationController;
+    
+    //start the episode
+    [self playAudio];
+    
+    //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [self playAudio];
+    [super viewWillAppear:animated];
+    
+    //kvo on isPlaying for the play/pause image
+    [self.audioPlayerManager addObserver:self
+                              forKeyPath:kIsPlayingString
+                                 options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+                                 context:nil];
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
+    
+    //remove observations
+    [self.audioPlayerManager removeObserver:self forKeyPath:kIsPlayingString];
 }
 
 - (void)setupAudioPlayerManager {
     self.audioPlayerManager = [TMAudioPlayerManager sharedInstance];
     self.audioPlayerManager.delegate = self;
     self.audioPlayerManager.episode = self.episode;
+    
 }
 
 - (void)setupSeekSlider {
     self.timeSlider.value = 0;
 }
 
+- (void)changePlayPauseButtonImage:(BOOL)isPlaying {
+    NSString *imageName = isPlaying ? kPauseImageString : kPlayImageString;
+    [self.playPauseButton setBackgroundImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+}
+
 - (void)pauseAudio {
     [self.audioPlayerManager pause];
-    [self.playPauseButton setBackgroundImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
+    [self changePlayPauseButtonImage:NO];
 }
 
 - (void)playAudio {
     [self.audioPlayerManager play];
-    [self.playPauseButton setBackgroundImage:[UIImage imageNamed:@"pause"] forState:UIControlStateNormal];
+    [self changePlayPauseButtonImage:YES];
     self.navController.currentAudioPlayerViewController = self;
+}
+
+- (void)showReviewVC:(BOOL)initiatedByUser {
+    TMReviewViewController *reviewVC = [[self storyboard] instantiateViewControllerWithIdentifier:@"TMReviewViewController"];
+    reviewVC.initiatedByUser = initiatedByUser;
+    reviewVC.episode = self.episode;
+    [self presentViewController:reviewVC animated:YES completion:nil];
+}
+
+-(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    
+    if([keyPath isEqualToString:kIsPlayingString]) {
+        BOOL isPlaying = [(NSNumber *)[change objectForKey:NSKeyValueChangeNewKey] boolValue];
+        [self changePlayPauseButtonImage:isPlaying];
+    }
 }
 
 #pragma mark - IBActions
@@ -94,7 +142,7 @@
 }
 
 - (IBAction)timeSliderValueChanged:(id)sender {
-    [self.audioPlayerManager seekToPosition:self.timeSlider.value];
+    [self.audioPlayerManager seekToPosition:self.timeSlider.value andPlay:YES];
 }
 
 - (IBAction)seekBackHandler:(id)sender {
@@ -103,6 +151,15 @@
 
 - (IBAction)seekForwardHandler:(id)sender {
     [self.audioPlayerManager seekWithInterval:15];
+}
+
+- (IBAction)rateButtonHandler:(id)sender {
+    [self showReviewVC:YES];
+}
+
+#pragma mark - Gesture Recognizer methods
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    return NO;
 }
 
 #pragma mark - TMAudioPlayerManagerDelegate methods
@@ -119,5 +176,13 @@
 - (void)didFinishPlaying {
     //tell the nav controller we're not currently playing anything
     self.navController.currentAudioPlayerViewController = nil;
+    
+    if ([self presentedViewController] == nil) {
+        //if we're not presenting anything, pop up the reviewVC so they can rate the episode
+        [self showReviewVC:NO];
+    }
+    
+    //pause the player and reset it to the beginning of the episode
+    [self.audioPlayerManager seekToPosition:0 andPlay:NO];
 }
 @end
