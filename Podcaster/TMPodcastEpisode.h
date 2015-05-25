@@ -29,6 +29,7 @@
 @property (assign, nonatomic) NSInteger fileSize;
 @property (strong, nonatomic) NSURL *podcastURL;
 @property (strong, nonatomic) NSString *fileLocation;
+@property (assign, nonatomic) NSTimeInterval lastPlayLocation;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast;

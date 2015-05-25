@@ -14,7 +14,6 @@
 
 @interface TMPodcast : NSObject <TMPodcastDelegate>
 
-@property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSString *subtitle;
 @property (strong, nonatomic) NSString *language;
 @property (strong, nonatomic) NSString *copyright;

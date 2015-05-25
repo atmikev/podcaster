@@ -12,5 +12,6 @@
 @property (strong, nonatomic) NSString *feedURLString;
 @property (strong, nonatomic) UIImage *podcastImage;
 @property (strong, nonatomic) NSSet *episodes;
+@property (strong, nonatomic) NSString *title;
 
 @end

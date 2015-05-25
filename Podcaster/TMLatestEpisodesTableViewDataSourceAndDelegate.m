@@ -46,13 +46,11 @@
     
     TMPodcastEpisode *podcastEpisode = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
     
-    cell.titleLabel.text = podcastEpisode.title;
-    cell.durationLabel.text = podcastEpisode.durationString;
-    cell.publishDateLabel.text = podcastEpisode.publishDateString;
-    
     if (podcastEpisode.podcast.podcastImage) {
         cell.podcastImageView.image = podcastEpisode.podcast.podcastImage;
     }
+    
+    [cell setupCellWithEpisode:podcastEpisode];
     
     return cell;
 }

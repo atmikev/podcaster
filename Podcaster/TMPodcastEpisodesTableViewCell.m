@@ -12,8 +12,8 @@
 @implementation TMPodcastEpisodesTableViewCell
 
 - (void)awakeFromNib {
-    self.titleLabel.preferredMaxLayoutWidth = 300;
-    [self.titleLabel setNumberOfLines:0];
+    [super awakeFromNib];
+    self.titleLabel.preferredMaxLayoutWidth = 250;
 }
 
 - (void)setupCellWithEpisode:(TMPodcastEpisode *)episode {
@@ -23,8 +23,7 @@
     [self.durationLabel sizeToFit];
     
     self.publishDateLabel.text = episode.publishDateString;
-    [self.publishDateLabel sizeToFit];
-    
+
     self.progressView.hidden = YES;
     
     if (episode.fileLocation) {

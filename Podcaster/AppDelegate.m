@@ -24,11 +24,21 @@
     [self setupAudioSession];
     
     // Initialize Parse.
-    [Parse setApplicationId:@"didt7yjPADOjehfHCTXo2rfl8DfJ1a8fdxqtgUDK"
-                  clientKey:@"Sef1i7qzIj1zapJl7iusnVqBk5AWIXk6QIWf46pN"];
+    [Parse setApplicationId:@"30Bek4Zru3Mo50xFTWDeODOUYfxmaC228JXeQuMC"
+                  clientKey:@"AAXcXOIG9y3WqJpYevjpgea8iCYAd9pOwc8UXoOE"];
     
     // [Optional] Track statistics around application opens.
-    [PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+    [PFAnalytics trackAppOpenedWithLaunchOptionsInBackground:launchOptions block:^(BOOL succeeded, NSError *PF_NULLABLE_S error) {
+        if (!succeeded) {
+            NSLog(@"Failed to send app open event to Parse:\n%@",error.localizedDescription);
+        }
+    }];
+    
+    
+    //turn on the automatic user
+    [PFUser enableAutomaticUser];
+    [[PFUser currentUser] incrementKey:@"RunCount"];
+    [[PFUser currentUser] saveInBackground];
     
     return YES;
 }

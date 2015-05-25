@@ -10,6 +10,10 @@
 #import <AVFoundation/AVFoundation.h>
 #import "TMMark.h"
 #import "TMPodcastEpisode.h"
+#import "TMPodcastProtocol.h"
+#import <Parse/Parse.h>
+
+static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 
 @interface TMAudioPlayerManager () <AVAudioPlayerDelegate>
 
@@ -66,6 +70,10 @@
         //fire back the initial time info to the delegate
         [self updateDelegateTimeInfo];
     }
+    
+    //track finished event
+    [PFAnalytics trackEvent:@"start" dimensions:[self startFinishDimensions]];
+
 }
 
 - (void)setDelegate:(id<TMAudioPlayerManagerDelegate>)delegate {
@@ -98,6 +106,8 @@
                                                    object:self.playerItem];
 
     });
+    
+
 }
 
 - (void)pause {
@@ -105,13 +115,19 @@
     
     //update isPlaying
     self.isPlaying = NO;
+
 }
 
 - (void)handlePlayPause {
+    //Note: Track play/pause analytics here to prevent accidental play/pause tracking caused by seeking
     if ([self isPlaying]) {
         [self pause];
+        //track the pause event
+        [PFAnalytics trackEvent:@"pause" dimensions:[self playPauseDimensions]];
     } else {
         [self play];
+        //track the play event
+        [PFAnalytics trackEvent:@"play" dimensions:[self playPauseDimensions]];
     }
 }
 
@@ -131,6 +147,9 @@
 
 - (void)seekToPosition:(float)value andPlay:(BOOL)shouldPlay {
     int time = floor(value * CMTimeGetSeconds(self.playerItem.duration));
+    
+    //track seek event
+    [PFAnalytics trackEvent:@"seek" dimensions:[self seekDimensionsWithSeekToTime:time]];
     
     CMTime seekTime = CMTimeMake(time, 1);
     [self.audioPlayer seekToTime:seekTime];
@@ -167,6 +186,9 @@
     
     //tell the delegate we're done
     [self.delegate didFinishPlaying];
+    
+    //track finished event
+    [PFAnalytics trackEvent:@"finished" dimensions:[self startFinishDimensions]];
 }
 
 #pragma mark - Marks methods
@@ -278,6 +300,44 @@
 - (NSTimeInterval)duration {
     NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
     return duration;
+}
+
+- (NSDictionary *)playPauseDimensions {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:dateFormatterString options:0 locale:[NSLocale currentLocale]]];
+    
+    NSDictionary *dimensions =  @{@"podcast":self.episode.podcast.title,
+                                 @"episode":self.episode.title,
+                                 @"episodeTime":[NSString stringWithFormat:@"%f",self.currentTime],
+                                 @"dateTime":[dateFormatter stringFromDate:[NSDate date]]};
+    
+    return dimensions;
+}
+
+- (NSDictionary *)seekDimensionsWithSeekToTime:(NSInteger)seekToTime {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:dateFormatterString options:0 locale:[NSLocale currentLocale]]];
+
+    
+    NSDictionary *dimensions =  @{@"podcast":self.episode.podcast.title,
+                                  @"episode":self.episode.title,
+                                  @"episodeTime":[NSString stringWithFormat:@"%f",self.currentTime],
+                                  @"seekToTime":[NSString stringWithFormat:@"%li",(long)seekToTime],
+                                  @"dateTime":[dateFormatter stringFromDate:[NSDate date]]};
+    
+    return dimensions;
+}
+
+- (NSDictionary *)startFinishDimensions {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:dateFormatterString options:0 locale:[NSLocale currentLocale]]];
+    
+    
+    NSDictionary *dimensions =  @{@"podcast":self.episode.podcast.title,
+                                  @"episode":self.episode.title,
+                                  @"dateTime":[dateFormatter stringFromDate:[NSDate date]]};
+    
+    return dimensions;
 }
 
 @end

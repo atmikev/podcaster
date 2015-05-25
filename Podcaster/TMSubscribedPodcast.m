@@ -29,11 +29,10 @@
 + (instancetype)instanceFromTMPodcast:(TMPodcast *)podcast inContext:(NSManagedObjectContext *)context {
     
     //if we've already subscribed to this podcast, get it
-    
     TMSubscribedPodcast *subscribedPodcast = [self subscribedPodcastWithName:podcast.title inContext:context];
     
+    //otherwise make a new one
     if (subscribedPodcast == nil) {
-
         subscribedPodcast = [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
         subscribedPodcast.title = podcast.title;
         subscribedPodcast.feedURLString = podcast.feedURLString;

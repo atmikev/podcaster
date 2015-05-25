@@ -8,6 +8,10 @@
 
 #import "TMReviewViewController.h"
 #import "HCSStarRatingView.h"
+#import "TMRating.h"
+#import <Parse/Parse.h>
+#import "TMPodcastEpisode.h"
+#import "TMPodcastProtocol.h"
 
 @interface TMReviewViewController ()
 
@@ -29,16 +33,45 @@
     
     //pop up the keyboard
     [self.commentsTextView becomeFirstResponder];
+    
+    //track page name and associated info
+    [PFAnalytics trackEvent:@"startedReview" dimensions:[self dimensions]];
 }
 
 - (void)submitReview {
+    //track that we've submitted the review
+    [PFAnalytics trackEvent:@"finishedReview" dimensions:[self dimensions]];
+    
     //dismiss the keyboard
     [self.view endEditing:YES];
     
     //do the submission stuff
+    TMRating *rating = [TMRating object];
+    rating.score = self.ratingView.value;
+    rating.comment = self.commentsTextView.text;
+    rating.episode = self.episode.title;
+    rating.podcast = self.episode.podcast.title;
+    rating.initiatedByUser = self.initiatedByUser;
+    rating.user = [PFUser currentUser];
+    [rating saveInBackgroundWithBlock:^(BOOL succeeded, NSError *PF_NULLABLE_S error){
+        if (!succeeded) {
+            [[[UIAlertView alloc] initWithTitle:@"Uh oh" message:@"There was an error saving your rating. Sorry we blew it. Please try again!!!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil] show];
+        }
+    }];
     
     //pop the vc
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (NSDictionary *)dimensions {
+    
+    NSString *initiatedByUserString = self.initiatedByUser ? @"Yes" : @"No";
+    NSDictionary *dimensions = @{@"episode" : self.episode.title,
+                                 @"podcast" : self.episode.podcast.title,
+                                 @"episodeTime" : [NSString stringWithFormat:@"%f", self.episodeTime],
+                                 @"initiatedByUser" : initiatedByUserString};
+    
+    return dimensions;
 }
 
 #pragma mark - Button Handlers

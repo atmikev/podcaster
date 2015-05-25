@@ -199,6 +199,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 - (void)subscribeToPodcast:(TMPodcast *)podcast {
     
+    //This logic should be in TMPodcastsManager
     TMSubscribedPodcast *subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:podcast inContext:self.managedObjectContext];
     
     NSError *saveError;

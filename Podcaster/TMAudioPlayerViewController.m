@@ -10,12 +10,14 @@
 #import "TMAudioPlayerManager.h"
 #import "TMNavigationController.h"
 #import "TMReviewViewController.h"
+#import "TMPodcastProtocol.h"
+#import <Parse/Parse.h>
 
 static NSString * const kPlayImageString = @"play";
 static NSString * const kPauseImageString = @"pause";
 static NSString * const kIsPlayingString = @"isPlaying";
 
-@interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate>
+@interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
@@ -60,7 +62,7 @@ static NSString * const kIsPlayingString = @"isPlaying";
     //start the episode
     [self playAudio];
     
-    //workaround for ios 8 bug
+    //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
     self.navigationController.interactivePopGestureRecognizer.delegate = self;
 }
 
@@ -108,8 +110,10 @@ static NSString * const kIsPlayingString = @"isPlaying";
     self.navController.currentAudioPlayerViewController = self;
 }
 
-- (void)showReviewVC {
+- (void)showReviewVC:(BOOL)initiatedByUser {
     TMReviewViewController *reviewVC = [[self storyboard] instantiateViewControllerWithIdentifier:@"TMReviewViewController"];
+    reviewVC.initiatedByUser = initiatedByUser;
+    reviewVC.episode = self.episode;
     [self presentViewController:reviewVC animated:YES completion:nil];
 }
 
@@ -150,7 +154,7 @@ static NSString * const kIsPlayingString = @"isPlaying";
 }
 
 - (IBAction)rateButtonHandler:(id)sender {
-    [self showReviewVC];
+    [self showReviewVC:YES];
 }
 
 #pragma mark - Gesture Recognizer methods
@@ -175,7 +179,7 @@ static NSString * const kIsPlayingString = @"isPlaying";
     
     if ([self presentedViewController] == nil) {
         //if we're not presenting anything, pop up the reviewVC so they can rate the episode
-        [self showReviewVC];
+        [self showReviewVC:NO];
     }
     
     //pause the player and reset it to the beginning of the episode

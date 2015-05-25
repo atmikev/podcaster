@@ -32,7 +32,7 @@
 
 - (UIBarButtonItem *)nowPlayingButton {
     if (!_nowPlayingButton) {
-        _nowPlayingButton = [[UIBarButtonItem alloc] initWithTitle:@"Now Playing"
+        _nowPlayingButton = [[UIBarButtonItem alloc] initWithTitle:@"Now Playing >"
                                                              style:UIBarButtonItemStylePlain
                                                             target:self
                                                             action:@selector(navigateToCurrentAudioPlayerViewController)];

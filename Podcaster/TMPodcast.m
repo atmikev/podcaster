@@ -16,6 +16,7 @@
 @synthesize feedURLString;
 @synthesize podcastImage;
 @synthesize episodes;
+@synthesize title;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     TMPodcast *podcast = [TMPodcast new];

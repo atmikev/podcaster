@@ -8,6 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
+@class TMPodcastEpisode;
+
 @interface TMReviewViewController : UIViewController
+
+@property (strong, nonatomic) TMPodcastEpisode *episode;
+@property (assign, nonatomic) NSTimeInterval episodeTime;
+@property (assign, nonatomic) BOOL initiatedByUser;
 
 @end
