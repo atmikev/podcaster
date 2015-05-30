@@ -16,12 +16,14 @@
 static NSString * const kPlayImageString = @"play";
 static NSString * const kPauseImageString = @"pause";
 static NSString * const kIsPlayingString = @"isPlaying";
+static NSString * const kReviewViewControllerSegueString = @"reviewViewControllerSegue";
 
 @interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) TMNavigationController *navController;
+@property (assign, nonatomic) BOOL initiatedByUser;
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
@@ -111,10 +113,10 @@ static NSString * const kIsPlayingString = @"isPlaying";
 }
 
 - (void)showReviewVC:(BOOL)initiatedByUser {
-    TMReviewViewController *reviewVC = [[self storyboard] instantiateViewControllerWithIdentifier:@"TMReviewViewController"];
-    reviewVC.initiatedByUser = initiatedByUser;
-    reviewVC.episode = self.episode;
-    [self presentViewController:reviewVC animated:YES completion:nil];
+
+    //track who initiated the review
+    self.initiatedByUser = initiatedByUser;
+    [self performSegueWithIdentifier:kReviewViewControllerSegueString sender:nil];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
@@ -123,6 +125,16 @@ static NSString * const kIsPlayingString = @"isPlaying";
         BOOL isPlaying = [(NSNumber *)[change objectForKey:NSKeyValueChangeNewKey] boolValue];
         [self changePlayPauseButtonImage:isPlaying];
     }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
+    if ([[segue identifier] isEqualToString:kReviewViewControllerSegueString]) {
+        TMReviewViewController *reviewVC = [segue destinationViewController];
+        reviewVC.initiatedByUser = self.initiatedByUser;
+        reviewVC.episode = self.episode;
+    }
+    
 }
 
 #pragma mark - IBActions

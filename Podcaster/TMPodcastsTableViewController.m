@@ -15,12 +15,14 @@
 #import "TMAudioPlayerViewController.h"
 #import "TMSearchResultsTableViewController.h"
 #import "TMSubscribedPodcast.h"
+#import "TMSubscribedEpisode.h"
 #import "AppDelegate.h"
 #import "TMDownloadManager.h"
 #import "TMLatestEpisodesTableViewDataSourceAndDelegate.h"
 #import "TMSelectPodcastProtocol.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
 #import "TMAllEpisodesTableViewDataSourceAndDelegate.h"
+#import "NSManagedObject+EntityName.h"
 
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
@@ -40,7 +42,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
-//ATM UGH FIX THIS TOO
+//ATM: UGH FIX THIS TOO
 @property (strong, nonatomic) id selectedItem;
 
 - (IBAction)episodesSegmentedControlHandler:(id)sender;
@@ -100,8 +102,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
             //increment the retrievedCount
             finishedCalls++;
             
-            //ATM FIX THIS: I think I screwed this us. Too tired. Do I still need TMPodcast to have an NSSet or not??
-            subscribedPodcast.episodes = podcast.episodes.allObjects;
+            subscribedPodcast.episodes = podcast.episodes;
             
             if (finishedCalls == subscribedPodcastsArray.count) {
                 [self handleRetrievedEpisodes:subscribedPodcastsArray];
@@ -125,17 +126,16 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO];
     for (TMSubscribedPodcast *subscribedPodcast in subscribedPodcastsArray) {
         TMPodcastEpisode *latestEpisode = [subscribedPodcast.episodes sortedArrayUsingDescriptors:@[dateDescriptor]].firstObject;
-        //replace this with our subscribed podcast so we can have access to any saved info for the podcast (i.e. the image)
-        latestEpisode.podcast = subscribedPodcast;
-        [latestEpisodes addObject:latestEpisode];
+        TMSubscribedEpisode *subscribedEpisode = [TMSubscribedEpisode instanceFromTMPodcastEpisode:latestEpisode inContext:self.managedObjectContext];
+        
+        [latestEpisodes addObject:subscribedEpisode];
     }
     
     //give the podcast episodes to our latest episode data source
-    self.latestEpisodesTableViewDataSourceAndDelegate.subscribedEpisodesArray = [latestEpisodes sortedArrayUsingDescriptors:@[dateDescriptor]];
+    self.latestEpisodesTableViewDataSourceAndDelegate.subscribedEpisodesArray = latestEpisodes;
     
     //reload the data
     [self.tableView reloadData];
-
 }
 
 - (void)setupSearchController {

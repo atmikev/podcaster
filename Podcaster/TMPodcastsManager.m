@@ -147,7 +147,7 @@
                     andFailureBlock:(void(^)(NSError *error))failureBlock {
     
     if (self.downloadManager) {
-#warning TODO: add ability to queue up multiple downloads
+#warning TODO: add ability to queue up multiple downloads using an NSOperation
         return;
     }
     __weak TMPodcastsManager *weakSelf = self;
@@ -187,7 +187,7 @@
 }
 
 - (NSString *)filePathForEpisode:(TMPodcastEpisode *)episode {
-    NSString *fileName = [episode.downloadURL lastPathComponent];
+    NSString *fileName = [[NSURL URLWithString:episode.downloadURLString] lastPathComponent];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];

@@ -58,8 +58,8 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     NSURL *fileURL = nil;
     if (episode.fileLocation) {
         fileURL = [NSURL fileURLWithPath:episode.fileLocation];
-    } else if (episode.downloadURL) {
-        fileURL = [NSURL URLWithString:episode.downloadURL.absoluteString];
+    } else if (episode.downloadURLString) {
+        fileURL = [NSURL URLWithString:episode.downloadURLString];
     }
     
     self.playerItem = [AVPlayerItem playerItemWithURL:fileURL];
@@ -173,7 +173,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 }
 
 - (NSString *)fileDurationString {
-    return [self formattedTimeForNSTimeInterval:self.episode.duration];
+    return [self formattedTimeForNSTimeInterval:[self.episode.duration doubleValue]];
 }
 
 - (void)itemDidFinishPlaying:(id)sender {
@@ -243,6 +243,9 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (void)monitorTimeRelatedInfo {
     
     [self updateDelegateTimeInfo];
+    
+    //mark the last played time (can this be optimized?)
+    self.episode.lastPlayLocation = [NSNumber numberWithDouble:[self currentTime]];
     
     if (self.marksArray) {
         [self checkForNextMark];
@@ -331,8 +334,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (NSDictionary *)startFinishDimensions {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:dateFormatterString options:0 locale:[NSLocale currentLocale]]];
-    
-    
+        
     NSDictionary *dimensions =  @{@"podcast":self.episode.podcast.title,
                                   @"episode":self.episode.title,
                                   @"dateTime":[dateFormatter stringFromDate:[NSDate date]]};

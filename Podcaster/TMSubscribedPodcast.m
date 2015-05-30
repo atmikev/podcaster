@@ -9,6 +9,7 @@
 #import "TMSubscribedPodcast.h"
 #import "TMPodcast.h"
 #import "TMDownloadManager.h"
+#import "NSManagedObject+EntityName.h"
 
 @interface TMSubscribedPodcast ()
 
@@ -21,12 +22,12 @@
 @synthesize podcastDescription = _podcastDescription;
 @synthesize episodes = _episodes;
 @synthesize podcastImage = _podcastImage;
-@dynamic imageURLRemote;
 @dynamic imageURLLocal;
 @dynamic feedURLString;
 @dynamic title;
 
-+ (instancetype)instanceFromTMPodcast:(TMPodcast *)podcast inContext:(NSManagedObjectContext *)context {
+#warning Move writing to the DB to a background threaded context
++ (instancetype)instanceFromTMPodcast:(id<TMPodcastDelegate>)podcast inContext:(NSManagedObjectContext *)context {
     
     //if we've already subscribed to this podcast, get it
     TMSubscribedPodcast *subscribedPodcast = [self subscribedPodcastWithName:podcast.title inContext:context];
@@ -36,7 +37,6 @@
         subscribedPodcast = [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
         subscribedPodcast.title = podcast.title;
         subscribedPodcast.feedURLString = podcast.feedURLString;
-        subscribedPodcast.imageURLRemote = [podcast.imageURL absoluteString];
         subscribedPodcast.podcastDescription = podcast.podcastDescription;
         [subscribedPodcast saveImageToDisk:podcast.podcastImage forPodcast:podcast withCompletion:^(NSString *localURLString) {
             subscribedPodcast.imageURLLocal = localURLString;
