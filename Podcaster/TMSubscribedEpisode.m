@@ -48,6 +48,12 @@
         subscribedEpisode.publishDate = episode.publishDate;
         subscribedEpisode.lastPlayLocation = episode.lastPlayLocation;
         subscribedEpisode.subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:episode.podcast inContext:context];
+        
+        //save
+        NSError *saveError = nil;
+        if (![context save:&saveError]) {
+            NSLog(@"error saving when trying to insert a TMSubscribedEpisode named %@.\nError description: %@", subscribedEpisode.title, saveError.localizedDescription);
+        }
     }
     
     return subscribedEpisode;

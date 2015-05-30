@@ -38,10 +38,18 @@
         subscribedPodcast.title = podcast.title;
         subscribedPodcast.feedURLString = podcast.feedURLString;
         subscribedPodcast.podcastDescription = podcast.podcastDescription;
-        [subscribedPodcast saveImageToDisk:podcast.podcastImage forPodcast:podcast withCompletion:^(NSString *localURLString) {
+        [subscribedPodcast saveImageToDisk:podcast.podcastImage
+                                forPodcast:podcast
+                            withCompletion:^(NSString *localURLString) {
             subscribedPodcast.imageURLLocal = localURLString;
         }];
-
+        subscribedPodcast.episodes = nil;
+        
+        //save
+        NSError *saveError = nil;
+        if (![context save:&saveError]) {
+            NSLog(@"error saving when trying to insert a TMSubscribedPodcast named %@.\nError description: %@", subscribedPodcast.title, saveError.localizedDescription);
+        }
     }
     
     return subscribedPodcast;
@@ -51,14 +59,13 @@
     
     //fetch all subscribed podcasts
     NSEntityDescription *entityDescription = [NSEntityDescription
-                                              entityForName:[TMSubscribedPodcast entityName]
+                                              entityForName:[self entityName]
                                               inManagedObjectContext:context];
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:entityDescription];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:
-                              @"title = %@", podcastTitle];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title = %@", podcastTitle];
     [request setPredicate:predicate];
     
     NSArray *results = [context executeFetchRequest:request error:nil];
