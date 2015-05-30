@@ -101,18 +101,17 @@
     [self.delegate didSelectEpisode:podcastEpisode];
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *headerView = nil;
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    NSString *title = nil;
     
     if (section == 0) {
-        headerView = self.headerView;
+        title = @"Fresh!";
+    } else {
+        title = @"Already Heard";
     }
     
-    return headerView;
+    return title;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 65;
-}
 
 @end

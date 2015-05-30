@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Tyler Mikev. All rights reserved.
 //
 
-#import "TMPodcastsTableViewController.h"
+#import "TMPodcastsViewController.h"
 #import "TMPodcastsManager.h"
 #import "TMPodcastTableViewCell.h"
 #import "TMPodcast.h"
@@ -28,10 +28,10 @@
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
 
-@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
+@interface TMPodcastsViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *episodesSegmentedControl;
-@property (weak, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
 @property (strong, nonatomic) UISearchController *searchController;
@@ -49,7 +49,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 
 @end
 
-@implementation TMPodcastsTableViewController
+@implementation TMPodcastsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -57,9 +57,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     //setup the data sources/delegates
     self.podcastsManager = [TMPodcastsManager new];
     self.latestEpisodesTableViewDataSourceAndDelegate = [[TMLatestEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
-    self.latestEpisodesTableViewDataSourceAndDelegate.headerView = self.headerView;
     self.allEpisodesTableViewDataSourceAndDelegate = [[TMAllEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
-    self.allEpisodesTableViewDataSourceAndDelegate.headerView = self.headerView;
     
     [self setupSearchController];
     
@@ -235,7 +233,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     NSString *strippedString = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
     
     if (strippedString) {
-        __weak TMPodcastsTableViewController *weakSelf = self;
+        __weak TMPodcastsViewController *weakSelf = self;
         [self.podcastsManager searchForPodcastsWithSearchString:strippedString
                                                      maxResults:25
                                                    successBlock:^(NSArray *podcasts) {
