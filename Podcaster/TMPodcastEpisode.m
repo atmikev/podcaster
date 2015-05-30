@@ -65,14 +65,18 @@
 
 + (NSNumber *)durationFromDurationString:(NSString *)durationString {
     //this can come back as in hh:mm:ss or as the total number of seconds, so use a scanner to differentiate. fuckin idiots.
+    
+    //reverse the string so we start with seconds
     NSTimeInterval duration = 0;
     if ([durationString containsString:@":"]) {
-        NSInteger secondsMultiplier = 3600;
-        for (NSString *substring in [durationString componentsSeparatedByString:@":"]) {
+        NSInteger secondsMultiplier = 1;
+        NSArray *timeSubstrings = [durationString componentsSeparatedByString:@":"];
+        NSArray *reversedTimeSubstrings = [[timeSubstrings reverseObjectEnumerator] allObjects];
+        for (NSString *substring in reversedTimeSubstrings) {
             duration += [substring doubleValue] *secondsMultiplier;
             
-            //take the seconds multiplier down by a factor of 60 so it converts the value to seconds properly
-            secondsMultiplier /= 60;
+            //take the seconds multiplier up by a factor of 60 so it converts the value to seconds properly
+            secondsMultiplier *= 60;
         }
     } else {
         duration = [durationString integerValue];
