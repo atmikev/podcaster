@@ -19,7 +19,7 @@
         <relationship name="episodes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TMSubscribedEpisode" inverseName="subscribedPodcast" inverseEntity="TMSubscribedEpisode" syncable="YES"/>
     </entity>
     <elements>
-        <element name="TMSubscribedEpisode" positionX="-65" positionY="-9" width="128" height="180"/>
-        <element name="TMSubscribedPodcast" positionX="-272" positionY="-24" width="128" height="118"/>
+        <element name="TMSubscribedEpisode" positionX="-65" positionY="-9" width="128" height="178"/>
+        <element name="TMSubscribedPodcast" positionX="-324" positionY="-72" width="128" height="118"/>
     </elements>
 </model>

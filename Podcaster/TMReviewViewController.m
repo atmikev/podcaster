@@ -39,7 +39,6 @@ static NSString * const kCommentTextViewDefaultText = @"What did you think?";
     //setup rating view
     [self setupRatingView];
     
-    
     //setup episode section
     self.podcastImageView.image = self.episode.podcast.podcastImage;
     self.episodeTitleLabel.text = self.episode.title;
@@ -50,14 +49,7 @@ static NSString * const kCommentTextViewDefaultText = @"What did you think?";
     
     //track page name and associated info
     [PFAnalytics trackEvent:@"startedReview" dimensions:[self dimensions]];
-    
-    FBSDKShareButton *shareButton = [[FBSDKShareButton alloc] init];
-    FBSDKShareLinkContent *content = [[FBSDKShareLinkContent alloc] init];
-    
-    
-    CGPoint point = CGPointMake(100, 500);
-    shareButton.center = point;
-    [self.view addSubview:shareButton];
+
 }
 
 - (void)updateViewConstraints {

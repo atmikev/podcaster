@@ -12,6 +12,7 @@
 @class TMPodcast;
 
 @protocol TMPodcastEpisodeHeaderProtocol;
+@protocol TMPodcastDelegate;
 
 @interface TMPodcastEpisodeHeaderTableViewCell : UITableViewCell
 
@@ -19,9 +20,10 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UITextView *descriptionTextView;
 @property (weak, nonatomic) IBOutlet UIButton *subscribeButton;
+@property (weak, nonatomic) IBOutlet UILabel *subscribedLabel;
 @property (weak, nonatomic) id<TMPodcastSubscriptionDelegate> subscriptionDelegate;
 
-- (void)setupCellWithPodcast:(TMPodcast *)podcast;
+- (void)setupCellWithPodcast:(id<TMPodcastDelegate>)podcast;
 
 - (IBAction)subscribeButtonHandler:(id)sender;
 

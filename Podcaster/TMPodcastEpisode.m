@@ -64,7 +64,7 @@
 }
 
 + (NSNumber *)durationFromDurationString:(NSString *)durationString {
-    //this can come back as in hh:mm:ss or as the total number of seconds, so use a scanner to differentiate. fuckin idiots.
+    //this can come back as in hh:mm:ss, mm:ss, or as the total number of seconds, so use a scanner to differentiate. idiots.
     
     //reverse the string so we start with seconds
     NSTimeInterval duration = 0;

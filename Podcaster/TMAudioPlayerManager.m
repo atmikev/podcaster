@@ -90,23 +90,33 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 }
 
 - (void)play {
-    [self.audioPlayer play];
-    
-    //update isPlaying
-    self.isPlaying = YES;
-    
-    //start the timer to monitor stuff
-    [self startMonitoringAudioTime];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //pay attention to when the player has reached the end to let our owner know
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(itemDidFinishPlaying:)
-                                                     name:AVPlayerItemDidPlayToEndTimeNotification
-                                                   object:self.playerItem];
 
-    });
+    NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
     
+    CMTime startPlayingTime = CMTimeMake(lastPlayedTime, 1);
+    
+    [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
+        if (finished) {
+            
+            [self.audioPlayer play];
+            
+            //update the isPlaying value
+            self.isPlaying = YES;
+            
+            //start the timer to monitor stuff
+            [self startMonitoringAudioTime];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //pay attention to when the player has reached the end to let our owner know
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(itemDidFinishPlaying:)
+                                                             name:AVPlayerItemDidPlayToEndTimeNotification
+                                                           object:self.playerItem];
+                
+            });
+
+        }
+    }];
 
 }
 
@@ -167,7 +177,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (NSString *)formattedTimeForNSTimeInterval:(NSTimeInterval)interval {
     NSInteger minutes = floor(interval/60);
     NSInteger seconds = (int)(interval)%60;
-    NSString *formattedString = [NSString stringWithFormat:@"%li:%.2li", (long)minutes, seconds];
+    NSString *formattedString = [NSString stringWithFormat:@"%li:%.2li", (long)minutes, (long)seconds];
     
     return formattedString;
 }
@@ -183,6 +193,9 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     
     //update isPlaying
     self.isPlaying = NO;
+    
+    //set the lastPlayedTime back to 0
+    self.episode.lastPlayLocation = @(0);
     
     //tell the delegate we're done
     [self.delegate didFinishPlaying];

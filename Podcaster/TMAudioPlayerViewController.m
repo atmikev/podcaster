@@ -61,6 +61,12 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     //store the custom navigation controller
     self.navController = (TMNavigationController *)self.navigationController;
     
+    //If this is the first time this is being played,
+    //populate the lastPlayedLocation variable
+    if (self.episode.lastPlayLocation == nil) {
+        self.episode.lastPlayLocation = @(0);
+    }
+    
     //start the episode
     [self playAudio];
     

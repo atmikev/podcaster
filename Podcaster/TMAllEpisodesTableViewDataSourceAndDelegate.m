@@ -10,7 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "TMSelectPodcastProtocol.h"
 #import "TMPodcastTableViewCell.h"
-#import "TMPodcast.h"
+#import "TMSubscribedPodcast.h"
 #import "TMPodcastProtocol.h"
 
 @interface TMAllEpisodesTableViewDataSourceAndDelegate ()
@@ -46,7 +46,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TMPodcastTableViewCell *cell = (TMPodcastTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kPodcastCellReuseIdentifier forIndexPath:indexPath];
     
-    TMPodcast *podcast = [self.subscribedPodcasts objectAtIndex:indexPath.row];
+    TMSubscribedPodcast *podcast = [self.subscribedPodcasts objectAtIndex:indexPath.row];
     
     cell.titleLabel.text = podcast.title;
     
@@ -65,7 +65,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    TMPodcast *podcast = [self.subscribedPodcasts objectAtIndex:indexPath.row];
+    TMSubscribedPodcast *podcast = [self.subscribedPodcasts objectAtIndex:indexPath.row];
     [self.delegate didSelectPodcast:podcast];
 }
 

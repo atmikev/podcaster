@@ -213,7 +213,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     if ([segue.identifier isEqualToString:kEpisodesViewControllerSegue]) {
         TMPodcastEpisodesTableViewController *vc = (TMPodcastEpisodesTableViewController *)segue.destinationViewController;
         vc.managedObjectContext = self.managedObjectContext;
-        vc.podcast = (TMPodcast *)self.selectedItem;
+        vc.podcast = (id<TMPodcastDelegate>) self.selectedItem;
     } else if ([segue.identifier isEqualToString:kAudioPlayerViewControllerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)segue.destinationViewController;
         vc.episode = (TMPodcastEpisode *)self.selectedItem;
@@ -260,7 +260,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 
 #pragma TMSelectPodcastProtocol methods
 
-- (void)didSelectPodcast:(TMPodcast *)podcast {
+- (void)didSelectPodcast:(TMSubscribedPodcast *)podcast {
     self.selectedItem = podcast;
     [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
