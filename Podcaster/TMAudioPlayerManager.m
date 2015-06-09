@@ -42,8 +42,14 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (AVPlayer *)audioPlayer {
     if (!_audioPlayer) {
         _audioPlayer = [[AVPlayer alloc] init];
+        
+        //KVO on AVPlayerItemStatusReadyToPlay to let our delegate know when we can show the play button
+        [_audioPlayer addObserver:self
+                       forKeyPath:@"status"
+                          options:(NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew)
+                          context:nil];
     }
-
+    
     return _audioPlayer;
 }
 
@@ -89,34 +95,56 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     
 }
 
+- (void)readyToPlay {
+    //let our delegate know we're ready to play
+    [self.delegate readyToPlay];
+}
+
 - (void)play {
 
-    NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
+    [self.audioPlayer play];
     
-    CMTime startPlayingTime = CMTimeMake(lastPlayedTime, 1);
+    //update the isPlaying value
+    self.isPlaying = YES;
     
-    [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
-        if (finished) {
-            
-            [self.audioPlayer play];
-            
-            //update the isPlaying value
-            self.isPlaying = YES;
-            
-            //start the timer to monitor stuff
-            [self startMonitoringAudioTime];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //pay attention to when the player has reached the end to let our owner know
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(itemDidFinishPlaying:)
-                                                             name:AVPlayerItemDidPlayToEndTimeNotification
-                                                           object:self.playerItem];
-                
-            });
-
-        }
-    }];
+    //start the timer to monitor stuff
+    [self startMonitoringAudioTime];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //pay attention to when the player has reached the end to let our owner know
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFinishPlaying:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:self.playerItem];
+        
+    });
+    
+//    NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
+//    
+//    CMTime startPlayingTime = CMTimeMake(lastPlayedTime, 1);
+//    
+//    [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
+//        if (finished) {
+//            
+//            [self.audioPlayer play];
+//            
+//            //update the isPlaying value
+//            self.isPlaying = YES;
+//            
+//            //start the timer to monitor stuff
+//            [self startMonitoringAudioTime];
+//            
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                //pay attention to when the player has reached the end to let our owner know
+//                [[NSNotificationCenter defaultCenter] addObserver:self
+//                                                         selector:@selector(itemDidFinishPlaying:)
+//                                                             name:AVPlayerItemDidPlayToEndTimeNotification
+//                                                           object:self.playerItem];
+//                
+//            });
+//
+//        }
+//    }];
 
 }
 
@@ -205,6 +233,16 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 }
 
 #pragma mark - Marks methods
+
+- (NSTimeInterval)currentTime {
+    NSTimeInterval currentTime = CMTimeGetSeconds(self.playerItem.currentTime);
+    return currentTime;
+}
+
+- (NSTimeInterval)duration {
+    NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
+    return duration;
+}
 
 - (void)startMonitoringAudioTime {
     if (!self.marksTimer) {
@@ -295,6 +333,8 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     }
 }
 
+#pragma mark - KVO
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     
     if (object == self.audioPlayer && [keyPath isEqualToString:@"status"]) {
@@ -302,21 +342,14 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
             NSLog(@"AVPlayer Failed");
         } else if (self.audioPlayer.status == AVPlayerStatusReadyToPlay) {
             NSLog(@"AVPlayerStatusReadyToPlay");
+            [self readyToPlay];
         } else if (self.audioPlayer.status == AVPlayerItemStatusUnknown) {
             NSLog(@"AVPlayer Unknown");
         }
     }
 }
 
-- (NSTimeInterval)currentTime {
-    NSTimeInterval currentTime = CMTimeGetSeconds(self.playerItem.currentTime);
-    return currentTime;
-}
-
-- (NSTimeInterval)duration {
-    NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
-    return duration;
-}
+#pragma mark - Analytics Dimensions
 
 - (NSDictionary *)playPauseDimensions {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];

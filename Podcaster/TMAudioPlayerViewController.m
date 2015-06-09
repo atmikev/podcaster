@@ -67,8 +67,8 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
         self.episode.lastPlayLocation = @(0);
     }
     
-    //start the episode
-    [self playAudio];
+    self.playPauseButton.enabled = NO;
+    self.playPauseButton.alpha = 0.5;
     
     //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
     self.navigationController.interactivePopGestureRecognizer.delegate = self;
@@ -189,6 +189,15 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 - (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value {
     self.timeElapsedLabel.text = elapsedTime;
     self.timeSlider.value = value;
+}
+
+- (void)readyToPlay {
+    
+    self.playPauseButton.enabled = YES;
+    self.playPauseButton.alpha = 1.0;
+    
+    //start the episode
+    [self playAudio];
 }
 
 - (void)didFinishPlaying {

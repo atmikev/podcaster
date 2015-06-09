@@ -13,6 +13,7 @@
 
 @protocol TMAudioPlayerManagerDelegate <NSObject>
 
+- (void)readyToPlay;
 - (void)didFinishPlaying;
 - (void)displayMark:(TMMark *)mark;
 - (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value;
