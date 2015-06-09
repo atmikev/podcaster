@@ -7,9 +7,10 @@
 //
 
 @class TMSubscribedPodcast;
+@protocol TMPodcastDelegate;
 
 @protocol TMSelectPodcastDelegate<NSObject>
 
-- (void)didSelectPodcast:(TMSubscribedPodcast *)podcast;
+- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast;
 
 @end

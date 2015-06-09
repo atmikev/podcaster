@@ -36,6 +36,8 @@ static NSString * const kCommentTextViewDefaultText = @"What did you think?";
 @implementation TMReviewViewController
 
 - (void)viewDidLoad {
+    [super viewDidLoad];
+    
     //setup rating view
     [self setupRatingView];
     

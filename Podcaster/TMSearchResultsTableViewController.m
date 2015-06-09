@@ -39,10 +39,8 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
     TMPodcast *podcast = [self.podcastsArray objectAtIndex:indexPath.row];
     [self.delegate didSelectPodcast:podcast];
-    
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -132,7 +132,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     //store the indexPath we're downloading
     self.downloadingIndex = indexPath;
     
-    //get the episode download link
+    //get the episode
     TMPodcastEpisode *episode = [self.episodes objectAtIndex:indexPath.row];
     
 //    if (episode.fileLocation != nil) {
@@ -181,13 +181,12 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    
+
     if ([[segue identifier] isEqualToString:kAudioPlayerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)[segue destinationViewController];
         vc.episode = self.episodeToPlay;
         vc.podcastImage = self.podcast.podcastImage;
+
     }
 }
 

@@ -218,7 +218,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="l7B-UJ-BXi"/>
                     <connections>
-                        <segue destination="NVZ-UN-u3u" kind="presentation" identifier="audioPlayerSegue" id="KdK-nV-vnK"/>
+                        <segue destination="NVZ-UN-u3u" kind="show" identifier="audioPlayerSegue" id="KdK-nV-vnK"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="WKJ-zu-jRk" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1011,6 +1011,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="06K-lx-mmL"/>
-        <segue reference="L3R-qT-38v"/>
+        <segue reference="KdK-nV-vnK"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -260,7 +260,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 
 #pragma TMSelectPodcastProtocol methods
 
-- (void)didSelectPodcast:(TMSubscribedPodcast *)podcast {
+- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast {
     self.selectedItem = podcast;
     [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
