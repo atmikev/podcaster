@@ -23,6 +23,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 @property (strong, nonatomic) NSTimer *marksTimer;
 @property (strong, nonatomic) NSMutableArray *marksArray;
 @property (assign, nonatomic, readwrite) BOOL isPlaying;
+@property (assign, nonatomic, readwrite) BOOL isReadyToPlay;
 @property (assign, nonatomic, readwrite) NSTimeInterval currentTime;
 @property (assign, nonatomic, readwrite) NSTimeInterval duration;
 
@@ -96,8 +97,8 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 }
 
 - (void)readyToPlay {
-    //let our delegate know we're ready to play
-    [self.delegate readyToPlay];
+    //let everyone know we're ready to play
+    self.isReadyToPlay = YES;
 }
 
 - (void)play {

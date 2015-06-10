@@ -63,7 +63,7 @@ static NSString * const kCommentTextViewDefaultText = @"What did you think?";
                             @"imageView":self.podcastImageView,
                             @"seperatorView":self.seperatorView,
                             @"podcastLabel":self.podcastTitleLabel};
-    NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[imageView]-margin-[ratingView]" options:0 metrics:metrics views:views];
+    NSArray *horizontalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[imageView]-margin-[ratingView]-margin-|" options:0 metrics:metrics views:views];
     NSArray *verticalConstraints = [NSLayoutConstraint constraintsWithVisualFormat:@"V:[podcastLabel]-margin-[ratingView]-margin-[seperatorView]" options:0 metrics:metrics views:views];
     
     [self.view addConstraints:horizontalConstraints];

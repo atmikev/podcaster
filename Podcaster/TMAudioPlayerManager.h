@@ -12,8 +12,6 @@
 @class TMPodcastEpisode;
 
 @protocol TMAudioPlayerManagerDelegate <NSObject>
-
-- (void)readyToPlay;
 - (void)didFinishPlaying;
 - (void)displayMark:(TMMark *)mark;
 - (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value;
@@ -25,6 +23,7 @@
 @property (weak, nonatomic) id<TMAudioPlayerManagerDelegate> delegate;
 @property (strong, nonatomic) TMPodcastEpisode *episode;
 @property (assign, nonatomic, readonly) BOOL isPlaying;
+@property (assign, nonatomic, readonly) BOOL isReadyToPlay;
 @property (assign, nonatomic, readonly) NSTimeInterval currentTime;
 @property (assign, nonatomic, readonly) NSTimeInterval duration;
 

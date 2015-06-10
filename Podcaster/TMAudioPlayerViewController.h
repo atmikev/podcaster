@@ -7,11 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TMPodcastEpisode.h"
+
+@protocol TMPodcastEpisodeDelegate;
 
 @interface TMAudioPlayerViewController : UIViewController
 
-@property (strong, nonatomic) TMPodcastEpisode *episode;
+@property (strong, nonatomic) id<TMPodcastEpisodeDelegate> episode;
 @property (strong, nonatomic) UIImage *podcastImage;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end

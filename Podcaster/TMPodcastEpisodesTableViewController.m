@@ -186,7 +186,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)[segue destinationViewController];
         vc.episode = self.episodeToPlay;
         vc.podcastImage = self.podcast.podcastImage;
-
+        vc.managedObjectContext = self.managedObjectContext;
     }
 }
 

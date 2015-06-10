@@ -26,6 +26,7 @@
 - (BOOL)shouldShowNowPlayingOnViewController:(UIViewController *)viewController {
     return  self.currentAudioPlayerViewController != nil
             && self.currentAudioPlayerViewController != viewController
+            && ![viewController isKindOfClass:[TMAudioPlayerViewController class]]
             && ![viewController isKindOfClass:[TMReviewViewController class]];
 }
 
@@ -63,7 +64,5 @@
     [self showNowPlayingButtonIfNecessaryOnViewController:[self topViewController]];
     return viewController;
 }
-
-
 
 @end
