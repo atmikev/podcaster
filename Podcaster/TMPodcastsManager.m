@@ -13,6 +13,7 @@
 #import "TMPodcast.h"
 #import "TMPodcastsManager.h"
 #import "TMiTunesResponse.h"
+#import "TMBrowsePodcastResponse.h"
 
 @interface TMPodcastsManager ()<NSXMLParserDelegate>
 
@@ -27,15 +28,17 @@
                              successBlock:(void(^)(NSArray *podcasts))successBlock
                           andFailureBlock:(void(^)(NSError *error))failureBlock {
     
-    if (self.searchTask) {
-        //make sure we cancel the last task if we're starting a new one
-        [self.searchTask cancel];
-    }
+   
     
     //escape the string properly
     searchString = [searchString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSString *urlString = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&entity=podcast&limit=%li",searchString, (long)maxResults];
+    
+    if (self.searchTask) {
+        //make sure we cancel the last task if we're starting a new one
+        [self.searchTask cancel];
+    }
     self.searchTask = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:urlString] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error != nil && failureBlock) {
@@ -71,6 +74,42 @@
     }];
     
     [self.searchTask resume];
+}
+
+- (void)podcastFromBrowsePodcastResponse:(TMBrowsePodcastResponse *)browsePodcastResponse
+                        withSuccessBlock:(void (^)(TMPodcast *))successBlock
+                         andFailureBlock:(void (^)(NSError *))failureBlock {
+    //probably should do this by podcast ID, but searching by the string that came back in the Browse response for now
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", browsePodcastResponse.podcastID]];
+    
+    [[[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+        if (error != nil && failureBlock) {
+                failureBlock(error);
+        } else {
+            
+            if (data) {
+                NSError *jsonError;
+                NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+                if (jsonError != nil && failureBlock) {
+                    failureBlock(error);
+                } else {
+                    NSDictionary *resultDictionary = [[responseDictionary objectForKey:@"results"] firstObject];
+                    
+                    TMiTunesResponse *iTunesResponse = [TMiTunesResponse iTunesResponseFromDictionary:resultDictionary];
+                    TMPodcast *podcast = [TMPodcast initWithiTunesResponse:iTunesResponse];
+
+                    if (successBlock) {
+                        successBlock(podcast);
+                    }
+                }
+            }
+            
+        }
+    }] resume];
+
+    
 }
 
 - (void)topPodcastsWithSuccessBlock:(void(^)(NSArray *podcasts))successBlock
