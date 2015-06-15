@@ -73,8 +73,15 @@ static NSString * const kTopAudioPodcastsKey = @"topAudioPodcasts";
 - (void)retrieveTopPodcastsForGenre:(TMGenre *)genre
                 withSuccessBlock:(void(^)(NSArray *podcastsArray))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock {
+    [self retrieveBrowseModelPodcastsWithURL:genre.urlString withSuccessBlock:successBlock withFailureBlock:failureBlock];
+}
+
+- (void)retrieveBrowseModelPodcastsWithURL:(NSString *)urlString
+                          withSuccessBlock:(void(^)(NSArray *podcastsArray))successBlock
+                          withFailureBlock:(void(^)(NSError *error))failureBlock {
+
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]];
-    NSURL *url = [NSURL URLWithString:[genre urlString]];
+    NSURL *url = [NSURL URLWithString:urlString];
     [[session dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         if (error && failureBlock) {
             failureBlock(error);
@@ -97,9 +104,12 @@ static NSString * const kTopAudioPodcastsKey = @"topAudioPodcasts";
             TMBrowsePodcastResponse *browseResponse = [TMBrowsePodcastResponse initWithDictionary:browseDictionary];
             
             [podcastsManager podcastFromBrowsePodcastResponse:browseResponse withSuccessBlock:^(TMPodcast *podcast) {
-                //increment the count
+
+                //store the image170URL
+                podcast.image170URL = [NSURL URLWithString:browseResponse.image170URLString];
                 [podcastsMutableArray addObject:podcast];
                 
+                //increment the count
                 count++;
                 if (count == total && successBlock) {
                     successBlock([podcastsMutableArray copy]);
@@ -113,10 +123,16 @@ static NSString * const kTopAudioPodcastsKey = @"topAudioPodcasts";
                 }
             }];
         }
-    
+        
     }] resume];
 }
 
-
+- (void)retrieveTopPodcastsWithCount:(NSInteger)maxNumPodcasts
+                    withSuccessBlock:(void(^)(NSArray *podcastsArray))successBlock
+                    withFailureBlock:(void(^)(NSError *error))failureBlock {
+    
+    NSString *urlString = [NSString stringWithFormat:@"https://itunes.apple.com/us/rss/toppodcasts/limit=%ld/explicit=true/json", (long)maxNumPodcasts];
+    [self retrieveBrowseModelPodcastsWithURL:urlString withSuccessBlock:successBlock withFailureBlock:failureBlock];
+}
 
 @end

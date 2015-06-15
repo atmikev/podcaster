@@ -7,19 +7,27 @@
 //
 
 #import "TMBrowsePodcastsTableViewController.h"
+#import "AppDelegate.h"
 #import "TMBrowsePodcastsCell.h"
+#import "TMBrowsePopularPodcastCell.h"
 #import "TMPodcast.h"
 #import "TMBrowsePodcastsManager.h"
 #import "TMGenre.h"
 #import "TMDownloadManager.h"
 #import "TMPodcastsManager.h"
+#import "TMBrowsePodcastButton.h"
+#import "TMPodcastEpisodesTableViewController.h"
 
-static const NSInteger kImageViewSide = 100;
+static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
 
 @interface TMBrowsePodcastsTableViewController ()
 
 @property (strong, nonatomic) TMBrowsePodcastsManager *browseManager;
 @property (strong, nonatomic) NSMutableArray *genresMutableArray;
+@property (assign, nonatomic) NSInteger totalGenresCount;
+@property (strong, nonatomic) TMGenre *popularGenre;
+@property (strong, nonatomic) TMPodcast *selectedPodcast;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
 
@@ -28,15 +36,35 @@ static const NSInteger kImageViewSide = 100;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //poor form again, come back to this
+    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+    self.managedObjectContext = [appDelegate managedObjectContext];
+    
     self.browseManager = [TMBrowsePodcastsManager new];
     self.genresMutableArray = [NSMutableArray new];
     
     [self retrieveGenres];
+    [self retrievePopularPodcasts];
 }
 
 - (void)retrieveGenres {
+
     [self.browseManager retrieveGenresDictionaryWithSuccessBlock:^(NSArray *genresArray) {
         
+        self.totalGenresCount = genresArray.count;
+        
+        //order the array by genre name
+        NSSortDescriptor *sortDescriptior = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
+        NSMutableArray *orderedMutableArray = [[genresArray sortedArrayUsingDescriptors:@[sortDescriptior]] mutableCopy];
+        
+        //create the popular array and insert it in the first spot to make sure its up top
+        //create a fake genre to work with the rest of the code
+        self.popularGenre = [TMGenre new];
+        self.popularGenre.name = @"Popular";
+        
+        [orderedMutableArray insertObject:self.popularGenre atIndex:0];
+        self.genresMutableArray = orderedMutableArray;
+
         //get all the podcasts
         for (TMGenre *genre in genresArray) {
             [self retrievePodcastsForGenre:genre];
@@ -49,18 +77,33 @@ static const NSInteger kImageViewSide = 100;
 
 - (void)retrievePodcastsForGenre:(TMGenre *)genre {
     [self.browseManager retrieveTopPodcastsForGenre:genre withSuccessBlock:^(NSArray *podcastsArray) {
-
+        
         //store the podcasts on the genre
         genre.podcasts = podcastsArray;
-        [self.genresMutableArray addObject:genre];
         
-        //refresh the table
+        //refresh the table on the main thread
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.tableView reloadData];
         });
         
     } andFailureBlock:^(NSError *error) {
-        NSLog(@"Error getting top podcasts:%@", error.debugDescription);
+        NSLog(@"Error getting top genre podcasts:%@", error.debugDescription);
+    }];
+}
+
+- (void)retrievePopularPodcasts {
+    [self.browseManager retrieveTopPodcastsWithCount:25 withSuccessBlock:^(NSArray *podcastsArray) {
+       
+        //store the podcasts on the popularGenre
+        self.popularGenre.podcasts = podcastsArray;
+        
+        //refresh the table on the main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+        
+    } withFailureBlock:^(NSError *error) {
+        NSLog(@"Error getting popular podcasts:%@", error.debugDescription);
     }];
 }
 
@@ -76,24 +119,59 @@ static const NSInteger kImageViewSide = 100;
     //add the new images
     NSInteger x = 0;
     for (TMPodcast *podcast in genre.podcasts) {
-        UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(x, 0, kImageViewSide, kImageViewSide)];
-        
+        //fit scrollview's height
+        NSInteger side = cell.scrollView.frame.size.height;
+        TMBrowsePodcastButton *button = [[TMBrowsePodcastButton alloc] initWithFrame:CGRectMake(x, 0, side, side)];
+        button.imageView.contentMode = UIViewContentModeCenter;
+
+        //store the podcast on the button so when its tapped we know where to navigate to
+        button.podcast = podcast;
+
+        //add the button handler
+        [button addTarget:self action:@selector(podcastButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
+
         if (podcast.podcastImage == nil) {
-            //download the image
-            [TMDownloadManager downloadImageAtURL:podcast.imageURL withCompletionBlock:^(UIImage *image) {
+            NSURL *imageURL = nil;
+            
+            //this is gross. do it better
+            if ([cell isKindOfClass:[TMBrowsePopularPodcastCell class]]) {
+                imageURL = podcast.image600URL;
+            } else if ([cell isKindOfClass:[TMBrowsePodcastsCell class]]) {
+                imageURL = podcast.image170URL;
+            }
+            
+            [TMDownloadManager downloadImageAtURL:imageURL withCompletionBlock:^(UIImage *image) {
+                //store whatever image we downloaded as this podcast object's image
                 podcast.podcastImage = image;
-                imageView.image = podcast.podcastImage;
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [button setBackgroundImage:podcast.podcastImage forState:UIControlStateNormal];
+                });
             }];
         } else {
-            imageView.image = podcast.podcastImage;
+            [button setBackgroundImage:podcast.podcastImage forState:UIControlStateNormal];
         }
         
-        [cell.scrollView addSubview:imageView];
-        x += kImageViewSide;
+        [cell.scrollView addSubview:button];
+        x += side;
     }
     
     NSInteger width = x;
     cell.scrollView.contentSize = CGSizeMake(width, 0);
+}
+
+- (void)podcastButtonHandler:(id)sender {
+    TMBrowsePodcastButton *button = (TMBrowsePodcastButton *)sender;
+    //maybe sender IS meant to handle this sort of stuff?
+    [self performSegueWithIdentifier:kPodcastEpisodesSegue sender:button];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:kPodcastEpisodesSegue]) {
+        TMPodcastEpisodesTableViewController *vc = segue.destinationViewController;
+        TMBrowsePodcastButton *button = (TMBrowsePodcastButton *)sender;
+        vc.podcast = button.podcast;
+        vc.managedObjectContext = self.managedObjectContext;
+    }
 }
 
 #pragma mark - Table view datasource
@@ -109,22 +187,28 @@ static const NSInteger kImageViewSide = 100;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    TMBrowsePodcastsCell *cell = (TMBrowsePodcastsCell *)[tableView dequeueReusableCellWithIdentifier:kTMBrowsePodcastsCellIdentifier forIndexPath:indexPath];
+    //not happy with this implementation at all, but its been a long day and I need to keep moving
+    TMBrowsePodcastsCell *cellToReturn = nil;
+
+    if (indexPath.row == 0) {
+        //popular podcasts row
+        TMBrowsePopularPodcastCell *cell = (TMBrowsePopularPodcastCell *)[tableView dequeueReusableCellWithIdentifier:kTMBrowsePopularPodcastsCellIdentifier forIndexPath:indexPath];
+        cellToReturn = cell;
+    } else {
+        TMBrowsePodcastsCell *cell = (TMBrowsePodcastsCell *)[tableView dequeueReusableCellWithIdentifier:kTMBrowsePodcastsCellIdentifier forIndexPath:indexPath];
+        cellToReturn = cell;
+    }
     
     TMGenre *genre = [self.genresMutableArray objectAtIndex:indexPath.row];
-    [self setupBrowsePocastsCell:cell withGenre:genre];
+    [self setupBrowsePocastsCell:cellToReturn withGenre:genre];
 
-    return cell;
+    return cellToReturn;
 }
 
 #pragma mark - Table view delegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 138;
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    return indexPath.row == 0 ? 208 : 138;
 }
 
 @end

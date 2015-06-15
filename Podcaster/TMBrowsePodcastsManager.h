@@ -21,4 +21,8 @@
                    withSuccessBlock:(void(^)(NSArray *podcastsArray))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock;
 
+//Gets the top podcasts with a max count of maxNumPodcasts
+- (void)retrieveTopPodcastsWithCount:(NSInteger)maxNumPodcasts
+                    withSuccessBlock:(void(^)(NSArray *podcastsArray))successBlock
+                    withFailureBlock:(void(^)(NSError *error))failureBlock;
 @end

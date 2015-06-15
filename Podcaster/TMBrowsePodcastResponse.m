@@ -21,11 +21,11 @@
         NSString *attribute = imageDictionary[@"attributes"][@"height"];
         NSString *url = imageDictionary[@"label"];
         if ([attribute isEqualToString:@"55"]) {
-            response.image55URL = url;
+            response.image55URLString = url;
         } else if ([attribute isEqualToString:@"60"]) {
-            response.image60URL = url;
+            response.image60URLString = url;
         } else if ([attribute isEqualToString:@"170"]) {
-            response.image170URL = url;
+            response.image170URLString = url;
         }
     }
     

@@ -20,7 +20,11 @@
 @property (strong, nonatomic) NSString *author;
 @property (strong, nonatomic) NSString *category;
 @property (strong, nonatomic) NSURL *imageURL;
+@property (strong, nonatomic) NSURL *image170URL;
+@property (strong, nonatomic) NSURL *image600URL;
 @property (strong, nonatomic) UIImage *podcastImage;
+@property (strong, nonatomic) UIImage *podcast170Image;
+@property (strong, nonatomic) UIImage *podcast600Image;
 @property (strong, nonatomic) NSSet *episodes;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;

@@ -33,7 +33,8 @@
     podcast.feedURLString = [iTunesResponse.feedUrl absoluteString];
     podcast.author = iTunesResponse.artistName;
     podcast.imageURL = iTunesResponse.artworkUrl100;
-
+    podcast.image600URL = iTunesResponse.artworkUrl600;
+    
     return podcast;
 }
 

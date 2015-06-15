@@ -12,9 +12,9 @@
 
 @property (strong, nonatomic) NSString *name;
 @property (strong, nonatomic) NSString *podcastID;
-@property (strong, nonatomic) NSString *image55URL;
-@property (strong, nonatomic) NSString *image60URL;
-@property (strong, nonatomic) NSString *image170URL;
+@property (strong, nonatomic) NSString *image55URLString;
+@property (strong, nonatomic) NSString *image60URLString;
+@property (strong, nonatomic) NSString *image170URLString;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 
