@@ -950,11 +950,11 @@
             </objects>
             <point key="canvasLocation" x="1344" y="-2015.25"/>
         </scene>
-        <!--Item-->
+        <!--My Podcasts-->
         <scene sceneID="4oD-tW-MJD">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rmb-z2-z4K" customClass="TMNavigationController" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="gts-DA-ga0"/>
+                    <tabBarItem key="tabBarItem" title="My Podcasts" id="gts-DA-ga0"/>
                     <toolbarItems/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aLo-9x-aeS">
@@ -1229,11 +1229,11 @@
             </objects>
             <point key="canvasLocation" x="1636.5" y="-1180.5"/>
         </scene>
-        <!--Item-->
+        <!--Navigation Controller-->
         <scene sceneID="1C6-hY-otE">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="mCc-JT-6XR" customClass="TMNavigationController" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="x9U-e5-4g1"/>
+                    <tabBarItem key="tabBarItem" systemItem="search" id="x9U-e5-4g1"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="rpV-Gd-0Ru">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
