@@ -44,7 +44,6 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
     self.genresMutableArray = [NSMutableArray new];
     
     [self retrieveGenres];
-    [self retrievePopularPodcasts];
 }
 
 - (void)retrieveGenres {
@@ -64,9 +63,9 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
         
         [orderedMutableArray insertObject:self.popularGenre atIndex:0];
         self.genresMutableArray = orderedMutableArray;
-
+        
         //get all the podcasts
-        for (TMGenre *genre in genresArray) {
+        for (TMGenre *genre in self.genresMutableArray) {
             [self retrievePodcastsForGenre:genre];
         }
         
@@ -91,22 +90,6 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
     }];
 }
 
-- (void)retrievePopularPodcasts {
-    [self.browseManager retrieveTopPodcastsWithCount:25 withSuccessBlock:^(NSArray *podcastsArray) {
-       
-        //store the podcasts on the popularGenre
-        self.popularGenre.podcasts = podcastsArray;
-        
-        //refresh the table on the main thread
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
-        
-    } withFailureBlock:^(NSError *error) {
-        NSLog(@"Error getting popular podcasts:%@", error.debugDescription);
-    }];
-}
-
 - (void)setupBrowsePocastsCell:(TMBrowsePodcastsCell *)cell withGenre:(TMGenre *)genre {
     //remove all the existing subviews in the scrollview
     for (UIView *view in [cell.scrollView subviews]) {
@@ -119,10 +102,13 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
     //add the new images
     NSInteger x = 0;
     for (TMPodcast *podcast in genre.podcasts) {
+        
         //fit scrollview's height
         NSInteger side = cell.scrollView.frame.size.height;
+       
+        //make the button
         TMBrowsePodcastButton *button = [[TMBrowsePodcastButton alloc] initWithFrame:CGRectMake(x, 0, side, side)];
-        button.imageView.contentMode = UIViewContentModeCenter;
+        button.imageView.contentMode = UIViewContentModeScaleAspectFill;
 
         //store the podcast on the button so when its tapped we know where to navigate to
         button.podcast = podcast;
@@ -130,24 +116,7 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
         //add the button handler
         [button addTarget:self action:@selector(podcastButtonHandler:) forControlEvents:UIControlEventTouchUpInside];
 
-        if (podcast.podcastImage == nil) {
-            NSURL *imageURL = nil;
-            
-            //this is gross. do it better
-            if ([cell isKindOfClass:[TMBrowsePopularPodcastCell class]]) {
-                imageURL = podcast.image600URL;
-            } else if ([cell isKindOfClass:[TMBrowsePodcastsCell class]]) {
-                imageURL = podcast.image170URL;
-            }
-            
-            [TMDownloadManager downloadImageAtURL:imageURL withCompletionBlock:^(UIImage *image) {
-                //store whatever image we downloaded as this podcast object's image
-                podcast.podcastImage = image;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [button setBackgroundImage:podcast.podcastImage forState:UIControlStateNormal];
-                });
-            }];
-        } else {
+        if (podcast.podcastImage) {
             [button setBackgroundImage:podcast.podcastImage forState:UIControlStateNormal];
         }
         

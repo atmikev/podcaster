@@ -13,6 +13,7 @@
 #import "TMiTunesResponse.h"
 #import "TMBrowsePodcastResponse.h"
 #import "TMPodcastsManager.h"
+#import "TMDownloadManager.h"
 
 static NSString * const kGenresDictionaryURLString = @"http://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres";
 static NSString * const kPodcastGenreID = @"26";
@@ -70,10 +71,65 @@ static NSString * const kTopAudioPodcastsKey = @"topAudioPodcasts";
     return [extractedGenresArray copy];
 }
 
+- (void)retrieveImagesForPodcasts:(NSArray *)podcastsArray withGenre:(TMGenre *)genre andCompletionBlock:(void(^)(NSArray *podcastsArray))successBlock {
+    __block NSInteger count = 0;
+    
+    for (TMPodcast *podcast in podcastsArray) {
+        NSURL *imageURL = nil;
+        
+        //this is gross. do it better
+        if ([genre.name isEqualToString:@"Popular"]) {
+            imageURL = podcast.image600URL;
+        } else {
+            imageURL = podcast.image170URL;
+        }
+        
+        [TMDownloadManager downloadImageAtURL:imageURL withCompletionBlock:^(UIImage *image) {
+            //store whatever image we downloaded as this podcast object's image
+            podcast.podcastImage = image;
+            
+            //call the successBlock if its time
+            count++;
+            if (successBlock && count == podcastsArray.count) {
+                successBlock(podcastsArray);
+            }
+        }];
+        
+    }
+}
+
 - (void)retrieveTopPodcastsForGenre:(TMGenre *)genre
                 withSuccessBlock:(void(^)(NSArray *podcastsArray))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock {
-    [self retrieveBrowseModelPodcastsWithURL:genre.urlString withSuccessBlock:successBlock withFailureBlock:failureBlock];
+   
+    if ([genre.name isEqualToString:@"Popular"]) {
+        //popular genre
+        
+        [self retrieveTopPodcastsWithCount:25
+                          withSuccessBlock:^(NSArray *podcastsArray) {
+            
+            [self retrieveImagesForPodcasts:podcastsArray
+                                  withGenre:genre
+                         andCompletionBlock:successBlock];
+            
+        } withFailureBlock:^(NSError *error) {
+            NSLog(@"Error getting popular podcasts:%@", error.debugDescription);
+        }];
+    } else {
+        //regular genre
+        
+        [self retrieveBrowseModelPodcastsWithURL:genre.urlString
+                                withSuccessBlock:^(NSArray *podcastsArray) {
+                                    
+                                    [self retrieveImagesForPodcasts:podcastsArray
+                                                          withGenre:genre
+                                                 andCompletionBlock:successBlock];
+                                    
+                                } withFailureBlock:failureBlock];
+    }
+    
+    
+    
 }
 
 - (void)retrieveBrowseModelPodcastsWithURL:(NSString *)urlString
