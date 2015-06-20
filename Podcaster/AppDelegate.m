@@ -33,6 +33,9 @@
     
     [self setupAudioSession];
     
+    //set tint color for navbar
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    
     // Initialize Parse.
     [Parse setApplicationId:@"30Bek4Zru3Mo50xFTWDeODOUYfxmaC228JXeQuMC"
                   clientKey:@"AAXcXOIG9y3WqJpYevjpgea8iCYAd9pOwc8UXoOE"];
