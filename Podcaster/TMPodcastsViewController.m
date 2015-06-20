@@ -239,7 +239,7 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     } else if ([segue.identifier isEqualToString:kAudioPlayerViewControllerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)segue.destinationViewController;
         vc.episode = (TMPodcastEpisode *)self.selectedItem;
-        vc.podcastImage = vc.episode.podcast.podcast100Image;
+        vc.podcastImage = vc.episode.podcast.podcastImage;
         vc.managedObjectContext = self.managedObjectContext;
     }
 
