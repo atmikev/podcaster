@@ -27,14 +27,15 @@
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
+static CGFloat const kEpisodeButtonFontHeight = 14;
 
 @interface TMPodcastsViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
 
-@property (weak, nonatomic) IBOutlet UISegmentedControl *episodesSegmentedControl;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIButton *latestEpisodeButton;
+@property (weak, nonatomic) IBOutlet UIButton *allEpisodesButton;
 
 @property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
-@property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) TMLatestEpisodesTableViewDataSourceAndDelegate *latestEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMAllEpisodesTableViewDataSourceAndDelegate *allEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
@@ -42,10 +43,9 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
-//ATM: UGH FIX THIS TOO
 @property (strong, nonatomic) id selectedItem;
 
-- (IBAction)episodesSegmentedControlHandler:(id)sender;
+- (IBAction)episodeButtonsHandler:(UIButton *)senderButton;
 
 @end
 
@@ -59,11 +59,8 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     self.latestEpisodesTableViewDataSourceAndDelegate = [[TMLatestEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
     self.allEpisodesTableViewDataSourceAndDelegate = [[TMAllEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
     
-    [self setupSearchController];
-    
     //start out on the latestEpisodesTableViewDataSource
-    self.tableView.dataSource = self.latestEpisodesTableViewDataSourceAndDelegate;
-    self.tableView.delegate = self.latestEpisodesTableViewDataSourceAndDelegate;
+    [self setNewDataSource:self.latestEpisodesTableViewDataSourceAndDelegate andDelegate:self.latestEpisodesTableViewDataSourceAndDelegate];
     
     //poor form, come back to this
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
@@ -138,25 +135,25 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 
 - (void)setupSearchController {
 
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
-
-    self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
-    self.searchResultsController.delegate = self;
-    
-    self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
-    self.searchController.searchResultsUpdater = self;
-    [self.searchController.searchBar sizeToFit];
-    self.tableView.tableHeaderView = self.searchController.searchBar;
-    
-    // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
-    self.searchController.delegate = self;
-    self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
-    
-    // Search is now just presenting a view controller. As such, normal view controller
-    // presentation semantics apply. Namely that presentation will walk up the view controller
-    // hierarchy until it finds the root view controller or one that defines a presentation context.
-    //
-    self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
+//
+//    self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
+//    self.searchResultsController.delegate = self;
+//    
+//    self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
+//    self.searchController.searchResultsUpdater = self;
+//    [self.searchController.searchBar sizeToFit];
+//    self.tableView.tableHeaderView = self.searchController.searchBar;
+//    
+//    // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
+//    self.searchController.delegate = self;
+//    self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
+//    
+//    // Search is now just presenting a view controller. As such, normal view controller
+//    // presentation semantics apply. Namely that presentation will walk up the view controller
+//    // hierarchy until it finds the root view controller or one that defines a presentation context.
+//    //
+//    self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
 }
 
 - (NSFetchedResultsController *)fetchedResultsController {
@@ -188,6 +185,23 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     
 }
 
+- (void)updateButtonFontsWithSenderButton {
+    //figure out which button should be bolded, and which shouldn't
+    UIButton *otherButton = self.allEpisodesButton;
+    UIButton *selectedButton = self.latestEpisodeButton;
+    if (self.tableView.dataSource == self.allEpisodesTableViewDataSourceAndDelegate) {
+        otherButton = self.latestEpisodeButton;
+        selectedButton = self.allEpisodesButton;
+    }
+    
+    //set the sender button to have a bold fond
+    UIFont *regularFont = [UIFont fontWithName:@"HelveticaNeue-Light" size:kEpisodeButtonFontHeight];
+    UIFont *boldFont = [UIFont fontWithName:@"HelveticaNeue-Bold" size:kEpisodeButtonFontHeight];
+    
+    selectedButton.titleLabel.font = boldFont;
+    otherButton.titleLabel.font = regularFont;
+}
+
 - (void)switchDataSourcesAndDelegates {
     
     id newDataSourceAndDelegate = nil;
@@ -200,10 +214,18 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     }
     
     //set the new datasource and delegate
-    self.tableView.dataSource = (id<UITableViewDataSource>)newDataSourceAndDelegate;
-    self.tableView.delegate = (id<UITableViewDelegate>)newDataSourceAndDelegate;
+    [self setNewDataSource:newDataSourceAndDelegate andDelegate:newDataSourceAndDelegate];
+
+}
+
+- (void)setNewDataSource:(id<UITableViewDataSource>)datasource andDelegate:(id<UITableViewDelegate>)delegate {
+    self.tableView.dataSource = datasource;
+    self.tableView.delegate = delegate;
     
     [self.tableView reloadData];
+    
+    //update the episode button fonts
+    [self updateButtonFontsWithSenderButton];
 }
 
 #pragma mark - Segue stuff
@@ -217,7 +239,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     } else if ([segue.identifier isEqualToString:kAudioPlayerViewControllerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)segue.destinationViewController;
         vc.episode = (TMPodcastEpisode *)self.selectedItem;
-        vc.podcastImage = vc.episode.podcast.podcastImage;
+        vc.podcastImage = vc.episode.podcast.podcast100Image;
         vc.managedObjectContext = self.managedObjectContext;
     }
 
@@ -253,7 +275,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 
 #pragma IBActions
 
-- (void)episodesSegmentedControlHandler:(id)sender {
+- (IBAction)episodeButtonsHandler:(UIButton *)senderButton {
     
     //switch out the data source and reload
     [self switchDataSourcesAndDelegates];
