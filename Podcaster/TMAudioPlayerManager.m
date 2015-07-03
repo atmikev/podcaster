@@ -172,50 +172,33 @@ const NSInteger kSeekInterval = 15;
 }
 
 - (void)play {
+    
+    NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
+    
+    CMTime startPlayingTime = CMTimeMake(lastPlayedTime, 1);
+    
+    [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
+        if (finished) {
+            
+            [self.audioPlayer play];
+            
+            //update the isPlaying value
+            self.isPlaying = YES;
+            
+            //start the timer to monitor stuff
+            [self startMonitoringAudioTime];
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //pay attention to when the player has reached the end to let our owner know
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(itemDidFinishPlaying:)
+                                                             name:AVPlayerItemDidPlayToEndTimeNotification
+                                                           object:self.playerItem];
+                
+            });
 
-    [self.audioPlayer play];
-    
-    //update the isPlaying value
-    self.isPlaying = YES;
-    
-    //start the timer to monitor stuff
-    [self startMonitoringAudioTime];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        //pay attention to when the player has reached the end to let our owner know
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(itemDidFinishPlaying:)
-                                                     name:AVPlayerItemDidPlayToEndTimeNotification
-                                                   object:self.playerItem];
-        
-    });
-    
-//    NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
-//    
-//    CMTime startPlayingTime = CMTimeMake(lastPlayedTime, 1);
-//    
-//    [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
-//        if (finished) {
-//            
-//            [self.audioPlayer play];
-//            
-//            //update the isPlaying value
-//            self.isPlaying = YES;
-//            
-//            //start the timer to monitor stuff
-//            [self startMonitoringAudioTime];
-//            
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                //pay attention to when the player has reached the end to let our owner know
-//                [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                         selector:@selector(itemDidFinishPlaying:)
-//                                                             name:AVPlayerItemDidPlayToEndTimeNotification
-//                                                           object:self.playerItem];
-//                
-//            });
-//
-//        }
-//    }];
+        }
+    }];
 
 }
 
