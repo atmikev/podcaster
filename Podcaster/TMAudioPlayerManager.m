@@ -7,13 +7,15 @@
 //
 
 #import "TMAudioPlayerManager.h"
-#import <AVFoundation/AVFoundation.h>
 #import "TMMark.h"
 #import "TMPodcastEpisode.h"
 #import "TMPodcastProtocol.h"
 #import <Parse/Parse.h>
+@import MediaPlayer;
+@import AVFoundation;
 
 static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
+const NSInteger kSeekInterval = 15;
 
 @interface TMAudioPlayerManager () <AVAudioPlayerDelegate>
 
@@ -26,7 +28,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 @property (assign, nonatomic, readwrite) BOOL isReadyToPlay;
 @property (assign, nonatomic, readwrite) NSTimeInterval currentTime;
 @property (assign, nonatomic, readwrite) NSTimeInterval duration;
-
+@property (strong, nonatomic) NSTimer *seekTimer;
 @end
 
 @implementation TMAudioPlayerManager
@@ -49,9 +51,60 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
                        forKeyPath:@"status"
                           options:(NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew)
                           context:nil];
+        
+        [self registerForRemoteEvents];
     }
     
     return _audioPlayer;
+}
+
+- (void)registerForRemoteEvents {
+
+    //register for remote events
+    MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    
+    //play event
+    [commandCenter.playCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self play];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    //pause event
+    [commandCenter.pauseCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self pause];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    //seek backward event
+    [commandCenter.skipBackwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self seekWithInterval:-kSeekInterval];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+
+    //seek forward event
+    [commandCenter.skipForwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self seekWithInterval:kSeekInterval];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+}
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)receivedEvent {
+    if (receivedEvent.type == UIEventTypeRemoteControl) {
+        
+        switch (receivedEvent.subtype) {
+                
+            case UIEventSubtypeRemoteControlTogglePlayPause:
+                [self play];
+                break;
+                
+            case UIEventSubtypeRemoteControlPause:
+                [self pause];
+                break;
+                
+            default:
+                break;
+        }
+    }
 }
 
 - (void)setEpisode:(TMPodcastEpisode *)episode {
@@ -78,9 +131,26 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
         [self updateDelegateTimeInfo];
     }
     
+    //update the now playing info
+    [self updateNowPlayingInfo];
+    
     //track finished event
     [PFAnalytics trackEvent:@"start" dimensions:[self startFinishDimensions]];
 
+}
+
+- (void)updateNowPlayingInfo {
+    
+    NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+    
+    
+    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:self.episode.podcast.podcastImage];
+    
+    [songInfo setObject:self.episode.title forKey:MPMediaItemPropertyTitle];
+    [songInfo setObject:self.episode.podcast.title forKey:MPMediaItemPropertyArtist];
+    [songInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
+    [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
+    
 }
 
 - (void)setDelegate:(id<TMAudioPlayerManagerDelegate>)delegate {
@@ -157,7 +227,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 
 }
 
-- (void)handlePlayPause {
+- (void)togglePlayPause {
     //Note: Track play/pause analytics here to prevent accidental play/pause tracking caused by seeking
     if ([self isPlaying]) {
         [self pause];
@@ -169,6 +239,44 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
         [PFAnalytics trackEvent:@"play" dimensions:[self playPauseDimensions]];
     }
 }
+
+- (void)startSeekingForwardContinuously {
+    if (self.seekTimer != nil) {
+        [self.seekTimer invalidate];
+    }
+
+    self.seekTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(seekForward)
+                                                    userInfo:nil
+                                                     repeats:YES];
+}
+
+- (void)startSeekingBackwardContinuously {
+    if (self.seekTimer != nil) {
+        [self.seekTimer invalidate];
+    }
+    
+    self.seekTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(seekBackward)
+                                                    userInfo:nil
+                                                     repeats:YES];
+
+}
+
+- (void)stopSeekingContinuously {
+    [self.seekTimer invalidate];
+}
+
+- (void)seekForward {
+    [self seekWithInterval:kSeekInterval];
+}
+
+- (void)seekBackward {
+    [self seekWithInterval:-kSeekInterval];
+}
+
 
 - (void)seekWithInterval:(float)seekTime {
     NSTimeInterval time = floor(seekTime + CMTimeGetSeconds(self.playerItem.currentTime));

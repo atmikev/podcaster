@@ -44,6 +44,8 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
     self.genresMutableArray = [NSMutableArray new];
     
     [self retrieveGenres];
+    
+    self.title = @"Search";
 }
 
 - (void)retrieveGenres {
@@ -64,6 +66,8 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
         [orderedMutableArray insertObject:self.popularGenre atIndex:0];
         self.genresMutableArray = orderedMutableArray;
         
+        [self reloadDataOnMainThread];
+        
         //get all the podcasts
         for (TMGenre *genre in self.genresMutableArray) {
             [self retrievePodcastsForGenre:genre];
@@ -81,9 +85,7 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
         genre.podcasts = podcastsArray;
         
         //refresh the table on the main thread
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self.tableView reloadData];
-        });
+        [self reloadDataOnMainThread];
         
     } andFailureBlock:^(NSError *error) {
         NSLog(@"Error getting top genre podcasts:%@", error.debugDescription);
@@ -141,6 +143,12 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
         vc.podcast = button.podcast;
         vc.managedObjectContext = self.managedObjectContext;
     }
+}
+
+- (void)reloadDataOnMainThread {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.tableView reloadData];
+    });
 }
 
 #pragma mark - Table view datasource

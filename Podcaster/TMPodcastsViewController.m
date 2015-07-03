@@ -65,7 +65,8 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     //poor form, come back to this
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     self.managedObjectContext = [appDelegate managedObjectContext];
-
+    
+    self.title = @"My Podcasts";
 }
 
 - (void)viewWillAppear:(BOOL)animated {

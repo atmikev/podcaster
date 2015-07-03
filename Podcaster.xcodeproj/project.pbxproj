@@ -12,6 +12,7 @@
 		2F1FA8531B13DA3D00170CA3 /* TMRating.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1FA8521B13DA3D00170CA3 /* TMRating.m */; };
 		2FB2BCFE1B1420BE00F2FA20 /* AppIcon.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 2FB2BCFD1B1420BE00F2FA20 /* AppIcon.appiconset */; };
 		2FB2BD021B14210100F2FA20 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB2BD011B14210100F2FA20 /* Media.xcassets */; };
+		2FDF7E151B473B3E006B312B /* TMAppilcation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FDF7E141B473B3E006B312B /* TMAppilcation.m */; };
 		2FE626AA1B194AD000D1799F /* NSString+Formatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FE626A91B194AD000D1799F /* NSString+Formatter.m */; };
 		2FF82CCF1B2D1E270011E1A8 /* TMBrowsePodcastsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FF82CCE1B2D1E270011E1A8 /* TMBrowsePodcastsCell.m */; };
 		2FF82CD21B2D1EE00011E1A8 /* TMBrowsePodcastsTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FF82CD11B2D1EE00011E1A8 /* TMBrowsePodcastsTableViewController.m */; };
@@ -74,6 +75,8 @@
 		2F1FA8521B13DA3D00170CA3 /* TMRating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMRating.m; sourceTree = "<group>"; };
 		2FB2BCFD1B1420BE00F2FA20 /* AppIcon.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppIcon.appiconset; sourceTree = "<group>"; };
 		2FB2BD011B14210100F2FA20 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		2FDF7E131B473B3E006B312B /* TMAppilcation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMAppilcation.h; sourceTree = "<group>"; };
+		2FDF7E141B473B3E006B312B /* TMAppilcation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMAppilcation.m; sourceTree = "<group>"; };
 		2FE626A51B192E8D00D1799F /* TMPodcastEpisodeProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodeProtocol.h; sourceTree = "<group>"; };
 		2FE626A61B193C6700D1799F /* Podcaster2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Podcaster2.xcdatamodel; sourceTree = "<group>"; };
 		2FE626A81B194AD000D1799F /* NSString+Formatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Formatter.h"; sourceTree = "<group>"; };
@@ -399,6 +402,8 @@
 				C37D27A81ACF8820009AE39A /* XMLReader.m */,
 				C3DA5F1A1AF6A34C00505A94 /* TMNavigationController.h */,
 				C3DA5F1B1AF6A34C00505A94 /* TMNavigationController.m */,
+				2FDF7E131B473B3E006B312B /* TMAppilcation.h */,
+				2FDF7E141B473B3E006B312B /* TMAppilcation.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -615,6 +620,7 @@
 				2FF82CDE1B2E3F300011E1A8 /* TMBrowsePopularPodcastCell.m in Sources */,
 				2FE626AA1B194AD000D1799F /* NSString+Formatter.m in Sources */,
 				C3A47B0D1AAFCF1E00613E6F /* TMAudioPlayerViewController.m in Sources */,
+				2FDF7E151B473B3E006B312B /* TMAppilcation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

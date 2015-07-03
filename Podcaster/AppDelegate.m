@@ -33,8 +33,7 @@
     
     [self setupAudioSession];
     
-    //set tint color for navbar
-    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    [self setupNavBarAttributes];
     
     // Initialize Parse.
     [Parse setApplicationId:@"30Bek4Zru3Mo50xFTWDeODOUYfxmaC228JXeQuMC"
@@ -177,6 +176,20 @@
             abort();
         }
     }
+}
+
+#pragma nav bar setup
+- (void)setupNavBarAttributes {
+    
+    //white status bar
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
+    //set tint color for navbar
+    [[UINavigationBar appearance] setTintColor:[UIColor whiteColor]];
+    
+    [[UINavigationBar appearance] setTitleTextAttributes:
+     @{NSFontAttributeName :[UIFont fontWithName:@"HelveticaNeue-Thin" size:17],
+       NSForegroundColorAttributeName: [UIColor whiteColor]}];
 }
 
 @end

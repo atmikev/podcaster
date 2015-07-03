@@ -11,7 +11,7 @@
             <objects>
                 <tableViewController id="ovy-uC-JdO" customClass="TMPodcastEpisodesTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="92" sectionHeaderHeight="22" sectionFooterHeight="22" id="cw8-qk-NJk">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
@@ -710,9 +710,9 @@
                                 <exclude reference="Afp-Ih-mxB"/>
                                 <exclude reference="P1h-n0-Ate"/>
                                 <exclude reference="8It-HU-7kS"/>
+                                <exclude reference="RxJ-0m-o7h"/>
                                 <exclude reference="WZg-4Y-aMR"/>
                                 <exclude reference="8yh-Vb-ol6"/>
-                                <exclude reference="RxJ-0m-o7h"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -720,9 +720,9 @@
                                 <include reference="Afp-Ih-mxB"/>
                                 <include reference="P1h-n0-Ate"/>
                                 <include reference="8It-HU-7kS"/>
+                                <include reference="RxJ-0m-o7h"/>
                                 <include reference="WZg-4Y-aMR"/>
                                 <include reference="8yh-Vb-ol6"/>
-                                <include reference="RxJ-0m-o7h"/>
                             </mask>
                         </variation>
                     </view>
@@ -942,7 +942,7 @@
         <scene sceneID="4oD-tW-MJD">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rmb-z2-z4K" customClass="TMNavigationController" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="My Podcasts" id="gts-DA-ga0"/>
+                    <tabBarItem key="tabBarItem" title="My Podcasts" image="podcastIcon" id="gts-DA-ga0"/>
                     <toolbarItems/>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="aLo-9x-aeS">
@@ -986,6 +986,9 @@
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                        <rect key="frame" x="89" y="8" width="209" height="73"/>
+                                                    </variation>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="WYs-sk-Aa4">
                                                     <rect key="frame" x="8" y="8" width="73" height="73"/>
@@ -1020,6 +1023,9 @@
                                                     <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
+                                                    <variation key="heightClass=regular-widthClass=compact" misplaced="YES">
+                                                        <rect key="frame" x="89" y="8" width="223" height="17"/>
+                                                    </variation>
                                                 </label>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Ad1-aY-caX">
                                                     <rect key="frame" x="8" y="8" width="73" height="74"/>
@@ -1220,6 +1226,8 @@
                                 <exclude reference="G2p-uG-fwA"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="oYn-8H-9Sw"/>
+                                <exclude reference="pF0-85-nuV"/>
                                 <exclude reference="06n-I3-1nY"/>
                                 <exclude reference="9UW-9p-iIS"/>
                                 <exclude reference="GkW-2d-9n2"/>
@@ -1229,15 +1237,6 @@
                                 <exclude reference="jMw-Xy-Mz8"/>
                                 <exclude reference="nf6-z1-U5M"/>
                                 <exclude reference="vqS-20-pMx"/>
-                                <exclude reference="KId-no-Cgr"/>
-                                <exclude reference="qJE-DL-EZz"/>
-                                <exclude reference="tzo-ge-sg3"/>
-                                <exclude reference="2Hu-xB-e2y"/>
-                                <exclude reference="37B-Vu-kO6"/>
-                                <exclude reference="9Zn-b5-6CO"/>
-                                <exclude reference="TlO-nm-N5u"/>
-                                <exclude reference="fpl-PQ-FBl"/>
-                                <exclude reference="zkA-oT-oAf"/>
                                 <exclude reference="2eh-s3-Dsa"/>
                                 <exclude reference="6O3-HR-4iR"/>
                                 <exclude reference="I2m-kQ-crw"/>
@@ -1249,10 +1248,17 @@
                                 <exclude reference="b4J-lB-ryQ"/>
                                 <exclude reference="dT3-ZH-g98"/>
                                 <exclude reference="hjA-J5-GwB"/>
+                                <exclude reference="KId-no-Cgr"/>
+                                <exclude reference="qJE-DL-EZz"/>
+                                <exclude reference="tzo-ge-sg3"/>
                                 <exclude reference="Iyv-wh-olH"/>
                                 <exclude reference="pwu-Aw-1ws"/>
-                                <exclude reference="oYn-8H-9Sw"/>
-                                <exclude reference="pF0-85-nuV"/>
+                                <exclude reference="2Hu-xB-e2y"/>
+                                <exclude reference="37B-Vu-kO6"/>
+                                <exclude reference="9Zn-b5-6CO"/>
+                                <exclude reference="TlO-nm-N5u"/>
+                                <exclude reference="fpl-PQ-FBl"/>
+                                <exclude reference="zkA-oT-oAf"/>
                             </mask>
                         </variation>
                         <variation key="heightClass=regular-widthClass=compact">
@@ -1264,6 +1270,8 @@
                                 <include reference="G2p-uG-fwA"/>
                             </mask>
                             <mask key="constraints">
+                                <exclude reference="oYn-8H-9Sw"/>
+                                <include reference="pF0-85-nuV"/>
                                 <exclude reference="06n-I3-1nY"/>
                                 <include reference="9UW-9p-iIS"/>
                                 <include reference="GkW-2d-9n2"/>
@@ -1273,15 +1281,6 @@
                                 <exclude reference="jMw-Xy-Mz8"/>
                                 <include reference="nf6-z1-U5M"/>
                                 <exclude reference="vqS-20-pMx"/>
-                                <include reference="KId-no-Cgr"/>
-                                <include reference="qJE-DL-EZz"/>
-                                <include reference="tzo-ge-sg3"/>
-                                <exclude reference="2Hu-xB-e2y"/>
-                                <include reference="37B-Vu-kO6"/>
-                                <exclude reference="9Zn-b5-6CO"/>
-                                <exclude reference="TlO-nm-N5u"/>
-                                <include reference="fpl-PQ-FBl"/>
-                                <include reference="zkA-oT-oAf"/>
                                 <include reference="2eh-s3-Dsa"/>
                                 <include reference="6O3-HR-4iR"/>
                                 <exclude reference="I2m-kQ-crw"/>
@@ -1293,10 +1292,17 @@
                                 <exclude reference="b4J-lB-ryQ"/>
                                 <exclude reference="dT3-ZH-g98"/>
                                 <exclude reference="hjA-J5-GwB"/>
+                                <include reference="KId-no-Cgr"/>
+                                <include reference="qJE-DL-EZz"/>
+                                <include reference="tzo-ge-sg3"/>
                                 <include reference="Iyv-wh-olH"/>
                                 <include reference="pwu-Aw-1ws"/>
-                                <exclude reference="oYn-8H-9Sw"/>
-                                <include reference="pF0-85-nuV"/>
+                                <exclude reference="2Hu-xB-e2y"/>
+                                <include reference="37B-Vu-kO6"/>
+                                <exclude reference="9Zn-b5-6CO"/>
+                                <exclude reference="TlO-nm-N5u"/>
+                                <include reference="fpl-PQ-FBl"/>
+                                <include reference="zkA-oT-oAf"/>
                             </mask>
                         </variation>
                     </view>
@@ -1395,6 +1401,7 @@
     <resources>
         <image name="fastForward" width="600" height="700"/>
         <image name="pause" width="600" height="700"/>
+        <image name="podcastIcon" width="30" height="30"/>
         <image name="rewind" width="600" height="700"/>
     </resources>
     <inferredMetricsTieBreakers>

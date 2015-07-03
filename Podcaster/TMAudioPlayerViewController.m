@@ -88,7 +88,11 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     
     //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
     self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    
+    //start receiving remote control events
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
+
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
@@ -174,15 +178,18 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     
 }
 
-#pragma mark - IBActions
-
-- (IBAction)playPause:(id)sender {
+-(void)togglePlayPause {
     if (self.audioPlayerManager.isPlaying) {
         [self pauseAudio];
     } else {
         [self playAudio];
     }
-    
+}
+
+#pragma mark - IBActions
+
+- (IBAction)playPause:(id)sender {
+    [self togglePlayPause];
 }
 
 - (IBAction)timerStartedSliding:(id)sender {
@@ -195,11 +202,11 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 }
 
 - (IBAction)seekBackHandler:(id)sender {
-    [self.audioPlayerManager seekWithInterval:-15];
+    [self.audioPlayerManager seekWithInterval:-kSeekInterval];
 }
 
 - (IBAction)seekForwardHandler:(id)sender {
-    [self.audioPlayerManager seekWithInterval:15];
+    [self.audioPlayerManager seekWithInterval:kSeekInterval];
 }
 
 - (IBAction)rateButtonHandler:(id)sender {

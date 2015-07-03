@@ -17,6 +17,7 @@
 - (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value;
 @end
 
+FOUNDATION_EXPORT const NSInteger kSeekInterval;
 
 @interface TMAudioPlayerManager : NSObject
 
@@ -31,15 +32,19 @@
 
 - (NSString *)fileDurationString;
 
+- (void)startSeekingForwardContinuously;
+
+- (void)startSeekingBackwardContinuously;
+
+- (void)stopSeekingContinuously;
+
 - (void)seekWithInterval:(float)seekTime;
 
 - (void)seekToPosition:(float)value andPlay:(BOOL)shouldPlay;
-
-- (void)handlePlayPause;
 
 - (void)pause;
 
 - (void)play;
 
-
+- (void)togglePlayPause;
 @end
