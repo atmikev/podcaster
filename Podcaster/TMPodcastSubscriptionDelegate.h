@@ -6,10 +6,14 @@
 //  Copyright (c) 2015 Tyler Mikev. All rights reserved.
 //
 
-@class TMPodcast;
+@protocol TMPodcastDelegate;
 
 @protocol TMPodcastSubscriptionDelegate <NSObject>
 
-- (void)subscribeToPodcast:(TMPodcast *)podcast;
+- (void)subscribeToPodcast:(id<TMPodcastDelegate>)podcast
+       withCompletionBlock:(void(^)(BOOL wasSuccessful))completionBlock;
+
+- (void)unsubscribeToPodcast:(id<TMPodcastDelegate>)podcast
+         withCompletionBlock:(void(^)(BOOL wasSuccessful))completionBlock;
 
 @end

@@ -6,10 +6,11 @@
 //  Copyright (c) 2015 Tyler Mikev. All rights reserved.
 //
 
-@class TMPodcast;
+@class TMSubscribedPodcast;
+@protocol TMPodcastDelegate;
 
 @protocol TMSelectPodcastDelegate<NSObject>
 
-- (void)didSelectPodcast:(TMPodcast *)podcast;
+- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast;
 
 @end

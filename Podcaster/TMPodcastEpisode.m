@@ -12,6 +12,15 @@
 
 @implementation TMPodcastEpisode
 
+@synthesize fileSize;
+@synthesize downloadURLString;
+@synthesize duration;
+@synthesize episodeNumber;
+@synthesize fileLocation;
+@synthesize publishDate;
+@synthesize title;
+@synthesize lastPlayLocation;
+
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast {
     
     NSMutableSet *episodesArray = [NSMutableSet new];
@@ -30,7 +39,7 @@
     TMPodcastEpisode *episode = [TMPodcastEpisode new];
     
     episode.title = dictionary[@"title"][@"text"];
-    episode.episodeLinkURL = [NSURL URLWithString:dictionary[@"link"][@"text"]];
+    episode.episodeLinkURLString = dictionary[@"link"][@"text"];
     episode.episodeDescription = dictionary[@"description"][@"text"];
 
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -38,36 +47,48 @@
     episode.publishDate = [dateFormatter dateFromString:dictionary[@"pubDate"][@"text"]];
     
     episode.author = dictionary[@"itunes:author"][@"text"];
-    episode.episodeNumber = [dictionary[@"itunes:order"][@"text"] integerValue];
-    episode.duration = [dictionary[@"itunes:duration"][@"text"] doubleValue];
+    episode.episodeNumber = [NSNumber numberWithInteger:[dictionary[@"itunes:order"][@"text"] integerValue]];
+
+    NSString *durationString = dictionary[@"itunes:duration"][@"text"];
+    episode.duration = [self durationFromDurationString:durationString];
 
     NSDictionary *enclosure = dictionary[@"enclosure"];
-    episode.downloadURL = [NSURL URLWithString:enclosure[@"url"]];
-    episode.fileSize = [enclosure[@"length"] integerValue];
+    episode.downloadURLString = enclosure[@"url"];
+    episode.fileSize = [NSNumber numberWithInteger:[enclosure[@"length"] integerValue]];
     
     episode.subtitle = dictionary[@"itunes:subtitle"][@"text"];
     episode.summary = dictionary[@"itunes:summary"][@"text"];
-    episode.podcastURL = [NSURL URLWithString:dictionary[@"feedburner:origLink"][@"text"]];
+    episode.podcastURLString = dictionary[@"feedburner:origLink"][@"text"];
 
-    
     return episode;
+}
+
++ (NSNumber *)durationFromDurationString:(NSString *)durationString {
+    //this can come back as in hh:mm:ss, mm:ss, or as the total number of seconds, so use a scanner to differentiate. idiots.
+    
+    //reverse the string so we start with seconds
+    NSTimeInterval duration = 0;
+    if ([durationString containsString:@":"]) {
+        NSInteger secondsMultiplier = 1;
+        NSArray *timeSubstrings = [durationString componentsSeparatedByString:@":"];
+        NSArray *reversedTimeSubstrings = [[timeSubstrings reverseObjectEnumerator] allObjects];
+        for (NSString *substring in reversedTimeSubstrings) {
+            duration += [substring doubleValue] *secondsMultiplier;
+            
+            //take the seconds multiplier up by a factor of 60 so it converts the value to seconds properly
+            secondsMultiplier *= 60;
+        }
+    } else {
+        duration = [durationString integerValue];
+    }
+
+    return [NSNumber numberWithDouble:duration];
 }
 
 - (BOOL)isEqual:(id)object {
     TMPodcastEpisode *episode = (TMPodcastEpisode *)object;
-    BOOL isEqual = [self.downloadURL.absoluteString isEqualToString:episode.downloadURL.absoluteString];
+    BOOL isEqual = [self.downloadURLString isEqualToString:episode.downloadURLString];
     return isEqual;
-}
-
-- (NSString *)publishDateString {
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"MMMM d, YYYY"];
-    return [dateFormatter stringFromDate:self.publishDate];
-}
-
-- (NSString *)durationString {
-    NSInteger minutes = self.duration / 60;
-    return [NSString stringWithFormat:@"%ld min", (long)minutes];
 }
 
 @end

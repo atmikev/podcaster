@@ -8,15 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "TMPodcastEpisodeProtocol.h"
 
+@class TMSubscribedPodcast;
+@class TMPodcastEpisode;
 
-@interface TMSubscribedEpisode : NSManagedObject
+@interface TMSubscribedEpisode : NSManagedObject <TMPodcastEpisodeDelegate>
 
-@property (strong, nonatomic) NSNumber * duration;
-@property (strong, nonatomic) NSNumber * episodeNumber;
-@property (strong, nonatomic) NSString * fileLocation;
-@property (strong, nonatomic) NSNumber * fileSize;
-@property (strong, nonatomic) NSDate * publishDate;
-@property (strong, nonatomic) NSString * title;
+//returns an instance based on 'episode'. Creates a new instance in the db if one does not already exist
++ (instancetype)instanceFromTMPodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode inContext:(NSManagedObjectContext *)context;
+
+//returns an instance iff one already exists in the db
++ (instancetype)subscribedPodcastEpisodeWithName:(NSString *)podcastTitle inContext:(NSManagedObjectContext *)context;
 
 @end

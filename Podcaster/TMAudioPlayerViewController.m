@@ -11,17 +11,24 @@
 #import "TMNavigationController.h"
 #import "TMReviewViewController.h"
 #import "TMPodcastProtocol.h"
+#import "TMPodcastEpisode.h"
+#import "TMSubscribedEpisode.h"
+#import "TMPodcastEpisodeProtocol.h"
 #import <Parse/Parse.h>
 
 static NSString * const kPlayImageString = @"play";
 static NSString * const kPauseImageString = @"pause";
 static NSString * const kIsPlayingString = @"isPlaying";
+static NSString * const kIsReadyToPlayString = @"isReadyToPlay";
+static NSString * const kReviewViewControllerSegueString = @"reviewViewControllerSegue";
 
 @interface TMAudioPlayerViewController () <TMAudioPlayerManagerDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) TMAudioPlayerManager *audioPlayerManager;
 @property (strong, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) TMNavigationController *navController;
+@property (assign, nonatomic) BOOL initiatedByUser;
+@property (assign, nonatomic) BOOL isFirstAppearance;
 
 @property (weak, nonatomic) IBOutlet UIButton *playPauseButton;
 @property (weak, nonatomic) IBOutlet UIImageView *podcastImageView;
@@ -43,6 +50,9 @@ static NSString * const kIsPlayingString = @"isPlaying";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //use this to prevent us from playing ever time viewDidAppear gets called
+    self.isFirstAppearance = NO;
+    
     [self setupAudioPlayerManager];
     
     [self setupSeekSlider];
@@ -59,35 +69,55 @@ static NSString * const kIsPlayingString = @"isPlaying";
     //store the custom navigation controller
     self.navController = (TMNavigationController *)self.navigationController;
     
-    //start the episode
-    [self playAudio];
-    
-    //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
-    self.navigationController.interactivePopGestureRecognizer.delegate = self;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    
     //kvo on isPlaying for the play/pause image
     [self.audioPlayerManager addObserver:self
                               forKeyPath:kIsPlayingString
-                                 options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld
+                                 options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
                                  context:nil];
+    
+    [self checkIfWeAreReadyToPlay];
+    
+    //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
+    self.navigationController.interactivePopGestureRecognizer.delegate = self;
+    
+    //start receiving remote control events
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
     
-    //remove observations
-    [self.audioPlayerManager removeObserver:self forKeyPath:kIsPlayingString];
+    //seems intermittent...should come back to this though
+    @try {
+        [self.audioPlayerManager removeObserver:self forKeyPath:kIsPlayingString];
+    }
+    @catch (NSException * __unused exception) {}
+
 }
 
 - (void)setupAudioPlayerManager {
     self.audioPlayerManager = [TMAudioPlayerManager sharedInstance];
     self.audioPlayerManager.delegate = self;
     self.audioPlayerManager.episode = self.episode;
-    
+}
+
+- (void)checkIfWeAreReadyToPlay {
+    //check if we're ready to play
+    if (self.audioPlayerManager.isReadyToPlay == NO) {
+        //kvo on isReadyToPlay to show whether the audio player is ready to play or not
+        [self.audioPlayerManager addObserver:self
+                                  forKeyPath:kIsReadyToPlayString
+                                     options:NSKeyValueObservingOptionNew
+                                     context:nil];
+
+        //show the user we can't interact quite yet
+        self.playPauseButton.enabled = NO;
+        self.playPauseButton.alpha = 0.5;
+        
+    } else {
+        [self readyToPlay];
+    }
+
 }
 
 - (void)setupSeekSlider {
@@ -106,34 +136,60 @@ static NSString * const kIsPlayingString = @"isPlaying";
 
 - (void)playAudio {
     [self.audioPlayerManager play];
+    [self setupPlayUI];
+}
+
+- (void)playAudioFromLastPlayedLocation {
+    [self.audioPlayerManager playFromLastPlayedLocation];
+    [self setupPlayUI];
+}
+
+- (void)setupPlayUI {
     [self changePlayPauseButtonImage:YES];
     self.navController.currentAudioPlayerViewController = self;
 }
 
 - (void)showReviewVC:(BOOL)initiatedByUser {
-    TMReviewViewController *reviewVC = [[self storyboard] instantiateViewControllerWithIdentifier:@"TMReviewViewController"];
-    reviewVC.initiatedByUser = initiatedByUser;
-    reviewVC.episode = self.episode;
-    [self presentViewController:reviewVC animated:YES completion:nil];
+
+    //track who initiated the review
+    self.initiatedByUser = initiatedByUser;
+    [self performSegueWithIdentifier:kReviewViewControllerSegueString sender:nil];
 }
 
 -(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     
-    if([keyPath isEqualToString:kIsPlayingString]) {
+    if ([keyPath isEqualToString:kIsPlayingString]) {
         BOOL isPlaying = [(NSNumber *)[change objectForKey:NSKeyValueChangeNewKey] boolValue];
         [self changePlayPauseButtonImage:isPlaying];
+    } else if ([keyPath isEqualToString:kIsReadyToPlayString]) {
+        [self readyToPlay];
+        //unregister for ready to play, because the audioplayer will be ready to play for the rest of the app's existence
+        [self.audioPlayerManager removeObserver:self forKeyPath:kIsReadyToPlayString];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
+    if ([[segue identifier] isEqualToString:kReviewViewControllerSegueString]) {
+        TMReviewViewController *reviewVC = [segue destinationViewController];
+        reviewVC.initiatedByUser = self.initiatedByUser;
+        reviewVC.episode = self.episode;
+    }
+    
+}
+
+-(void)togglePlayPause {
+    if (self.audioPlayerManager.isPlaying) {
+        [self pauseAudio];
+    } else {
+        [self playAudio];
     }
 }
 
 #pragma mark - IBActions
 
 - (IBAction)playPause:(id)sender {
-    if (self.audioPlayerManager.isPlaying) {
-        [self pauseAudio];
-    } else {
-        [self playAudio];
-    }
-    
+    [self togglePlayPause];
 }
 
 - (IBAction)timerStartedSliding:(id)sender {
@@ -146,11 +202,11 @@ static NSString * const kIsPlayingString = @"isPlaying";
 }
 
 - (IBAction)seekBackHandler:(id)sender {
-    [self.audioPlayerManager seekWithInterval:-15];
+    [self.audioPlayerManager seekWithInterval:-kSeekInterval];
 }
 
 - (IBAction)seekForwardHandler:(id)sender {
-    [self.audioPlayerManager seekWithInterval:15];
+    [self.audioPlayerManager seekWithInterval:kSeekInterval];
 }
 
 - (IBAction)rateButtonHandler:(id)sender {
@@ -171,6 +227,15 @@ static NSString * const kIsPlayingString = @"isPlaying";
 - (void)updateTimeInfoWithElapsedTime:(NSString *)elapsedTime andTimeSliderValue:(float)value {
     self.timeElapsedLabel.text = elapsedTime;
     self.timeSlider.value = value;
+}
+
+- (void)readyToPlay {
+    
+    self.playPauseButton.enabled = YES;
+    self.playPauseButton.alpha = 1.0;
+    
+    //start the episode
+    [self playAudioFromLastPlayedLocation];
 }
 
 - (void)didFinishPlaying {

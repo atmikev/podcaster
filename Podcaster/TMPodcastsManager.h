@@ -12,6 +12,7 @@
 
 @class TMPodcast;
 @class TMPodcastEpisode;
+@class TMBrowsePodcastResponse;
 
 @interface TMPodcastsManager : NSObject
 
@@ -24,6 +25,10 @@
                         updateBlock:(void(^)(CGFloat downloadPercentage))updateBlock
                        successBlock:(void(^)(NSString *filePath))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock;
+
+- (void)podcastFromBrowsePodcastResponse:(TMBrowsePodcastResponse *)browsePodcastResponse
+                        withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock
+                         andFailureBlock:(void(^)(NSError *error))failureBlock;
 
 - (void)searchForPodcastsWithSearchString:(NSString *)searchString
                                maxResults:(NSInteger)maxResults

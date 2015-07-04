@@ -8,6 +8,8 @@
 
 #import "TMNavigationController.h"
 
+#import "TMReviewViewController.h"
+
 @interface TMNavigationController ()
 
 @property (strong, nonatomic) UIBarButtonItem *nowPlayingButton;
@@ -21,9 +23,16 @@
     [self showNowPlayingButtonIfNecessaryOnViewController:currentAudioPlayerViewController];
 }
 
+- (BOOL)shouldShowNowPlayingOnViewController:(UIViewController *)viewController {
+    return  self.currentAudioPlayerViewController != nil
+            && self.currentAudioPlayerViewController != viewController
+            && ![viewController isKindOfClass:[TMAudioPlayerViewController class]]
+            && ![viewController isKindOfClass:[TMReviewViewController class]];
+}
+
 - (void)showNowPlayingButtonIfNecessaryOnViewController:(UIViewController *)viewController {
 
-    if (self.currentAudioPlayerViewController != nil && self.currentAudioPlayerViewController != viewController) {
+    if ([self shouldShowNowPlayingOnViewController:viewController]) {
         viewController.navigationItem.rightBarButtonItem = self.nowPlayingButton;
     } else {
         viewController.navigationItem.rightBarButtonItem = nil;
@@ -55,7 +64,5 @@
     [self showNowPlayingButtonIfNecessaryOnViewController:[self topViewController]];
     return viewController;
 }
-
-
 
 @end

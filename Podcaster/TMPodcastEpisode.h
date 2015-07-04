@@ -7,29 +7,20 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TMPodcastEpisodeProtocol.h"
 
 @class TMPodcast;
 @protocol TMPodcastDelegate;
 
-@interface TMPodcastEpisode : NSObject
+@interface TMPodcastEpisode : NSObject <TMPodcastEpisodeDelegate>
 
 @property (strong, nonatomic) id<TMPodcastDelegate> podcast;
-@property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSString *subtitle;
 @property (strong, nonatomic) NSString *summary;
-@property (strong, nonatomic) NSURL *episodeLinkURL;
+@property (strong, nonatomic) NSString *episodeLinkURLString;
 @property (strong, nonatomic) NSString *episodeDescription;
-@property (strong, nonatomic) NSDate *publishDate;
-@property (strong, nonatomic) NSString *publishDateString;
 @property (strong, nonatomic) NSString *author;
-@property (assign, nonatomic) NSInteger episodeNumber;
-@property (assign, nonatomic) NSTimeInterval duration;
-@property (strong, nonatomic) NSString *durationString;
-@property (strong, nonatomic) NSURL *downloadURL;
-@property (assign, nonatomic) NSInteger fileSize;
-@property (strong, nonatomic) NSURL *podcastURL;
-@property (strong, nonatomic) NSString *fileLocation;
-@property (assign, nonatomic) NSTimeInterval lastPlayLocation;
+@property (strong, nonatomic) NSString *podcastURLString;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast;

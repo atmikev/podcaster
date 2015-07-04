@@ -7,13 +7,16 @@
 //
 
 #import "TMAudioPlayerManager.h"
-#import <AVFoundation/AVFoundation.h>
 #import "TMMark.h"
 #import "TMPodcastEpisode.h"
+#import "TMSubscribedEpisode.h"
 #import "TMPodcastProtocol.h"
 #import <Parse/Parse.h>
+@import MediaPlayer;
+@import AVFoundation;
 
 static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
+const NSInteger kSeekInterval = 15;
 
 @interface TMAudioPlayerManager () <AVAudioPlayerDelegate>
 
@@ -23,9 +26,10 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 @property (strong, nonatomic) NSTimer *marksTimer;
 @property (strong, nonatomic) NSMutableArray *marksArray;
 @property (assign, nonatomic, readwrite) BOOL isPlaying;
+@property (assign, nonatomic, readwrite) BOOL isReadyToPlay;
 @property (assign, nonatomic, readwrite) NSTimeInterval currentTime;
 @property (assign, nonatomic, readwrite) NSTimeInterval duration;
-
+@property (strong, nonatomic) NSTimer *seekTimer;
 @end
 
 @implementation TMAudioPlayerManager
@@ -42,9 +46,66 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (AVPlayer *)audioPlayer {
     if (!_audioPlayer) {
         _audioPlayer = [[AVPlayer alloc] init];
+        
+        //KVO on AVPlayerItemStatusReadyToPlay to let our delegate know when we can show the play button
+        [_audioPlayer addObserver:self
+                       forKeyPath:@"status"
+                          options:(NSKeyValueObservingOptionInitial|NSKeyValueObservingOptionNew)
+                          context:nil];
+        
+        [self registerForRemoteEvents];
     }
-
+    
     return _audioPlayer;
+}
+
+- (void)registerForRemoteEvents {
+
+    //register for remote events
+    MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    
+    //play event
+    [commandCenter.playCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self play];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    //pause event
+    [commandCenter.pauseCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self pause];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+    
+    //seek backward event
+    [commandCenter.skipBackwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self seekWithInterval:-kSeekInterval];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+
+    //seek forward event
+    [commandCenter.skipForwardCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent *event) {
+        [self seekWithInterval:kSeekInterval];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+}
+
+- (void)remoteControlReceivedWithEvent:(UIEvent *)receivedEvent {
+    if (receivedEvent.type == UIEventTypeRemoteControl) {
+        
+        switch (receivedEvent.subtype) {
+                
+            case UIEventSubtypeRemoteControlTogglePlayPause:
+                [self play];
+                break;
+                
+            case UIEventSubtypeRemoteControlPause:
+                [self pause];
+                break;
+                
+            default:
+                break;
+        }
+    }
 }
 
 - (void)setEpisode:(TMPodcastEpisode *)episode {
@@ -58,8 +119,8 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     NSURL *fileURL = nil;
     if (episode.fileLocation) {
         fileURL = [NSURL fileURLWithPath:episode.fileLocation];
-    } else if (episode.downloadURL) {
-        fileURL = [NSURL URLWithString:episode.downloadURL.absoluteString];
+    } else if (episode.downloadURLString) {
+        fileURL = [NSURL URLWithString:episode.downloadURLString];
     }
     
     self.playerItem = [AVPlayerItem playerItemWithURL:fileURL];
@@ -71,9 +132,27 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
         [self updateDelegateTimeInfo];
     }
     
+    //update the now playing info
+    [self updateNowPlayingInfo];
+    
     //track finished event
     [PFAnalytics trackEvent:@"start" dimensions:[self startFinishDimensions]];
 
+}
+
+- (void)updateNowPlayingInfo {
+    
+    NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
+    
+    if (self.episode.podcast.podcastImage) {
+        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:self.episode.podcast.podcastImage];
+        [songInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
+    }
+    
+    [songInfo setObject:self.episode.title forKey:MPMediaItemPropertyTitle];
+    [songInfo setObject:self.episode.podcast.title forKey:MPMediaItemPropertyArtist];
+    [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
+    
 }
 
 - (void)setDelegate:(id<TMAudioPlayerManagerDelegate>)delegate {
@@ -89,10 +168,46 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     
 }
 
+- (void)readyToPlay {
+    //let everyone know we're ready to play
+    self.isReadyToPlay = YES;
+}
+
+- (void)checkIfFirstPlay {
+    //If this is the first time this is being played,
+    //populate the lastPlayedLocation variable
+    if (self.episode.lastPlayLocation == nil) {
+        self.episode.lastPlayLocation = @(0);
+        
+        if ([self.episode isKindOfClass:[TMSubscribedEpisode class]]) {
+            NSError *error;
+            if ([self.managedObjectContext save:&error] == NO) {
+                NSLog(@"Error: %@",error.debugDescription);
+            }
+        }
+    }
+}
+
+- (void)playFromLastPlayedLocation {
+    
+    NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
+    
+    CMTime startPlayingTime = CMTimeMake(lastPlayedTime, 1);
+    
+    [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
+        if (finished) {
+            [self play];
+        }
+    }];
+
+}
+
 - (void)play {
+    [self checkIfFirstPlay];
+    
     [self.audioPlayer play];
     
-    //update isPlaying
+    //update the isPlaying value
     self.isPlaying = YES;
     
     //start the timer to monitor stuff
@@ -104,9 +219,8 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
                                                  selector:@selector(itemDidFinishPlaying:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:self.playerItem];
-
+        
     });
-    
 
 }
 
@@ -115,10 +229,9 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     
     //update isPlaying
     self.isPlaying = NO;
-
 }
 
-- (void)handlePlayPause {
+- (void)togglePlayPause {
     //Note: Track play/pause analytics here to prevent accidental play/pause tracking caused by seeking
     if ([self isPlaying]) {
         [self pause];
@@ -130,6 +243,44 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
         [PFAnalytics trackEvent:@"play" dimensions:[self playPauseDimensions]];
     }
 }
+
+- (void)startSeekingForwardContinuously {
+    if (self.seekTimer != nil) {
+        [self.seekTimer invalidate];
+    }
+
+    self.seekTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(seekForward)
+                                                    userInfo:nil
+                                                     repeats:YES];
+}
+
+- (void)startSeekingBackwardContinuously {
+    if (self.seekTimer != nil) {
+        [self.seekTimer invalidate];
+    }
+    
+    self.seekTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
+                                                      target:self
+                                                    selector:@selector(seekBackward)
+                                                    userInfo:nil
+                                                     repeats:YES];
+
+}
+
+- (void)stopSeekingContinuously {
+    [self.seekTimer invalidate];
+}
+
+- (void)seekForward {
+    [self seekWithInterval:kSeekInterval];
+}
+
+- (void)seekBackward {
+    [self seekWithInterval:-kSeekInterval];
+}
+
 
 - (void)seekWithInterval:(float)seekTime {
     NSTimeInterval time = floor(seekTime + CMTimeGetSeconds(self.playerItem.currentTime));
@@ -167,13 +318,13 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (NSString *)formattedTimeForNSTimeInterval:(NSTimeInterval)interval {
     NSInteger minutes = floor(interval/60);
     NSInteger seconds = (int)(interval)%60;
-    NSString *formattedString = [NSString stringWithFormat:@"%li:%.2li", (long)minutes, seconds];
+    NSString *formattedString = [NSString stringWithFormat:@"%li:%.2li", (long)minutes, (long)seconds];
     
     return formattedString;
 }
 
 - (NSString *)fileDurationString {
-    return [self formattedTimeForNSTimeInterval:self.episode.duration];
+    return [self formattedTimeForNSTimeInterval:[self.episode.duration doubleValue]];
 }
 
 - (void)itemDidFinishPlaying:(id)sender {
@@ -184,6 +335,9 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     //update isPlaying
     self.isPlaying = NO;
     
+    //set the lastPlayedTime back to 0
+    self.episode.lastPlayLocation = @(0);
+    
     //tell the delegate we're done
     [self.delegate didFinishPlaying];
     
@@ -192,6 +346,16 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 }
 
 #pragma mark - Marks methods
+
+- (NSTimeInterval)currentTime {
+    NSTimeInterval currentTime = CMTimeGetSeconds(self.playerItem.currentTime);
+    return currentTime;
+}
+
+- (NSTimeInterval)duration {
+    NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
+    return duration;
+}
 
 - (void)startMonitoringAudioTime {
     if (!self.marksTimer) {
@@ -242,6 +406,11 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 
 - (void)monitorTimeRelatedInfo {
     
+    //mark the last played time (can this be optimized?)
+    self.episode.lastPlayLocation = [NSNumber numberWithDouble:[self currentTime]];
+    //this is probably going to block the main thread, ugh. need to make a background thread
+    [self.managedObjectContext save:nil];
+    
     [self updateDelegateTimeInfo];
     
     if (self.marksArray) {
@@ -279,6 +448,8 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
     }
 }
 
+#pragma mark - KVO
+
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
     
     if (object == self.audioPlayer && [keyPath isEqualToString:@"status"]) {
@@ -286,21 +457,14 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
             NSLog(@"AVPlayer Failed");
         } else if (self.audioPlayer.status == AVPlayerStatusReadyToPlay) {
             NSLog(@"AVPlayerStatusReadyToPlay");
+            [self readyToPlay];
         } else if (self.audioPlayer.status == AVPlayerItemStatusUnknown) {
             NSLog(@"AVPlayer Unknown");
         }
     }
 }
 
-- (NSTimeInterval)currentTime {
-    NSTimeInterval currentTime = CMTimeGetSeconds(self.playerItem.currentTime);
-    return currentTime;
-}
-
-- (NSTimeInterval)duration {
-    NSTimeInterval duration = CMTimeGetSeconds(self.playerItem.duration);
-    return duration;
-}
+#pragma mark - Analytics Dimensions
 
 - (NSDictionary *)playPauseDimensions {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -331,8 +495,7 @@ static NSString * const dateFormatterString = @"yyyy-MM-dd HH zzz";
 - (NSDictionary *)startFinishDimensions {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
     [dateFormatter setDateFormat:[NSDateFormatter dateFormatFromTemplate:dateFormatterString options:0 locale:[NSLocale currentLocale]]];
-    
-    
+        
     NSDictionary *dimensions =  @{@"podcast":self.episode.podcast.title,
                                   @"episode":self.episode.title,
                                   @"dateTime":[dateFormatter stringFromDate:[NSDate date]]};

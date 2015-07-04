@@ -11,11 +11,13 @@
 #import "TMPodcastEpisode.h"
 #import "TMPodcastProtocol.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
+#import "TMSubscribedEpisode.h"
 
 @interface TMLatestEpisodesTableViewDataSourceAndDelegate ()
 
 @property (weak, nonatomic) id<TMSelectPodcastEpisodeDelegate> delegate;
-
+@property (strong, nonatomic) NSArray *heardEpisodesArray;
+@property (strong, nonatomic) NSArray *unheardEpisodesArray;
 @end
 
 @implementation TMLatestEpisodesTableViewDataSourceAndDelegate
@@ -30,21 +32,53 @@
     return self;
 }
 
+- (void)setSubscribedEpisodesArray:(NSArray *)subscribedEpisodesArray {
+    //sort the array to see which episodes have been listened to or not
+    NSMutableArray *heardMutableArray = [NSMutableArray new];
+    NSMutableArray *unheardMutableArray = [NSMutableArray new];
+    
+    for (TMSubscribedEpisode *episode in subscribedEpisodesArray) {
+        if (episode.lastPlayLocation == nil) {
+            [unheardMutableArray addObject:episode];
+        } else {
+            [heardMutableArray addObject:episode];
+        }
+    }
+    
+    //sort both arrays by publish date
+    NSArray *sortDescriptorArray = @[[NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO]];
+    self.heardEpisodesArray = [heardMutableArray sortedArrayUsingDescriptors:sortDescriptorArray];
+    self.unheardEpisodesArray = [unheardMutableArray sortedArrayUsingDescriptors:sortDescriptorArray];
+    
+}
+
+- (NSArray *)arrayForSection:(NSInteger)section {
+    NSArray *array = nil;
+    if (section == 0) {
+        array = self.unheardEpisodesArray;
+    } else if (section == 1) {
+        array = self.heardEpisodesArray;
+    }
+    
+    return array;
+}
+
 #pragma mark - Table view data source
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.subscribedEpisodesArray.count;
+    NSInteger count = [[self arrayForSection:section] count];
+    return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TMPodcastLatestEpisodeTableViewCell *cell = (TMPodcastLatestEpisodeTableViewCell *)[tableView dequeueReusableCellWithIdentifier:kLatestEpisodeCellReuseIdentifier forIndexPath:indexPath];
     
-    TMPodcastEpisode *podcastEpisode = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
+    TMPodcastEpisode *podcastEpisode = [[self arrayForSection:indexPath.section] objectAtIndex:indexPath.row];
     
     if (podcastEpisode.podcast.podcastImage) {
         cell.podcastImageView.image = podcastEpisode.podcast.podcastImage;
@@ -63,16 +97,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    TMPodcastEpisode *episode = [self.subscribedEpisodesArray objectAtIndex:indexPath.row];
-    [self.delegate didSelectEpisode:episode];
+    TMPodcastEpisode *podcastEpisode = [[self arrayForSection:indexPath.section] objectAtIndex:indexPath.row];
+    [self.delegate didSelectEpisode:podcastEpisode];
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    return self.headerView;
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    NSString *title = nil;
+    
+    if (section == 0) {
+        title = @"New";
+    } else {
+        title = @"Already Heard";
+    }
+    
+    return title;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 65;
-}
 
 @end

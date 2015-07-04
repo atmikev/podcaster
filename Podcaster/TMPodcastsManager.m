@@ -9,14 +9,15 @@
 #import "TMPodcastsManager.h"
 #import "XMLReader.h"
 #import "TMPodcastEpisode.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "TMPodcast.h"
 #import "TMPodcastsManager.h"
 #import "TMiTunesResponse.h"
+#import "TMBrowsePodcastResponse.h"
 
 @interface TMPodcastsManager ()<NSXMLParserDelegate>
 
-@property (strong, nonatomic) TMDownloadManager *downloadManager;
+@property (strong, nonatomic) TMDownloadUtilities *downloadManager;
 @property (strong, nonatomic) NSURLSessionDataTask *searchTask;
 @end
 
@@ -27,15 +28,17 @@
                              successBlock:(void(^)(NSArray *podcasts))successBlock
                           andFailureBlock:(void(^)(NSError *error))failureBlock {
     
-    if (self.searchTask) {
-        //make sure we cancel the last task if we're starting a new one
-        [self.searchTask cancel];
-    }
+   
     
     //escape the string properly
     searchString = [searchString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     NSString *urlString = [NSString stringWithFormat:@"https://itunes.apple.com/search?term=%@&entity=podcast&limit=%li",searchString, (long)maxResults];
+    
+    if (self.searchTask) {
+        //make sure we cancel the last task if we're starting a new one
+        [self.searchTask cancel];
+    }
     self.searchTask = [[NSURLSession sharedSession] dataTaskWithURL:[NSURL URLWithString:urlString] completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error != nil && failureBlock) {
@@ -71,6 +74,42 @@
     }];
     
     [self.searchTask resume];
+}
+
+- (void)podcastFromBrowsePodcastResponse:(TMBrowsePodcastResponse *)browsePodcastResponse
+                        withSuccessBlock:(void (^)(TMPodcast *))successBlock
+                         andFailureBlock:(void (^)(NSError *))failureBlock {
+    //probably should do this by podcast ID, but searching by the string that came back in the Browse response for now
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", browsePodcastResponse.podcastID]];
+    
+    [[[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+        
+        if (error != nil && failureBlock) {
+                failureBlock(error);
+        } else {
+            
+            if (data) {
+                NSError *jsonError;
+                NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+                if (jsonError != nil && failureBlock) {
+                    failureBlock(error);
+                } else {
+                    NSDictionary *resultDictionary = [[responseDictionary objectForKey:@"results"] firstObject];
+                    
+                    TMiTunesResponse *iTunesResponse = [TMiTunesResponse iTunesResponseFromDictionary:resultDictionary];
+                    TMPodcast *podcast = [TMPodcast initWithiTunesResponse:iTunesResponse];
+
+                    if (successBlock) {
+                        successBlock(podcast);
+                    }
+                }
+            }
+            
+        }
+    }] resume];
+
+    
 }
 
 - (void)topPodcastsWithSuccessBlock:(void(^)(NSArray *podcasts))successBlock
@@ -145,49 +184,44 @@
                         updateBlock:(void(^)(CGFloat downloadPercentage))updateBlock
                        successBlock:(void(^)(NSString *filePath))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock {
-    
-    if (self.downloadManager) {
-#warning TODO: add ability to queue up multiple downloads
-        return;
-    }
-    __weak TMPodcastsManager *weakSelf = self;
-    self.downloadManager = [[TMDownloadManager alloc] init];
-    [self.downloadManager downloadPodcastAtURL:episodeURL
-                                  withFileName:fileName
-                                   updateBlock:^(CGFloat downloadPercentage) {
-                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                           if (updateBlock) {
-                                               updateBlock(downloadPercentage);
-                                           }
-                                        });
-                                   }
-                                  successBlock:^(NSString *filePath) {
-                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                          if (successBlock) {
-                                              successBlock(filePath);
-                                          }
-                                          //once we're finished, nil out the downloadManager
-                                          //so we can can start our next download when necessary
-                                          weakSelf.downloadManager = nil;
-                                      });
-                                      
-                                  }
-                               andFailureBlock:^(NSError *downloadError) {
-                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                       if (failureBlock) {
-                                           failureBlock(downloadError);
-                                       }
-                                       
-                                       //once we're finished, nil out the downloadManager
-                                       //so we can can start our next download when necessary
-                                       weakSelf.downloadManager = nil;
-                                   });
-                               }
-    ];
+//    __weak TMPodcastsManager *weakSelf = self;
+//    self.downloadManager = [[TMDownloadUtilities alloc] init];
+//    [self.downloadManager downloadPodcastAtURL:episodeURL
+//                                  withFileName:fileName
+//                                   updateBlock:^(CGFloat downloadPercentage) {
+//                                       dispatch_async(dispatch_get_main_queue(), ^{
+//                                           if (updateBlock) {
+//                                               updateBlock(downloadPercentage);
+//                                           }
+//                                        });
+//                                   }
+//                                  successBlock:^(NSString *filePath) {
+//                                      dispatch_async(dispatch_get_main_queue(), ^{
+//                                          if (successBlock) {
+//                                              successBlock(filePath);
+//                                          }
+//                                          //once we're finished, nil out the downloadManager
+//                                          //so we can can start our next download when necessary
+//                                          weakSelf.downloadManager = nil;
+//                                      });
+//                                      
+//                                  }
+//                               andFailureBlock:^(NSError *downloadError) {
+//                                   dispatch_async(dispatch_get_main_queue(), ^{
+//                                       if (failureBlock) {
+//                                           failureBlock(downloadError);
+//                                       }
+//                                       
+//                                       //once we're finished, nil out the downloadManager
+//                                       //so we can can start our next download when necessary
+//                                       weakSelf.downloadManager = nil;
+//                                   });
+//                               }
+//    ];
 }
 
 - (NSString *)filePathForEpisode:(TMPodcastEpisode *)episode {
-    NSString *fileName = [episode.downloadURL lastPathComponent];
+    NSString *fileName = [[NSURL URLWithString:episode.downloadURLString] lastPathComponent];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *filePath = [documentsDirectory stringByAppendingPathComponent:fileName];

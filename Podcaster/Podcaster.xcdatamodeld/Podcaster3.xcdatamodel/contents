@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="7701" systemVersion="14D136" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="TMSubscribedEpisode" representedClassName="TMSubscribedEpisode" syncable="YES">
+        <attribute name="downloadURLString" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="episodeNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="fileLocation" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fileSize" optional="YES" attributeType="Integer 64" defaultValueString="0" syncable="YES"/>
+        <attribute name="lastPlayLocation" optional="YES" attributeType="Decimal" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="publishDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="subscribedPodcast" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TMSubscribedPodcast" inverseName="episodes" inverseEntity="TMSubscribedPodcast" syncable="YES"/>
+    </entity>
+    <entity name="TMSubscribedPodcast" representedClassName="TMSubscribedPodcast" syncable="YES">
+        <attribute name="feedURLString" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageURLLocal" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="imageURLRemote" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="episodes" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="TMSubscribedEpisode" inverseName="subscribedPodcast" inverseEntity="TMSubscribedEpisode" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="TMSubscribedEpisode" positionX="-65" positionY="-9" width="128" height="178"/>
+        <element name="TMSubscribedPodcast" positionX="-324" positionY="-72" width="128" height="118"/>
+    </elements>
+</model>

@@ -8,7 +8,8 @@
 
 #import "TMSubscribedPodcast.h"
 #import "TMPodcast.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
+#import "NSManagedObject+EntityName.h"
 
 @interface TMSubscribedPodcast ()
 
@@ -21,12 +22,12 @@
 @synthesize podcastDescription = _podcastDescription;
 @synthesize episodes = _episodes;
 @synthesize podcastImage = _podcastImage;
-@dynamic imageURLRemote;
 @dynamic imageURLLocal;
 @dynamic feedURLString;
 @dynamic title;
 
-+ (instancetype)instanceFromTMPodcast:(TMPodcast *)podcast inContext:(NSManagedObjectContext *)context {
+#warning Move writing to the DB to a background threaded context
++ (instancetype)instanceFromTMPodcast:(id<TMPodcastDelegate>)podcast inContext:(NSManagedObjectContext *)context {
     
     //if we've already subscribed to this podcast, get it
     TMSubscribedPodcast *subscribedPodcast = [self subscribedPodcastWithName:podcast.title inContext:context];
@@ -36,12 +37,19 @@
         subscribedPodcast = [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
         subscribedPodcast.title = podcast.title;
         subscribedPodcast.feedURLString = podcast.feedURLString;
-        subscribedPodcast.imageURLRemote = [podcast.imageURL absoluteString];
         subscribedPodcast.podcastDescription = podcast.podcastDescription;
-        [subscribedPodcast saveImageToDisk:podcast.podcastImage forPodcast:podcast withCompletion:^(NSString *localURLString) {
+        [subscribedPodcast saveImageToDisk:podcast.podcastImage
+                                forPodcast:podcast
+                            withCompletion:^(NSString *localURLString) {
             subscribedPodcast.imageURLLocal = localURLString;
         }];
-
+        subscribedPodcast.episodes = nil;
+        
+        //save
+        NSError *saveError = nil;
+        if (![context save:&saveError]) {
+            NSLog(@"error saving when trying to insert a TMSubscribedPodcast named %@.\nError description: %@", subscribedPodcast.title, saveError.localizedDescription);
+        }
     }
     
     return subscribedPodcast;
@@ -51,14 +59,13 @@
     
     //fetch all subscribed podcasts
     NSEntityDescription *entityDescription = [NSEntityDescription
-                                              entityForName:[TMSubscribedPodcast entityName]
+                                              entityForName:[self entityName]
                                               inManagedObjectContext:context];
     
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     [request setEntity:entityDescription];
 
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:
-                              @"title = %@", podcastTitle];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"title = %@", podcastTitle];
     [request setPredicate:predicate];
     
     NSArray *results = [context executeFetchRequest:request error:nil];
@@ -87,7 +94,7 @@
     NSString *titleNoSpaces = [podcast.title stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSString *fileName = [NSString stringWithFormat:@"%@-image.png", titleNoSpaces];
     NSError *saveError;
-    NSString *filePath = [TMDownloadManager saveData:data withFileName:fileName andError:saveError];
+    NSString *filePath = [TMDownloadUtilities saveData:data withFileName:fileName andError:saveError];
     if (saveError) {
         NSLog(@"Error saving image for subscribedPodcast %@ : %@", podcast.title, saveError.localizedDescription);
         completionBlock(nil);

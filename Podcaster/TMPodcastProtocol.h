@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Tyler Mikev. All rights reserved.
 //
 
+@class UIImage;
 @protocol TMPodcastDelegate <NSObject>
 
 @property (strong, nonatomic) NSString *podcastDescription;

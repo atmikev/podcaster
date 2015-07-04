@@ -15,7 +15,6 @@
 @interface TMLatestEpisodesTableViewDataSourceAndDelegate : NSObject <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) NSArray *subscribedEpisodesArray;
-@property (strong, nonatomic) UIView *headerView;
 
 - (instancetype)initWithDelegate:(id<TMSelectPodcastEpisodeDelegate>)delegate;
 

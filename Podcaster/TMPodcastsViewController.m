@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Tyler Mikev. All rights reserved.
 //
 
-#import "TMPodcastsTableViewController.h"
+#import "TMPodcastsViewController.h"
 #import "TMPodcastsManager.h"
 #import "TMPodcastTableViewCell.h"
 #import "TMPodcast.h"
@@ -15,24 +15,25 @@
 #import "TMAudioPlayerViewController.h"
 #import "TMSearchResultsTableViewController.h"
 #import "TMSubscribedPodcast.h"
+#import "TMSubscribedEpisode.h"
 #import "AppDelegate.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "TMLatestEpisodesTableViewDataSourceAndDelegate.h"
-#import "TMSelectPodcastProtocol.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
+#import "TMSelectPodcastProtocol.h"
 #import "TMAllEpisodesTableViewDataSourceAndDelegate.h"
-
+#import "NSManagedObject+EntityName.h"
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
+static CGFloat const kEpisodeButtonFontHeight = 14;
 
-@interface TMPodcastsTableViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
+@interface TMPodcastsViewController () <NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
 
-@property (weak, nonatomic) IBOutlet UISegmentedControl *episodesSegmentedControl;
-@property (weak, nonatomic) IBOutlet UIView *headerView;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIButton *latestEpisodeButton;
+@property (weak, nonatomic) IBOutlet UIButton *allEpisodesButton;
 
-@property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
-@property (strong, nonatomic) UISearchController *searchController;
 @property (strong, nonatomic) TMLatestEpisodesTableViewDataSourceAndDelegate *latestEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMAllEpisodesTableViewDataSourceAndDelegate *allEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
@@ -40,14 +41,13 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
-//ATM UGH FIX THIS TOO
 @property (strong, nonatomic) id selectedItem;
 
-- (IBAction)episodesSegmentedControlHandler:(id)sender;
+- (IBAction)episodeButtonsHandler:(UIButton *)senderButton;
 
 @end
 
-@implementation TMPodcastsTableViewController
+@implementation TMPodcastsViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -55,20 +55,16 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     //setup the data sources/delegates
     self.podcastsManager = [TMPodcastsManager new];
     self.latestEpisodesTableViewDataSourceAndDelegate = [[TMLatestEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
-    self.latestEpisodesTableViewDataSourceAndDelegate.headerView = self.headerView;
     self.allEpisodesTableViewDataSourceAndDelegate = [[TMAllEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
-    self.allEpisodesTableViewDataSourceAndDelegate.headerView = self.headerView;
-    
-    [self setupSearchController];
     
     //start out on the latestEpisodesTableViewDataSource
-    self.tableView.dataSource = self.latestEpisodesTableViewDataSourceAndDelegate;
-    self.tableView.delegate = self.latestEpisodesTableViewDataSourceAndDelegate;
+    [self setNewDataSource:self.latestEpisodesTableViewDataSourceAndDelegate andDelegate:self.latestEpisodesTableViewDataSourceAndDelegate];
     
     //poor form, come back to this
     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
     self.managedObjectContext = [appDelegate managedObjectContext];
-
+    
+    self.title = @"My Podcasts";
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -100,8 +96,7 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
             //increment the retrievedCount
             finishedCalls++;
             
-            //ATM FIX THIS: I think I screwed this us. Too tired. Do I still need TMPodcast to have an NSSet or not??
-            subscribedPodcast.episodes = podcast.episodes.allObjects;
+            subscribedPodcast.episodes = podcast.episodes;
             
             if (finishedCalls == subscribedPodcastsArray.count) {
                 [self handleRetrievedEpisodes:subscribedPodcastsArray];
@@ -125,40 +120,16 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO];
     for (TMSubscribedPodcast *subscribedPodcast in subscribedPodcastsArray) {
         TMPodcastEpisode *latestEpisode = [subscribedPodcast.episodes sortedArrayUsingDescriptors:@[dateDescriptor]].firstObject;
-        //replace this with our subscribed podcast so we can have access to any saved info for the podcast (i.e. the image)
-        latestEpisode.podcast = subscribedPodcast;
-        [latestEpisodes addObject:latestEpisode];
+        TMSubscribedEpisode *subscribedEpisode = [TMSubscribedEpisode instanceFromTMPodcastEpisode:latestEpisode inContext:self.managedObjectContext];
+        
+        [latestEpisodes addObject:subscribedEpisode];
     }
     
     //give the podcast episodes to our latest episode data source
-    self.latestEpisodesTableViewDataSourceAndDelegate.subscribedEpisodesArray = [latestEpisodes sortedArrayUsingDescriptors:@[dateDescriptor]];
+    self.latestEpisodesTableViewDataSourceAndDelegate.subscribedEpisodesArray = latestEpisodes;
     
     //reload the data
     [self.tableView reloadData];
-
-}
-
-- (void)setupSearchController {
-
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
-
-    self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
-    self.searchResultsController.delegate = self;
-    
-    self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
-    self.searchController.searchResultsUpdater = self;
-    [self.searchController.searchBar sizeToFit];
-    self.tableView.tableHeaderView = self.searchController.searchBar;
-    
-    // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
-    self.searchController.delegate = self;
-    self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
-    
-    // Search is now just presenting a view controller. As such, normal view controller
-    // presentation semantics apply. Namely that presentation will walk up the view controller
-    // hierarchy until it finds the root view controller or one that defines a presentation context.
-    //
-    self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
 }
 
 - (NSFetchedResultsController *)fetchedResultsController {
@@ -190,6 +161,23 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     
 }
 
+- (void)updateButtonFontsWithSenderButton {
+    //figure out which button should be bolded, and which shouldn't
+    UIButton *otherButton = self.allEpisodesButton;
+    UIButton *selectedButton = self.latestEpisodeButton;
+    if (self.tableView.dataSource == self.allEpisodesTableViewDataSourceAndDelegate) {
+        otherButton = self.latestEpisodeButton;
+        selectedButton = self.allEpisodesButton;
+    }
+    
+    //set the sender button to have a bold fond
+    UIFont *regularFont = [UIFont fontWithName:@"HelveticaNeue-Light" size:kEpisodeButtonFontHeight];
+    UIFont *boldFont = [UIFont fontWithName:@"HelveticaNeue-Bold" size:kEpisodeButtonFontHeight];
+    
+    selectedButton.titleLabel.font = boldFont;
+    otherButton.titleLabel.font = regularFont;
+}
+
 - (void)switchDataSourcesAndDelegates {
     
     id newDataSourceAndDelegate = nil;
@@ -202,10 +190,18 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     }
     
     //set the new datasource and delegate
-    self.tableView.dataSource = (id<UITableViewDataSource>)newDataSourceAndDelegate;
-    self.tableView.delegate = (id<UITableViewDelegate>)newDataSourceAndDelegate;
+    [self setNewDataSource:newDataSourceAndDelegate andDelegate:newDataSourceAndDelegate];
+
+}
+
+- (void)setNewDataSource:(id<UITableViewDataSource>)datasource andDelegate:(id<UITableViewDelegate>)delegate {
+    self.tableView.dataSource = datasource;
+    self.tableView.delegate = delegate;
     
     [self.tableView reloadData];
+    
+    //update the episode button fonts
+    [self updateButtonFontsWithSenderButton];
 }
 
 #pragma mark - Segue stuff
@@ -215,56 +211,24 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
     if ([segue.identifier isEqualToString:kEpisodesViewControllerSegue]) {
         TMPodcastEpisodesTableViewController *vc = (TMPodcastEpisodesTableViewController *)segue.destinationViewController;
         vc.managedObjectContext = self.managedObjectContext;
-        vc.podcast = (TMPodcast *)self.selectedItem;
+        vc.podcast = (id<TMPodcastDelegate>) self.selectedItem;
     } else if ([segue.identifier isEqualToString:kAudioPlayerViewControllerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)segue.destinationViewController;
         vc.episode = (TMPodcastEpisode *)self.selectedItem;
         vc.podcastImage = vc.episode.podcast.podcastImage;
+        vc.managedObjectContext = self.managedObjectContext;
     }
 
     self.selectedItem = nil;
 }
 
-#pragma mark - UISearchResultsUpdating
-
-- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
-    // update the filtered array based on the search text
-    NSString *searchText = searchController.searchBar.text;
-    
-    // strip out all the leading and trailing spaces
-    NSString *strippedString = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    
-    if (strippedString) {
-        __weak TMPodcastsTableViewController *weakSelf = self;
-        [self.podcastsManager searchForPodcastsWithSearchString:strippedString
-                                                     maxResults:25
-                                                   successBlock:^(NSArray *podcasts) {
-                                                       weakSelf.searchResultsController.podcastsArray = podcasts;
-                                                       
-                                                       //UI stuff needs to be done on the main thread, you idiot.
-                                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                                           [weakSelf.searchResultsController.tableView reloadData];
-                                                       });
-                                                   } andFailureBlock:^(NSError *error) {
-#warning Handle error
-                                                   }];
-    }
-    
-}
 
 #pragma IBActions
 
-- (void)episodesSegmentedControlHandler:(id)sender {
+- (IBAction)episodeButtonsHandler:(UIButton *)senderButton {
     
     //switch out the data source and reload
     [self switchDataSourcesAndDelegates];
-}
-
-#pragma TMSelectPodcastProtocol methods
-
-- (void)didSelectPodcast:(TMPodcast *)podcast {
-    self.selectedItem = podcast;
-    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
 
 #pragma TMSelectPodcastEpisodeProtocol methods
@@ -272,6 +236,13 @@ static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewContr
 - (void)didSelectEpisode:(TMPodcastEpisode *)episode {
     self.selectedItem = episode;
     [self performSegueWithIdentifier:kAudioPlayerViewControllerSegue sender:self];
+}
+
+#pragma TMSelectPodcastProtocol methods
+
+- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast {
+    self.selectedItem = podcast;
+    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
 
 

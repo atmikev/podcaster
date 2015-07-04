@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TMPodcastsTableViewController : UITableViewController
+@interface TMPodcastsViewController : UIViewController
 
 @end

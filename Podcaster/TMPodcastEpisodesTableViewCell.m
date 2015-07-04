@@ -8,6 +8,7 @@
 
 #import "TMPodcastEpisodesTableViewCell.h"
 #import "TMPodcastEpisode.h"
+#import "NSString+Formatter.h"
 
 @implementation TMPodcastEpisodesTableViewCell
 
@@ -19,10 +20,10 @@
 - (void)setupCellWithEpisode:(TMPodcastEpisode *)episode {
     self.titleLabel.text = episode.title;
     
-    self.durationLabel.text = episode.durationString;
+    self.durationLabel.text = [NSString durationStringFromDuration:episode.duration];
     [self.durationLabel sizeToFit];
     
-    self.publishDateLabel.text = episode.publishDateString;
+    self.publishDateLabel.text = [NSString publishDateStringFromPublishDate:episode.publishDate];
 
     self.progressView.hidden = YES;
     

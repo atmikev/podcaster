@@ -35,9 +35,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     [self retrievePodcastDetails];
-    
 }
 
 - (TMPodcastsManager *)podcastsManager {
@@ -51,17 +49,16 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 - (void)retrievePodcastDetails {
     
     [self.podcastsManager podcastEpisodesAtURL:self.podcast.feedURLString withSuccessBlock:^(TMPodcast *podcast) {
-        //add our image to the podcast we got back (which came back without an image),
-        //and then store the podcast
-        podcast.podcastImage = self.podcast.podcastImage;
-        self.podcast = podcast;
-
+        
+        //add the image from self.podcast to the podcast we got back from the service (which came back without an image),
+        self.podcast.podcastImage = self.podcast.podcastImage;
         //check if any of these are downloaded
         [self findDownloadedEpisodes];
         
-        //store the episodes as an array
+        //store the episodes as an array so we can access them as an array ordered by date
         NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO];
-        self.episodes = [[self.podcast.episodes allObjects] sortedArrayUsingDescriptors:@[dateDescriptor]];
+        self.episodes = [[podcast.episodes allObjects] sortedArrayUsingDescriptors:@[dateDescriptor]];
+        self.podcast.episodes = [NSSet setWithArray:self.episodes];
         
         //refresh that table
         [self.tableView reloadData];
@@ -135,7 +132,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     //store the indexPath we're downloading
     self.downloadingIndex = indexPath;
     
-    //get the episode download link
+    //get the episode
     TMPodcastEpisode *episode = [self.episodes objectAtIndex:indexPath.row];
     
 //    if (episode.fileLocation != nil) {
@@ -184,31 +181,55 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 
 // In a storyboard-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-    
+
     if ([[segue identifier] isEqualToString:kAudioPlayerSegue]) {
         TMAudioPlayerViewController *vc = (TMAudioPlayerViewController *)[segue destinationViewController];
         vc.episode = self.episodeToPlay;
         vc.podcastImage = self.podcast.podcastImage;
+        vc.managedObjectContext = self.managedObjectContext;
     }
 }
 
 #pragma mark - TMPodcastSubscriptionDelegate
 
-
-- (void)subscribeToPodcast:(TMPodcast *)podcast {
+- (void)subscribeToPodcast:(id<TMPodcastDelegate>)podcast withCompletionBlock:(void (^)(BOOL))completionBlock {
     
     //This logic should be in TMPodcastsManager
     TMSubscribedPodcast *subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:podcast inContext:self.managedObjectContext];
     
+    [self saveConextAfterChangingSubscriptionForPodcast:subscribedPodcast withCompletionBlock:completionBlock];
+}
+
+- (void)unsubscribeToPodcast:(id<TMPodcastDelegate>)podcast withCompletionBlock:(void (^)(BOOL))completionBlock {
+    //This logic should be in TMPodcastsManager
+    TMSubscribedPodcast *subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:podcast inContext:self.managedObjectContext];
+    
+    [self.managedObjectContext deleteObject:subscribedPodcast];
+    
+    [self saveConextAfterChangingSubscriptionForPodcast:podcast withCompletionBlock:completionBlock];
+    
+}
+
+- (void)saveConextAfterChangingSubscriptionForPodcast:(id<TMPodcastDelegate>)podcast withCompletionBlock:(void(^)(BOOL wasSuccessful))completionBlock{
     NSError *saveError;
-    if ([self.managedObjectContext hasChanges] && [self.managedObjectContext save:&saveError] == NO) {
-        NSLog(@"Error saving subscribedPodcast named %@ : %@", subscribedPodcast.title, saveError.localizedDescription);
+    NSString *title;
+    NSString *message;
+    BOOL successful = [self.managedObjectContext save:&saveError];
+    if ([self.managedObjectContext hasChanges] && successful == NO) {
+        NSLog(@"Error saving/deleting subscribedPodcast named %@ : %@", podcast.title, saveError.localizedDescription);
+        title = @"";
+        message = @"Something went wrong :-(";
+        
+    } else {
+        title = @"";
+        message = @"Success";
     }
     
-    [[[UIAlertView alloc] initWithTitle:@"Subscribed" message:@"Subscribed!" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
     
+    if (completionBlock) {
+        completionBlock(successful);
+    }
 }
 
 
