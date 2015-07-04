@@ -11,13 +11,7 @@
 
 @class TMPodcast;
 
-@interface TMDownloadManager : NSObject
-
-- (void)downloadPodcastAtURL:(NSURL *)downloadURL
-                withFileName:(NSString *)fileName
-                 updateBlock:(void (^)(CGFloat downloadPercentage))updateBlock
-                successBlock:(void (^)(NSString *filePath))successBlock
-             andFailureBlock:(void (^)(NSError *downloadError))failureBlock;
+@interface TMDownloadUtilities : NSObject
 
 + (void)downloadImageAtURL:(NSURL *)imageURL
             withCompletionBlock:(void(^)(UIImage *image))completionBlock;

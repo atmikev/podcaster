@@ -9,6 +9,7 @@
 #import "TMAudioPlayerManager.h"
 #import "TMMark.h"
 #import "TMPodcastEpisode.h"
+#import "TMSubscribedEpisode.h"
 #import "TMPodcastProtocol.h"
 #import <Parse/Parse.h>
 @import MediaPlayer;
@@ -143,12 +144,13 @@ const NSInteger kSeekInterval = 15;
     
     NSMutableDictionary *songInfo = [[NSMutableDictionary alloc] init];
     
-    
-    MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:self.episode.podcast.podcastImage];
+    if (self.episode.podcast.podcastImage) {
+        MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage:self.episode.podcast.podcastImage];
+        [songInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
+    }
     
     [songInfo setObject:self.episode.title forKey:MPMediaItemPropertyTitle];
     [songInfo setObject:self.episode.podcast.title forKey:MPMediaItemPropertyArtist];
-    [songInfo setObject:albumArt forKey:MPMediaItemPropertyArtwork];
     [[MPNowPlayingInfoCenter defaultCenter] setNowPlayingInfo:songInfo];
     
 }
@@ -171,7 +173,22 @@ const NSInteger kSeekInterval = 15;
     self.isReadyToPlay = YES;
 }
 
-- (void)play {
+- (void)checkIfFirstPlay {
+    //If this is the first time this is being played,
+    //populate the lastPlayedLocation variable
+    if (self.episode.lastPlayLocation == nil) {
+        self.episode.lastPlayLocation = @(0);
+        
+        if ([self.episode isKindOfClass:[TMSubscribedEpisode class]]) {
+            NSError *error;
+            if ([self.managedObjectContext save:&error] == NO) {
+                NSLog(@"Error: %@",error.debugDescription);
+            }
+        }
+    }
+}
+
+- (void)playFromLastPlayedLocation {
     
     NSInteger lastPlayedTime = [self.episode.lastPlayLocation integerValue];
     
@@ -179,26 +196,31 @@ const NSInteger kSeekInterval = 15;
     
     [self.audioPlayer seekToTime:startPlayingTime completionHandler:^(BOOL finished) {
         if (finished) {
-            
-            [self.audioPlayer play];
-            
-            //update the isPlaying value
-            self.isPlaying = YES;
-            
-            //start the timer to monitor stuff
-            [self startMonitoringAudioTime];
-            
-            dispatch_async(dispatch_get_main_queue(), ^{
-                //pay attention to when the player has reached the end to let our owner know
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(itemDidFinishPlaying:)
-                                                             name:AVPlayerItemDidPlayToEndTimeNotification
-                                                           object:self.playerItem];
-                
-            });
-
+            [self play];
         }
     }];
+
+}
+
+- (void)play {
+    [self checkIfFirstPlay];
+    
+    [self.audioPlayer play];
+    
+    //update the isPlaying value
+    self.isPlaying = YES;
+    
+    //start the timer to monitor stuff
+    [self startMonitoringAudioTime];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        //pay attention to when the player has reached the end to let our owner know
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidFinishPlaying:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:self.playerItem];
+        
+    });
 
 }
 
@@ -207,7 +229,6 @@ const NSInteger kSeekInterval = 15;
     
     //update isPlaying
     self.isPlaying = NO;
-
 }
 
 - (void)togglePlayPause {
@@ -385,10 +406,12 @@ const NSInteger kSeekInterval = 15;
 
 - (void)monitorTimeRelatedInfo {
     
-    [self updateDelegateTimeInfo];
-    
     //mark the last played time (can this be optimized?)
     self.episode.lastPlayLocation = [NSNumber numberWithDouble:[self currentTime]];
+    //this is probably going to block the main thread, ugh. need to make a background thread
+    [self.managedObjectContext save:nil];
+    
+    [self updateDelegateTimeInfo];
     
     if (self.marksArray) {
         [self checkForNextMark];

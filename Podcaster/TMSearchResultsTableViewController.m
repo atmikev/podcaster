@@ -10,7 +10,7 @@
 
 #import "TMPodcast.h"
 #import "TMPodcastTableViewCell.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "TMSelectPodcastProtocol.h"
 
 @implementation TMSearchResultsTableViewController
@@ -29,7 +29,7 @@
     if (podcast.podcastImage) {
         cell.podcastImageView.image = podcast.podcastImage;
     } else {
-        [TMDownloadManager downloadImageForPodcast:podcast
+        [TMDownloadUtilities downloadImageForPodcast:podcast
                                            forCell:cell
                                        atIndexPath:indexPath
                                        inTableView:tableView];

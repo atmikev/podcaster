@@ -69,22 +69,13 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     //store the custom navigation controller
     self.navController = (TMNavigationController *)self.navigationController;
     
-    //If this is the first time this is being played,
-    //populate the lastPlayedLocation variable
-    if (self.episode.lastPlayLocation == nil) {
-        self.episode.lastPlayLocation = @(0);
-        
-        if ([self.episode isKindOfClass:[TMSubscribedEpisode class]]) {
-            NSError *error;
-            if ([self.managedObjectContext save:&error] == NO) {
-                NSLog(@"Error: %@",error.debugDescription);
-            }
-        }
-    }
-
-    //show the user we can't interact quite yet
-    self.playPauseButton.enabled = NO;
-    self.playPauseButton.alpha = 0.5;
+    //kvo on isPlaying for the play/pause image
+    [self.audioPlayerManager addObserver:self
+                              forKeyPath:kIsPlayingString
+                                 options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                                 context:nil];
+    
+    [self checkIfWeAreReadyToPlay];
     
     //workaround for ios 8 bug to prevent accidentally swiping back when trying to use the time bar
     self.navigationController.interactivePopGestureRecognizer.delegate = self;
@@ -93,17 +84,25 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
 
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
     
+    //seems intermittent...should come back to this though
+    @try {
+        [self.audioPlayerManager removeObserver:self forKeyPath:kIsPlayingString];
+    }
+    @catch (NSException * __unused exception) {}
 
-    //kvo on isPlaying for the play/pause image
-    [self.audioPlayerManager addObserver:self
-                              forKeyPath:kIsPlayingString
-                                 options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-                                 context:nil];
-    
+}
+
+- (void)setupAudioPlayerManager {
+    self.audioPlayerManager = [TMAudioPlayerManager sharedInstance];
+    self.audioPlayerManager.delegate = self;
+    self.audioPlayerManager.episode = self.episode;
+}
+
+- (void)checkIfWeAreReadyToPlay {
+    //check if we're ready to play
     if (self.audioPlayerManager.isReadyToPlay == NO) {
         //kvo on isReadyToPlay to show whether the audio player is ready to play or not
         [self.audioPlayerManager addObserver:self
@@ -111,22 +110,14 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
                                      options:NSKeyValueObservingOptionNew
                                      context:nil];
 
+        //show the user we can't interact quite yet
+        self.playPauseButton.enabled = NO;
+        self.playPauseButton.alpha = 0.5;
+        
     } else {
         [self readyToPlay];
     }
-}
 
-- (void)viewDidDisappear:(BOOL)animated {
-    [super viewDidDisappear:animated];
-    
-    //remove observations
-    [self.audioPlayerManager removeObserver:self forKeyPath:kIsPlayingString];
-}
-
-- (void)setupAudioPlayerManager {
-    self.audioPlayerManager = [TMAudioPlayerManager sharedInstance];
-    self.audioPlayerManager.delegate = self;
-    self.audioPlayerManager.episode = self.episode;
 }
 
 - (void)setupSeekSlider {
@@ -145,6 +136,15 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 
 - (void)playAudio {
     [self.audioPlayerManager play];
+    [self setupPlayUI];
+}
+
+- (void)playAudioFromLastPlayedLocation {
+    [self.audioPlayerManager playFromLastPlayedLocation];
+    [self setupPlayUI];
+}
+
+- (void)setupPlayUI {
     [self changePlayPauseButtonImage:YES];
     self.navController.currentAudioPlayerViewController = self;
 }
@@ -235,7 +235,7 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     self.playPauseButton.alpha = 1.0;
     
     //start the episode
-    [self playAudio];
+    [self playAudioFromLastPlayedLocation];
 }
 
 - (void)didFinishPlaying {

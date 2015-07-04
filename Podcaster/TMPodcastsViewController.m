@@ -17,25 +17,23 @@
 #import "TMSubscribedPodcast.h"
 #import "TMSubscribedEpisode.h"
 #import "AppDelegate.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "TMLatestEpisodesTableViewDataSourceAndDelegate.h"
-#import "TMSelectPodcastProtocol.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
+#import "TMSelectPodcastProtocol.h"
 #import "TMAllEpisodesTableViewDataSourceAndDelegate.h"
 #import "NSManagedObject+EntityName.h"
-
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
 static CGFloat const kEpisodeButtonFontHeight = 14;
 
-@interface TMPodcastsViewController () <UISearchBarDelegate, UISearchControllerDelegate, UISearchResultsUpdating, NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
+@interface TMPodcastsViewController () <NSFetchedResultsControllerDelegate, TMSelectPodcastDelegate, TMSelectPodcastEpisodeDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *latestEpisodeButton;
 @property (weak, nonatomic) IBOutlet UIButton *allEpisodesButton;
 
-@property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
 @property (strong, nonatomic) TMLatestEpisodesTableViewDataSourceAndDelegate *latestEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMAllEpisodesTableViewDataSourceAndDelegate *allEpisodesTableViewDataSourceAndDelegate;
 @property (strong, nonatomic) TMPodcastsManager *podcastsManager;
@@ -134,29 +132,6 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     [self.tableView reloadData];
 }
 
-- (void)setupSearchController {
-
-//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
-//
-//    self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
-//    self.searchResultsController.delegate = self;
-//    
-//    self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
-//    self.searchController.searchResultsUpdater = self;
-//    [self.searchController.searchBar sizeToFit];
-//    self.tableView.tableHeaderView = self.searchController.searchBar;
-//    
-//    // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
-//    self.searchController.delegate = self;
-//    self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
-//    
-//    // Search is now just presenting a view controller. As such, normal view controller
-//    // presentation semantics apply. Namely that presentation will walk up the view controller
-//    // hierarchy until it finds the root view controller or one that defines a presentation context.
-//    //
-//    self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
-}
-
 - (NSFetchedResultsController *)fetchedResultsController {
     
     if (_fetchedResultsController != nil) {
@@ -247,32 +222,6 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     self.selectedItem = nil;
 }
 
-#pragma mark - UISearchResultsUpdating
-
-- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
-    // update the filtered array based on the search text
-    NSString *searchText = searchController.searchBar.text;
-    
-    // strip out all the leading and trailing spaces
-    NSString *strippedString = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    
-    if (strippedString) {
-        __weak TMPodcastsViewController *weakSelf = self;
-        [self.podcastsManager searchForPodcastsWithSearchString:strippedString
-                                                     maxResults:25
-                                                   successBlock:^(NSArray *podcasts) {
-                                                       weakSelf.searchResultsController.podcastsArray = podcasts;
-                                                       
-                                                       //UI stuff needs to be done on the main thread, you idiot.
-                                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                                           [weakSelf.searchResultsController.tableView reloadData];
-                                                       });
-                                                   } andFailureBlock:^(NSError *error) {
-#warning Handle error
-                                                   }];
-    }
-    
-}
 
 #pragma IBActions
 
@@ -282,18 +231,18 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     [self switchDataSourcesAndDelegates];
 }
 
-#pragma TMSelectPodcastProtocol methods
-
-- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast {
-    self.selectedItem = podcast;
-    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
-}
-
 #pragma TMSelectPodcastEpisodeProtocol methods
 
 - (void)didSelectEpisode:(TMPodcastEpisode *)episode {
     self.selectedItem = episode;
     [self performSegueWithIdentifier:kAudioPlayerViewControllerSegue sender:self];
+}
+
+#pragma TMSelectPodcastProtocol methods
+
+- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast {
+    self.selectedItem = podcast;
+    [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
 
 

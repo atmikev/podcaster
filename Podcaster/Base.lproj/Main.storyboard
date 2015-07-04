@@ -936,7 +936,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LdL-K1-9j6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1344" y="-2015.25"/>
+            <point key="canvasLocation" x="1288.5" y="-2015.25"/>
         </scene>
         <!--My Podcasts-->
         <scene sceneID="4oD-tW-MJD">

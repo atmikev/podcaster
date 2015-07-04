@@ -12,6 +12,7 @@
 #import <Parse/Parse.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
+#import "TMAudioPlayerManager.h"
 
 @interface AppDelegate ()
 
@@ -160,6 +161,10 @@
     }
     _managedObjectContext = [[NSManagedObjectContext alloc] init];
     [_managedObjectContext setPersistentStoreCoordinator:coordinator];
+    
+    //poor form again. Need to make a background context for this stuff
+    [TMAudioPlayerManager sharedInstance].managedObjectContext = _managedObjectContext;
+    
     return _managedObjectContext;
 }
 

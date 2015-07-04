@@ -13,7 +13,7 @@
 #import "TMiTunesResponse.h"
 #import "TMBrowsePodcastResponse.h"
 #import "TMPodcastsManager.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 
 static NSString * const kGenresDictionaryURLString = @"http://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres";
 static NSString * const kPodcastGenreID = @"26";
@@ -84,7 +84,7 @@ static NSString * const kTopAudioPodcastsKey = @"topAudioPodcasts";
             imageURL = podcast.image170URL;
         }
         
-        [TMDownloadManager downloadImageAtURL:imageURL withCompletionBlock:^(UIImage *image) {
+        [TMDownloadUtilities downloadImageAtURL:imageURL withCompletionBlock:^(UIImage *image) {
             //store whatever image we downloaded as this podcast object's image
             podcast.podcastImage = image;
             

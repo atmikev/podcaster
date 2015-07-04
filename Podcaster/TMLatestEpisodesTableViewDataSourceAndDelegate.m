@@ -105,7 +105,7 @@
     NSString *title = nil;
     
     if (section == 0) {
-        title = @"Fresh!";
+        title = @"New";
     } else {
         title = @"Already Heard";
     }

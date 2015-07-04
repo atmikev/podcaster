@@ -6,7 +6,8 @@
 //  Copyright (c) 2015 Tyler Mikev. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+@import CoreData;
 
 @class TMMark;
 @class TMPodcastEpisode;
@@ -27,6 +28,7 @@ FOUNDATION_EXPORT const NSInteger kSeekInterval;
 @property (assign, nonatomic, readonly) BOOL isReadyToPlay;
 @property (assign, nonatomic, readonly) NSTimeInterval currentTime;
 @property (assign, nonatomic, readonly) NSTimeInterval duration;
+@property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 
 + (instancetype)sharedInstance;
 
@@ -45,6 +47,7 @@ FOUNDATION_EXPORT const NSInteger kSeekInterval;
 - (void)pause;
 
 - (void)play;
+- (void)playFromLastPlayedLocation;
 
 - (void)togglePlayPause;
 @end

@@ -8,7 +8,7 @@
 
 #import "TMSubscribedPodcast.h"
 #import "TMPodcast.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "NSManagedObject+EntityName.h"
 
 @interface TMSubscribedPodcast ()
@@ -94,7 +94,7 @@
     NSString *titleNoSpaces = [podcast.title stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSString *fileName = [NSString stringWithFormat:@"%@-image.png", titleNoSpaces];
     NSError *saveError;
-    NSString *filePath = [TMDownloadManager saveData:data withFileName:fileName andError:saveError];
+    NSString *filePath = [TMDownloadUtilities saveData:data withFileName:fileName andError:saveError];
     if (saveError) {
         NSLog(@"Error saving image for subscribedPodcast %@ : %@", podcast.title, saveError.localizedDescription);
         completionBlock(nil);

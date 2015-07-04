@@ -9,7 +9,7 @@
 #import "TMPodcastsManager.h"
 #import "XMLReader.h"
 #import "TMPodcastEpisode.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "TMPodcast.h"
 #import "TMPodcastsManager.h"
 #import "TMiTunesResponse.h"
@@ -17,7 +17,7 @@
 
 @interface TMPodcastsManager ()<NSXMLParserDelegate>
 
-@property (strong, nonatomic) TMDownloadManager *downloadManager;
+@property (strong, nonatomic) TMDownloadUtilities *downloadManager;
 @property (strong, nonatomic) NSURLSessionDataTask *searchTask;
 @end
 
@@ -184,45 +184,40 @@
                         updateBlock:(void(^)(CGFloat downloadPercentage))updateBlock
                        successBlock:(void(^)(NSString *filePath))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock {
-    
-    if (self.downloadManager) {
-#warning TODO: add ability to queue up multiple downloads using an NSOperation
-        return;
-    }
-    __weak TMPodcastsManager *weakSelf = self;
-    self.downloadManager = [[TMDownloadManager alloc] init];
-    [self.downloadManager downloadPodcastAtURL:episodeURL
-                                  withFileName:fileName
-                                   updateBlock:^(CGFloat downloadPercentage) {
-                                       dispatch_async(dispatch_get_main_queue(), ^{
-                                           if (updateBlock) {
-                                               updateBlock(downloadPercentage);
-                                           }
-                                        });
-                                   }
-                                  successBlock:^(NSString *filePath) {
-                                      dispatch_async(dispatch_get_main_queue(), ^{
-                                          if (successBlock) {
-                                              successBlock(filePath);
-                                          }
-                                          //once we're finished, nil out the downloadManager
-                                          //so we can can start our next download when necessary
-                                          weakSelf.downloadManager = nil;
-                                      });
-                                      
-                                  }
-                               andFailureBlock:^(NSError *downloadError) {
-                                   dispatch_async(dispatch_get_main_queue(), ^{
-                                       if (failureBlock) {
-                                           failureBlock(downloadError);
-                                       }
-                                       
-                                       //once we're finished, nil out the downloadManager
-                                       //so we can can start our next download when necessary
-                                       weakSelf.downloadManager = nil;
-                                   });
-                               }
-    ];
+//    __weak TMPodcastsManager *weakSelf = self;
+//    self.downloadManager = [[TMDownloadUtilities alloc] init];
+//    [self.downloadManager downloadPodcastAtURL:episodeURL
+//                                  withFileName:fileName
+//                                   updateBlock:^(CGFloat downloadPercentage) {
+//                                       dispatch_async(dispatch_get_main_queue(), ^{
+//                                           if (updateBlock) {
+//                                               updateBlock(downloadPercentage);
+//                                           }
+//                                        });
+//                                   }
+//                                  successBlock:^(NSString *filePath) {
+//                                      dispatch_async(dispatch_get_main_queue(), ^{
+//                                          if (successBlock) {
+//                                              successBlock(filePath);
+//                                          }
+//                                          //once we're finished, nil out the downloadManager
+//                                          //so we can can start our next download when necessary
+//                                          weakSelf.downloadManager = nil;
+//                                      });
+//                                      
+//                                  }
+//                               andFailureBlock:^(NSError *downloadError) {
+//                                   dispatch_async(dispatch_get_main_queue(), ^{
+//                                       if (failureBlock) {
+//                                           failureBlock(downloadError);
+//                                       }
+//                                       
+//                                       //once we're finished, nil out the downloadManager
+//                                       //so we can can start our next download when necessary
+//                                       weakSelf.downloadManager = nil;
+//                                   });
+//                               }
+//    ];
 }
 
 - (NSString *)filePathForEpisode:(TMPodcastEpisode *)episode {

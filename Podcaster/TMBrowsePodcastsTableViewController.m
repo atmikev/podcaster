@@ -12,23 +12,27 @@
 #import "TMBrowsePopularPodcastCell.h"
 #import "TMPodcast.h"
 #import "TMBrowsePodcastsManager.h"
+#import "TMPodcastsManager.h"
 #import "TMGenre.h"
-#import "TMDownloadManager.h"
+#import "TMDownloadUtilities.h"
 #import "TMPodcastsManager.h"
 #import "TMBrowsePodcastButton.h"
 #import "TMPodcastEpisodesTableViewController.h"
+#import "TMSelectPodcastProtocol.h"
+#import "TMSearchResultsTableViewController.h"
 
 static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
 
-@interface TMBrowsePodcastsTableViewController ()
+@interface TMBrowsePodcastsTableViewController ()<UISearchControllerDelegate, UISearchResultsUpdating, UISearchBarDelegate, TMSelectPodcastDelegate>
 
+@property (strong, nonatomic) TMSearchResultsTableViewController *searchResultsController;
 @property (strong, nonatomic) TMBrowsePodcastsManager *browseManager;
 @property (strong, nonatomic) NSMutableArray *genresMutableArray;
 @property (assign, nonatomic) NSInteger totalGenresCount;
 @property (strong, nonatomic) TMGenre *popularGenre;
-@property (strong, nonatomic) TMPodcast *selectedPodcast;
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
-
+@property (strong, nonatomic) UISearchController *searchController;
+@property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @end
 
 @implementation TMBrowsePodcastsTableViewController
@@ -41,9 +45,12 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
     self.managedObjectContext = [appDelegate managedObjectContext];
     
     self.browseManager = [TMBrowsePodcastsManager new];
+    self.podcastsManager = [TMPodcastsManager new];
     self.genresMutableArray = [NSMutableArray new];
     
     [self retrieveGenres];
+    
+    [self setupSearchController];
     
     self.title = @"Search";
 }
@@ -133,14 +140,14 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
 - (void)podcastButtonHandler:(id)sender {
     TMBrowsePodcastButton *button = (TMBrowsePodcastButton *)sender;
     //maybe sender IS meant to handle this sort of stuff?
-    [self performSegueWithIdentifier:kPodcastEpisodesSegue sender:button];
+    [self performSegueWithIdentifier:kPodcastEpisodesSegue sender:button.podcast];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:kPodcastEpisodesSegue]) {
         TMPodcastEpisodesTableViewController *vc = segue.destinationViewController;
-        TMBrowsePodcastButton *button = (TMBrowsePodcastButton *)sender;
-        vc.podcast = button.podcast;
+        TMPodcast *podcast = (TMPodcast *)sender;
+        vc.podcast = podcast;
         vc.managedObjectContext = self.managedObjectContext;
     }
 }
@@ -150,6 +157,58 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
         [self.tableView reloadData];
     });
 }
+
+#pragma mark - Search stuff
+
+- (void)setupSearchController {
+    
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle: nil];
+    
+        self.searchResultsController = [storyboard instantiateViewControllerWithIdentifier:NSStringFromClass([TMSearchResultsTableViewController class])];
+        self.searchResultsController.delegate = self;
+    
+        self.searchController = [[UISearchController alloc] initWithSearchResultsController:self.searchResultsController];
+        self.searchController.searchResultsUpdater = self;
+        [self.searchController.searchBar sizeToFit];
+        self.tableView.tableHeaderView = self.searchController.searchBar;
+    
+        // we want to be the delegate for our filtered table so didSelectRowAtIndexPath is called for both tables
+        self.searchController.delegate = self;
+        self.searchController.searchBar.delegate = self; // so we can monitor text changes + others
+    
+        // Search is now just presenting a view controller. As such, normal view controller
+        // presentation semantics apply. Namely that presentation will walk up the view controller
+        // hierarchy until it finds the root view controller or one that defines a presentation context.
+        //
+        self.definesPresentationContext = YES;  // know where you want UISearchController to be displayed
+}
+
+#pragma mark - UISearchResultsUpdating
+
+- (void)updateSearchResultsForSearchController:(UISearchController *)searchController {
+    // update the filtered array based on the search text
+    NSString *searchText = searchController.searchBar.text;
+    
+    // strip out all the leading and trailing spaces
+    NSString *strippedString = [searchText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    if (strippedString) {
+        [self.podcastsManager searchForPodcastsWithSearchString:strippedString
+                                                     maxResults:25
+                                                   successBlock:^(NSArray *podcasts) {
+                                                       self.searchResultsController.podcastsArray = podcasts;
+                                                       
+                                                       //UI stuff needs to be done on the main thread, you idiot.
+                                                       dispatch_async(dispatch_get_main_queue(), ^{
+                                                           [self.searchResultsController.tableView reloadData];
+                                                       });
+                                                   } andFailureBlock:^(NSError *error) {
+                                                       NSLog(@"Error while searching: %@", error.debugDescription);
+                                                   }];
+    }
+    
+}
+
 
 #pragma mark - Table view datasource
 
@@ -187,5 +246,12 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return indexPath.row == 0 ? 208 : 138;
 }
+
+#pragma TMSelectPodcastProtocol methods
+
+- (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast {
+    [self performSegueWithIdentifier:kPodcastEpisodesSegue sender:podcast];
+}
+
 
 @end
