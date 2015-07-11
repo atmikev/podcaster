@@ -24,5 +24,4 @@
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast;
-
 @end

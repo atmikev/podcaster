@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 
 @class TMPodcast;
+@protocol TMPodcastEpisodeDelegate;
 
 @interface TMDownloadUtilities : NSObject
 
@@ -24,5 +25,7 @@
 + (NSString *)saveData:(NSData *)fileData
           withFileName:(NSString *)fileName
               andError:(NSError *)fileWritingError;
+
++ (NSString *)keyForEpisode:(id<TMPodcastEpisodeDelegate>)episode;
 @end
 

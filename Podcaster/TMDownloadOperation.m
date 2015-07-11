@@ -13,11 +13,13 @@
 @property (assign, nonatomic) BOOL isExecuting;
 @property (assign, nonatomic) BOOL isFinished;
 @property (strong, nonatomic) TMDownloadUtilities *downloadManager;
-@property (strong, nonatomic) NSString *downloadURLString;
+@property (strong, nonatomic, readwrite) NSString *downloadURLString;
 @property (strong, nonatomic) NSString *fileName;
 @property (copy, nonatomic) void(^updateBlock)(CGFloat percentage);
 @property (copy, nonatomic) void(^successBlock)(NSString *filePath);
 @property (copy, nonatomic) void(^failureBlock)(NSError *error);
+@property (assign, nonatomic) CGFloat lastPercentage;
+@property (strong, nonatomic) NSURLSessionDownloadTask *downloadTask;
 @end
 
 @implementation TMDownloadOperation
@@ -40,6 +42,7 @@
         _successBlock = successBlock;
         _failureBlock = failureBlock;
         _fileName = fileName;
+        _lastPercentage = 0;
     }
     return self;
 }
@@ -78,6 +81,13 @@
     }
 }
 
+- (void)cancel {
+    [super cancel];
+    
+    //cancel the download
+    [self.downloadTask cancel];
+}
+
 - (void)completeTask {
     [self setIsFinished:YES];
     [self setIsExecuting:NO];
@@ -99,7 +109,8 @@
                                                      delegateQueue:nil];
     
     //fire it up
-    [[session downloadTaskWithURL:[NSURL URLWithString:self.downloadURLString]] resume];
+    self.downloadTask = [session downloadTaskWithURL:[NSURL URLWithString:self.downloadURLString]];
+    [self.downloadTask resume];
     
 }
 
@@ -116,7 +127,13 @@ totalBytesExpectedToWrite:(int64_t)totalBytesExpectedToWrite {
         NSNumber *written = [NSNumber numberWithLongLong:totalBytesWritten];
         NSNumber *total = [NSNumber numberWithLongLong:totalBytesExpectedToWrite];
         CGFloat percentage = [written floatValue] / [total floatValue];
-        self.updateBlock(percentage);
+        
+        if (percentage - self.lastPercentage > 0.01 || percentage == 1.0) {
+            //only update if we've gone atleast one percent higher.
+            //this thing was popping off before and blocking the main UI thread because it was getting called so much
+            self.lastPercentage = percentage;
+            self.updateBlock(percentage);
+        }
     }
     
 }

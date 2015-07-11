@@ -29,6 +29,7 @@
 @dynamic lastPlayLocation;
 @dynamic subscribedPodcast;
 @synthesize podcast;
+@synthesize downloadPercentage;
 
 #warning Move writing to the DB to a background threaded context
 + (instancetype)instanceFromTMPodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode inContext:(NSManagedObjectContext *)context {

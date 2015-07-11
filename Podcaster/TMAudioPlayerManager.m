@@ -119,6 +119,13 @@ const NSInteger kSeekInterval = 15;
     NSURL *fileURL = nil;
     if (episode.fileLocation) {
         fileURL = [NSURL fileURLWithPath:episode.fileLocation];
+        
+        NSString* saveFileName = [episode.fileLocation lastPathComponent];
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *path = [documentsDirectory stringByAppendingPathComponent:saveFileName];
+        fileURL = [NSURL fileURLWithPath:path];
+
     } else if (episode.downloadURLString) {
         fileURL = [NSURL URLWithString:episode.downloadURLString];
     }

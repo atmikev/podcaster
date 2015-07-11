@@ -23,6 +23,7 @@
 #import "TMSelectPodcastProtocol.h"
 #import "TMAllEpisodesTableViewDataSourceAndDelegate.h"
 #import "NSManagedObject+EntityName.h"
+#import "TMPodcastEpisodeDownloadDelegate.h"
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
@@ -55,8 +56,9 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     //setup the data sources/delegates
     self.podcastsManager = [TMPodcastsManager new];
     self.latestEpisodesTableViewDataSourceAndDelegate = [[TMLatestEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
+    self.latestEpisodesTableViewDataSourceAndDelegate.tableView = self.tableView;
     self.allEpisodesTableViewDataSourceAndDelegate = [[TMAllEpisodesTableViewDataSourceAndDelegate alloc] initWithDelegate:self];
-    
+
     //start out on the latestEpisodesTableViewDataSource
     [self setNewDataSource:self.latestEpisodesTableViewDataSourceAndDelegate andDelegate:self.latestEpisodesTableViewDataSourceAndDelegate];
     
@@ -223,7 +225,7 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
 }
 
 
-#pragma IBActions
+#pragma mark - IBActions
 
 - (IBAction)episodeButtonsHandler:(UIButton *)senderButton {
     
@@ -231,19 +233,18 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     [self switchDataSourcesAndDelegates];
 }
 
-#pragma TMSelectPodcastEpisodeProtocol methods
+#pragma mark - TMSelectPodcastEpisodeProtocol methods
 
 - (void)didSelectEpisode:(TMPodcastEpisode *)episode {
     self.selectedItem = episode;
     [self performSegueWithIdentifier:kAudioPlayerViewControllerSegue sender:self];
 }
 
-#pragma TMSelectPodcastProtocol methods
+#pragma mark - TMSelectPodcastProtocol methods
 
 - (void)didSelectPodcast:(id<TMPodcastDelegate>)podcast {
     self.selectedItem = podcast;
     [self performSegueWithIdentifier:kEpisodesViewControllerSegue sender:self];
 }
-
 
 @end

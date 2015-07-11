@@ -8,6 +8,7 @@
 
 #import "TMDownloadUtilities.h"
 #import "TMPodcast.h"
+#import "TMPodcastEpisodeProtocol.h"
 
 @interface TMDownloadUtilities ()<NSURLSessionDownloadDelegate>
 
@@ -33,7 +34,7 @@
     //save file
     [fileData writeToFile:filePath options:0 error:&fileWritingError];
 
-    return fileName;
+    return filePath;
 }
 
 + (void)downloadImageAtURL:(NSURL *)imageURL
@@ -75,6 +76,10 @@
         }
     }];
     
+}
+
++ (NSString *)keyForEpisode:(id<TMPodcastEpisodeDelegate>)episode {
+    return [episode.downloadURLString lastPathComponent];
 }
 
 @end

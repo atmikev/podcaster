@@ -11,10 +11,12 @@
 
 @interface TMDownloadOperation : NSOperation
 
+@property (strong, nonatomic, readonly) NSString *downloadURLString;
+
 - (instancetype)initWithDownloadURL:(NSString *)downloadURLString
                withFileName:(NSString *)fileName
                 updateBlock:(void (^)(CGFloat downloadPercentage))updateBlock
-               successBlock:(void (^)(NSString *filePath))successBlock
+               successBlock:(void (^)(NSString *fileLocation))successBlock
             andFailureBlock:(void (^)(NSError *downloadError))failureBlock;
 
 @end

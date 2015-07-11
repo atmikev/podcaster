@@ -11,10 +11,14 @@
 
 @class TMPodcastEpisode;
 @protocol TMSelectPodcastEpisodeDelegate;
+@protocol TMDownloadDelegate;
+@protocol TMPodcastEpisodeDownloadDelegate;
 
 @interface TMLatestEpisodesTableViewDataSourceAndDelegate : NSObject <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) NSArray *subscribedEpisodesArray;
+@property (strong, nonatomic) id<TMPodcastEpisodeDownloadDelegate> downloadDelegate;
+@property (strong, nonatomic) UITableView *tableView;
 
 - (instancetype)initWithDelegate:(id<TMSelectPodcastEpisodeDelegate>)delegate;
 

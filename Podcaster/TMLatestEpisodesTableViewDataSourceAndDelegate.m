@@ -12,12 +12,17 @@
 #import "TMPodcastProtocol.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
 #import "TMSubscribedEpisode.h"
+#import "TMPodcastEpisodeDownloadDelegate.h"
+#import "TMDownloadOperation.h"
+#import "TMPodcastEpisodeProtocol.h"
+#import "TMPodcastsManager.h"
 
-@interface TMLatestEpisodesTableViewDataSourceAndDelegate ()
+@interface TMLatestEpisodesTableViewDataSourceAndDelegate () <TMPodcastEpisodeDownloadDelegate>
 
 @property (weak, nonatomic) id<TMSelectPodcastEpisodeDelegate> delegate;
 @property (strong, nonatomic) NSArray *heardEpisodesArray;
 @property (strong, nonatomic) NSArray *unheardEpisodesArray;
+@property (strong, nonatomic) TMPodcastsManager *podcastsManager;
 @end
 
 @implementation TMLatestEpisodesTableViewDataSourceAndDelegate
@@ -27,6 +32,7 @@
     
     if (self) {
         _delegate = delegate;
+        _podcastsManager = [TMPodcastsManager new];
     }
     
     return self;
@@ -84,7 +90,8 @@
         cell.podcastImageView.image = podcastEpisode.podcast.podcastImage;
     }
     
-    [cell setupCellWithEpisode:podcastEpisode];
+    cell.downloadDelegate = self;
+    cell.episode = podcastEpisode;
     
     return cell;
 }
@@ -111,6 +118,31 @@
     }
     
     return title;
+}
+
+#pragma mark - TMPodcastEpisodeDownloadDelegate methods
+
+- (void)startDownloadForEpisode:(id<TMPodcastEpisodeDelegate>)episode {
+
+    NSString *fileName = [episode.downloadURLString lastPathComponent];
+    [self.podcastsManager downloadPodcastEpisodeAtURL:episode.downloadURLString
+                                         withFileName:fileName
+                                          updateBlock:^(CGFloat downloadPercentage) {
+                                              episode.downloadPercentage = downloadPercentage;
+                                          }
+                                         successBlock:^(NSString *filePath) {
+                                             episode.fileLocation = filePath;
+                                         } andFailureBlock:^(NSError *error) {
+                                             NSLog(@"Error while downloading podcast: %@", error.debugDescription);
+    }];
+}
+
+- (void)stopDownloadForEpisode:(id<TMPodcastEpisodeDelegate>)episode {
+    [self.podcastsManager cancelDownloadForPodcastEpisode:episode];
+}
+
+- (void)deleteDownloadForEpisode:(id<TMPodcastEpisodeDelegate>)episode {
+    [self.podcastsManager deletePodcastEpisode:episode];
 }
 
 
