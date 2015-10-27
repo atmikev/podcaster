@@ -63,7 +63,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
         //refresh that table
         [self.tableView reloadData];
     } andFailureBlock:^(NSError *error) {
-#warning Handle this error
+        NSLog(@"Error: Failed to get podcast details: %@", error.debugDescription);
     }];
 }
 
@@ -108,7 +108,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     } else {
         TMPodcastEpisodesTableViewCell *episodeCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeCellReuseIdentifier forIndexPath:indexPath];
         TMPodcastEpisode *episode = [self.episodes objectAtIndex:indexPath.row];
-        [episodeCell setupCellWithEpisode:episode];
+        [episodeCell setEpisode:episode];
         cellToReturn = episodeCell;
     }
     
@@ -198,6 +198,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     TMSubscribedPodcast *subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:podcast inContext:self.managedObjectContext];
     
     [self saveConextAfterChangingSubscriptionForPodcast:subscribedPodcast withCompletionBlock:completionBlock];
+    
 }
 
 - (void)unsubscribeToPodcast:(id<TMPodcastDelegate>)podcast withCompletionBlock:(void (^)(BOOL))completionBlock {
@@ -211,25 +212,28 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
 }
 
 - (void)saveConextAfterChangingSubscriptionForPodcast:(id<TMPodcastDelegate>)podcast withCompletionBlock:(void(^)(BOOL wasSuccessful))completionBlock{
-    NSError *saveError;
-    NSString *title;
-    NSString *message;
-    BOOL successful = [self.managedObjectContext save:&saveError];
-    if ([self.managedObjectContext hasChanges] && successful == NO) {
-        NSLog(@"Error saving/deleting subscribedPodcast named %@ : %@", podcast.title, saveError.localizedDescription);
-        title = @"";
-        message = @"Something went wrong :-(";
-        
-    } else {
-        title = @"";
-        message = @"Success";
-    }
-    
-    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
+//    NSError *saveError;
+//    NSString *title;
+//    NSString *message;
+//    BOOL successful = [self.managedObjectContext save:&saveError];
+//    if ([self.managedObjectContext hasChanges] && successful == NO) {
+//        NSLog(@"Error saving/deleting subscribedPodcast named %@ : %@", podcast.title, saveError.localizedDescription);
+//        title = @"";
+//        message = @"Something went wrong :-(";
+//        
+//    } else {
+//        title = @"";
+//        message = @"Success";
+//    }
+//    
+//    
+//    [[[UIAlertView alloc] initWithTitle:title message:message delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles: nil] show];
     
     if (completionBlock) {
-        completionBlock(successful);
+//        completionBlock(successful);
+        completionBlock(YES);
     }
+   
 }
 
 

@@ -20,6 +20,7 @@
 #import "TMPodcastEpisodesTableViewController.h"
 #import "TMSelectPodcastProtocol.h"
 #import "TMSearchResultsTableViewController.h"
+#import "TMCoreDataManager.h"
 
 static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
 
@@ -40,9 +41,8 @@ static NSString * const kPodcastEpisodesSegue = @"browseToEpisodeSegue";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    //poor form again, come back to this
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    self.managedObjectContext = [appDelegate managedObjectContext];
+    self.managedObjectContext = [[TMCoreDataManager sharedInstance] mainThreadManagedObjectContext];
+//    self.managedObjectContext.parentContext = [[TMCoreDataManager sharedInstance] mainThreadManagedObjectContext];
     
     self.browseManager = [TMBrowsePodcastsManager new];
     self.podcastsManager = [TMPodcastsManager new];

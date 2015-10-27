@@ -10,10 +10,12 @@
 #import <UIKit/UIKit.h>
 
 @protocol TMSelectPodcastDelegate;
+@protocol TMPodcastEpisodeDownloadDelegate;
 
 @interface TMAllEpisodesTableViewDataSourceAndDelegate : NSObject <UITableViewDataSource,UITableViewDelegate>
 
 @property (strong, nonatomic) NSArray *subscribedPodcasts;
+@property (strong, nonatomic) id<TMPodcastEpisodeDownloadDelegate> downloadDelegate;
 
 - (instancetype)initWithDelegate:(id<TMSelectPodcastDelegate>)delegate;
 

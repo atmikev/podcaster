@@ -22,3 +22,4 @@
 + (instancetype)subscribedPodcastEpisodeWithName:(NSString *)podcastTitle inContext:(NSManagedObjectContext *)context;
 
 @end
+

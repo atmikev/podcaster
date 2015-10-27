@@ -13,6 +13,7 @@
 @class TMPodcast;
 @class TMPodcastEpisode;
 @class TMBrowsePodcastResponse;
+@protocol TMPodcastEpisodeDelegate;
 
 @interface TMPodcastsManager : NSObject
 
@@ -20,11 +21,15 @@
                withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock
                 andFailureBlock:(void(^)(NSError *error))failureBlock;
 
-- (void)downloadPodcastEpisodeAtURL:(NSURL *)episodeURL
+- (void)downloadPodcastEpisodeAtURL:(NSString *)episodeURLString
                        withFileName:(NSString *)fileName
                         updateBlock:(void(^)(CGFloat downloadPercentage))updateBlock
                        successBlock:(void(^)(NSString *filePath))successBlock
                     andFailureBlock:(void(^)(NSError *error))failureBlock;
+
+- (void)deletePodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode;
+
+- (void)cancelDownloadForPodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode;
 
 - (void)podcastFromBrowsePodcastResponse:(TMBrowsePodcastResponse *)browsePodcastResponse
                         withSuccessBlock:(void(^)(TMPodcast *podcast))successBlock

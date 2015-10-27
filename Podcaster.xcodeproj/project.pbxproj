@@ -10,6 +10,9 @@
 		2F1FA84B1B116D8C00170CA3 /* TMLatestEpisodesTableViewDataSourceAndDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1FA84A1B116D8C00170CA3 /* TMLatestEpisodesTableViewDataSourceAndDelegate.m */; };
 		2F1FA8501B11794F00170CA3 /* TMAllEpisodesTableViewDataSourceAndDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1FA84F1B11794F00170CA3 /* TMAllEpisodesTableViewDataSourceAndDelegate.m */; };
 		2F1FA8531B13DA3D00170CA3 /* TMRating.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1FA8521B13DA3D00170CA3 /* TMRating.m */; };
+		2F40FC2F1B51990A00903F63 /* TMDeleteOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F40FC2E1B51990A00903F63 /* TMDeleteOperation.m */; };
+		2F40FC331B51AE9900903F63 /* TMDownloadOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F40FC321B51AE9900903F63 /* TMDownloadOperationQueue.m */; };
+		2F89CA0C1B5218B000A70908 /* TMCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F89CA0B1B5218B000A70908 /* TMCoreDataManager.m */; };
 		2FB2BCFE1B1420BE00F2FA20 /* AppIcon.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 2FB2BCFD1B1420BE00F2FA20 /* AppIcon.appiconset */; };
 		2FB2BD021B14210100F2FA20 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB2BD011B14210100F2FA20 /* Media.xcassets */; };
 		2FDF7E151B473B3E006B312B /* TMAppilcation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FDF7E141B473B3E006B312B /* TMAppilcation.m */; };
@@ -74,6 +77,13 @@
 		2F1FA84F1B11794F00170CA3 /* TMAllEpisodesTableViewDataSourceAndDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMAllEpisodesTableViewDataSourceAndDelegate.m; sourceTree = "<group>"; };
 		2F1FA8511B13DA3D00170CA3 /* TMRating.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMRating.h; sourceTree = "<group>"; };
 		2F1FA8521B13DA3D00170CA3 /* TMRating.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMRating.m; sourceTree = "<group>"; };
+		2F40FC271B50A36600903F63 /* TMPodcastEpisodeDownloadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TMPodcastEpisodeDownloadDelegate.h; sourceTree = "<group>"; };
+		2F40FC2D1B51990A00903F63 /* TMDeleteOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMDeleteOperation.h; sourceTree = "<group>"; };
+		2F40FC2E1B51990A00903F63 /* TMDeleteOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMDeleteOperation.m; sourceTree = "<group>"; };
+		2F40FC311B51AE9900903F63 /* TMDownloadOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMDownloadOperationQueue.h; sourceTree = "<group>"; };
+		2F40FC321B51AE9900903F63 /* TMDownloadOperationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMDownloadOperationQueue.m; sourceTree = "<group>"; };
+		2F89CA0A1B5218B000A70908 /* TMCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCoreDataManager.h; sourceTree = "<group>"; };
+		2F89CA0B1B5218B000A70908 /* TMCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCoreDataManager.m; sourceTree = "<group>"; };
 		2FB2BCFD1B1420BE00F2FA20 /* AppIcon.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppIcon.appiconset; sourceTree = "<group>"; };
 		2FB2BD011B14210100F2FA20 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		2FDF7E131B473B3E006B312B /* TMAppilcation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMAppilcation.h; sourceTree = "<group>"; };
@@ -212,6 +222,19 @@
 			name = DataSources;
 			sourceTree = "<group>";
 		};
+		2F40FC301B51AE2F00903F63 /* OperationsAndQueues */ = {
+			isa = PBXGroup;
+			children = (
+				2F40FC311B51AE9900903F63 /* TMDownloadOperationQueue.h */,
+				2F40FC321B51AE9900903F63 /* TMDownloadOperationQueue.m */,
+				2FDF7E1C1B483662006B312B /* TMDownloadOperation.h */,
+				2FDF7E1D1B483662006B312B /* TMDownloadOperation.m */,
+				2F40FC2D1B51990A00903F63 /* TMDeleteOperation.h */,
+				2F40FC2E1B51990A00903F63 /* TMDeleteOperation.m */,
+			);
+			name = OperationsAndQueues;
+			sourceTree = "<group>";
+		};
 		2FE626A71B194A9A00D1799F /* Categories */ = {
 			isa = PBXGroup;
 			children = (
@@ -298,6 +321,7 @@
 				C386EDCE1A86BE8D000DE78F /* AppDelegate.h */,
 				C386EDCF1A86BE8D000DE78F /* AppDelegate.m */,
 				2FB2BD011B14210100F2FA20 /* Media.xcassets */,
+				2F40FC301B51AE2F00903F63 /* OperationsAndQueues */,
 				2FF82CE01B2E5F270011E1A8 /* Views */,
 				2FE626A71B194A9A00D1799F /* Categories */,
 				2F1FA8481B116D5C00170CA3 /* DataSources */,
@@ -394,6 +418,7 @@
 				2FE626A51B192E8D00D1799F /* TMPodcastEpisodeProtocol.h */,
 				2F1FA84C1B11774D00170CA3 /* TMSelectPodcastProtocol.h */,
 				2F1FA84D1B11777800170CA3 /* TMSelectPodcastEpisodeProtocol.h */,
+				2F40FC271B50A36600903F63 /* TMPodcastEpisodeDownloadDelegate.h */,
 			);
 			name = Protocols;
 			sourceTree = "<group>";
@@ -401,6 +426,8 @@
 		C3CE485B1AABF16A00085513 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				C3A47B081AACF7A200613E6F /* TMDownloadUtilities.h */,
+				C3A47B091AACF7A200613E6F /* TMDownloadUtilities.m */,
 				C37D27A71ACF8820009AE39A /* XMLReader.h */,
 				C37D27A81ACF8820009AE39A /* XMLReader.m */,
 				C3DA5F1A1AF6A34C00505A94 /* TMNavigationController.h */,
@@ -433,16 +460,14 @@
 		C3E0493D1AA9335F00EB63E3 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				2F89CA0A1B5218B000A70908 /* TMCoreDataManager.h */,
+				2F89CA0B1B5218B000A70908 /* TMCoreDataManager.m */,
 				C3CE48521AAA71E900085513 /* TMAudioPlayerManager.h */,
 				C3CE48531AAA71E900085513 /* TMAudioPlayerManager.m */,
 				C3CE48551AABEE2300085513 /* TMPodcastsManager.h */,
 				C3CE48561AABEE2300085513 /* TMPodcastsManager.m */,
 				2FF82CD31B2D25D00011E1A8 /* TMBrowsePodcastsManager.h */,
 				2FF82CD41B2D25D00011E1A8 /* TMBrowsePodcastsManager.m */,
-				C3A47B081AACF7A200613E6F /* TMDownloadUtilities.h */,
-				C3A47B091AACF7A200613E6F /* TMDownloadUtilities.m */,
-				2FDF7E1C1B483662006B312B /* TMDownloadOperation.h */,
-				2FDF7E1D1B483662006B312B /* TMDownloadOperation.m */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -603,14 +628,17 @@
 				C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */,
 				C3B8B5E41AEAC9B200192328 /* TMSubscribedPodcast.m in Sources */,
 				C3A47B0A1AACF7A200613E6F /* TMDownloadUtilities.m in Sources */,
+				2F89CA0C1B5218B000A70908 /* TMCoreDataManager.m in Sources */,
 				2F1FA8501B11794F00170CA3 /* TMAllEpisodesTableViewDataSourceAndDelegate.m in Sources */,
 				2F1FA84B1B116D8C00170CA3 /* TMLatestEpisodesTableViewDataSourceAndDelegate.m in Sources */,
 				C3CE48651AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m in Sources */,
+				2F40FC331B51AE9900903F63 /* TMDownloadOperationQueue.m in Sources */,
 				2FF82CCF1B2D1E270011E1A8 /* TMBrowsePodcastsCell.m in Sources */,
 				C3A47B101AB3C06B00613E6F /* TMiTunesResponse.m in Sources */,
 				C37D27A91ACF8820009AE39A /* XMLReader.m in Sources */,
 				2F1FA8531B13DA3D00170CA3 /* TMRating.m in Sources */,
 				C3CE48541AAA71E900085513 /* TMAudioPlayerManager.m in Sources */,
+				2F40FC2F1B51990A00903F63 /* TMDeleteOperation.m in Sources */,
 				C386EDCD1A86BE8D000DE78F /* main.m in Sources */,
 				C3010DB31B0D863E0005BD5E /* TMPodcastLatestEpisodeTableViewCell.m in Sources */,
 				2FF82CD21B2D1EE00011E1A8 /* TMBrowsePodcastsTableViewController.m in Sources */,
@@ -751,6 +779,7 @@
 			baseConfigurationReference = CFA31828C77E2156E568F34A /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -761,6 +790,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Podcaster/Podcaster-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -770,6 +801,7 @@
 			baseConfigurationReference = BC5D10F28D730A5D6AA2A498 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -780,6 +812,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Podcaster/Podcaster-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

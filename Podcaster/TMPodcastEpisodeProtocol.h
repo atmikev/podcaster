@@ -9,6 +9,8 @@
 @class TMSubscribedPodcast;
 @protocol TMPodcastDelegate;
 
+static NSString * const kDownloadPercentageKey = @"downloadPercentage";
+
 @protocol TMPodcastEpisodeDelegate <NSObject>
 
 @property (strong, nonatomic) NSString *downloadURLString;
@@ -20,5 +22,8 @@
 @property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSNumber *lastPlayLocation;
 @property (strong, nonatomic) id<TMPodcastDelegate> podcast;
+
+//This is a temporary hack to move download along.
+@property (assign, nonatomic) float downloadPercentage;
 
 @end

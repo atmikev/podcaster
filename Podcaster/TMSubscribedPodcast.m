@@ -26,31 +26,35 @@
 @dynamic feedURLString;
 @dynamic title;
 
-#warning Move writing to the DB to a background threaded context
 + (instancetype)instanceFromTMPodcast:(id<TMPodcastDelegate>)podcast inContext:(NSManagedObjectContext *)context {
     
-    //if we've already subscribed to this podcast, get it
-    TMSubscribedPodcast *subscribedPodcast = [self subscribedPodcastWithName:podcast.title inContext:context];
-    
-    //otherwise make a new one
-    if (subscribedPodcast == nil) {
-        subscribedPodcast = [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
-        subscribedPodcast.title = podcast.title;
-        subscribedPodcast.feedURLString = podcast.feedURLString;
-        subscribedPodcast.podcastDescription = podcast.podcastDescription;
-        [subscribedPodcast saveImageToDisk:podcast.podcastImage
-                                forPodcast:podcast
-                            withCompletion:^(NSString *localURLString) {
-            subscribedPodcast.imageURLLocal = localURLString;
-        }];
-        subscribedPodcast.episodes = nil;
+
+        //if we've already subscribed to this podcast, get it
+        TMSubscribedPodcast *subscribedPodcast = [self subscribedPodcastWithName:podcast.title inContext:context];
         
-        //save
-        NSError *saveError = nil;
-        if (![context save:&saveError]) {
-            NSLog(@"error saving when trying to insert a TMSubscribedPodcast named %@.\nError description: %@", subscribedPodcast.title, saveError.localizedDescription);
+        //otherwise make a new one
+        if (subscribedPodcast == nil) {
+            subscribedPodcast = [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
+            subscribedPodcast.title = podcast.title;
+            subscribedPodcast.feedURLString = podcast.feedURLString;
+            subscribedPodcast.podcastDescription = podcast.podcastDescription;
+            [subscribedPodcast saveImageToDisk:podcast.podcastImage
+                                    forPodcast:podcast
+                                withCompletion:^(NSString *localURLString) {
+                subscribedPodcast.imageURLLocal = localURLString;
+            }];
+            subscribedPodcast.episodes = nil;
+        
+            //save
+            NSError *saveError = nil;
+            if (![context save:&saveError]) {
+                NSLog(@"error saving when trying to insert a TMSubscribedPodcast named %@.\nError description: %@", subscribedPodcast.title, saveError.localizedDescription);
+            }
+            
+
         }
-    }
+
+
     
     return subscribedPodcast;
 }

@@ -29,8 +29,8 @@
 @dynamic lastPlayLocation;
 @dynamic subscribedPodcast;
 @synthesize podcast;
+@synthesize downloadPercentage;
 
-#warning Move writing to the DB to a background threaded context
 + (instancetype)instanceFromTMPodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode inContext:(NSManagedObjectContext *)context {
     
     //if we've already subscribed to this podcast, get it
@@ -49,11 +49,13 @@
         subscribedEpisode.lastPlayLocation = episode.lastPlayLocation;
         subscribedEpisode.subscribedPodcast = [TMSubscribedPodcast instanceFromTMPodcast:episode.podcast inContext:context];
         
-        //save
-        NSError *saveError = nil;
-        if (![context save:&saveError]) {
-            NSLog(@"error saving when trying to insert a TMSubscribedEpisode named %@.\nError description: %@", subscribedEpisode.title, saveError.localizedDescription);
-        }
+        [context performBlock:^{
+            //save
+            NSError *saveError = nil;
+            if (![context save:&saveError]) {
+                NSLog(@"error saving when trying to insert a TMSubscribedEpisode named %@.\nError description: %@", subscribedEpisode.title, saveError.localizedDescription);
+            }
+        }];        
     }
     
     return subscribedEpisode;

@@ -20,6 +20,8 @@
 @synthesize publishDate;
 @synthesize title;
 @synthesize lastPlayLocation;
+@synthesize downloadPercentage;
+
 
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast {
     

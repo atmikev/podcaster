@@ -21,6 +21,7 @@ PODS:
   - HCSStarRatingView (1.0)
   - Parse (1.7.3):
     - Bolts/Tasks (>= 1.1.5)
+  - UAProgressView (0.1.1)
 
 DEPENDENCIES:
   - FBSDKCoreKit
@@ -28,6 +29,7 @@ DEPENDENCIES:
   - FBSDKShareKit
   - HCSStarRatingView (from `https://github.com/hugocampossousa/HCSStarRatingView.git`)
   - Parse
+  - UAProgressView
 
 EXTERNAL SOURCES:
   HCSStarRatingView:
@@ -45,5 +47,6 @@ SPEC CHECKSUMS:
   FBSDKShareKit: 8002faf0c564ff3625eadd16e506b0b0fbf3adef
   HCSStarRatingView: 6fb5c03b4ae2b8a1cca712da20fca99898c69af1
   Parse: 0992f9d23cf47c32d646467d8badb814926c800a
+  UAProgressView: 9518e321a5d4173f66c225717db873322ec1f070
 
 COCOAPODS: 0.37.1

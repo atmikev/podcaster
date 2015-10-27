@@ -14,11 +14,17 @@
 #import "TMPodcastsManager.h"
 #import "TMiTunesResponse.h"
 #import "TMBrowsePodcastResponse.h"
+#import "TMDownloadOperation.h"
+#import "TMDeleteOperation.h"
+#import "TMDownloadOperationQueue.h"
 
 @interface TMPodcastsManager ()<NSXMLParserDelegate>
 
 @property (strong, nonatomic) TMDownloadUtilities *downloadManager;
 @property (strong, nonatomic) NSURLSessionDataTask *searchTask;
+@property (strong, nonatomic) TMDownloadOperationQueue *downloadQueue;
+@property (strong, nonatomic) NSOperationQueue *deleteQueue;
+
 @end
 
 @implementation TMPodcastsManager
@@ -178,48 +184,6 @@
 }
 
 
-
-- (void)downloadPodcastEpisodeAtURL:(NSURL *)episodeURL
-                       withFileName:(NSString *)fileName
-                        updateBlock:(void(^)(CGFloat downloadPercentage))updateBlock
-                       successBlock:(void(^)(NSString *filePath))successBlock
-                    andFailureBlock:(void(^)(NSError *error))failureBlock {
-//    __weak TMPodcastsManager *weakSelf = self;
-//    self.downloadManager = [[TMDownloadUtilities alloc] init];
-//    [self.downloadManager downloadPodcastAtURL:episodeURL
-//                                  withFileName:fileName
-//                                   updateBlock:^(CGFloat downloadPercentage) {
-//                                       dispatch_async(dispatch_get_main_queue(), ^{
-//                                           if (updateBlock) {
-//                                               updateBlock(downloadPercentage);
-//                                           }
-//                                        });
-//                                   }
-//                                  successBlock:^(NSString *filePath) {
-//                                      dispatch_async(dispatch_get_main_queue(), ^{
-//                                          if (successBlock) {
-//                                              successBlock(filePath);
-//                                          }
-//                                          //once we're finished, nil out the downloadManager
-//                                          //so we can can start our next download when necessary
-//                                          weakSelf.downloadManager = nil;
-//                                      });
-//                                      
-//                                  }
-//                               andFailureBlock:^(NSError *downloadError) {
-//                                   dispatch_async(dispatch_get_main_queue(), ^{
-//                                       if (failureBlock) {
-//                                           failureBlock(downloadError);
-//                                       }
-//                                       
-//                                       //once we're finished, nil out the downloadManager
-//                                       //so we can can start our next download when necessary
-//                                       weakSelf.downloadManager = nil;
-//                                   });
-//                               }
-//    ];
-}
-
 - (NSString *)filePathForEpisode:(TMPodcastEpisode *)episode {
     NSString *fileName = [[NSURL URLWithString:episode.downloadURLString] lastPathComponent];
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
@@ -234,4 +198,34 @@
     return filePath;
 }
 
+- (void)downloadPodcastEpisodeAtURL:(NSString *)episodeURLString withFileName:(NSString *)fileName updateBlock:(void (^)(CGFloat))updateBlock successBlock:(void (^)(NSString *))successBlock andFailureBlock:(void (^)(NSError *))failureBlock {
+    
+    if (!self.downloadQueue) {
+        self.downloadQueue = [TMDownloadOperationQueue new];
+    }
+    
+    TMDownloadOperation *downloadOperation = [[TMDownloadOperation alloc] initWithDownloadURL:episodeURLString
+                                                                                 withFileName:fileName
+                                                                                  updateBlock:updateBlock
+                                                                                 successBlock:successBlock
+                                                                              andFailureBlock:failureBlock];
+    [self.downloadQueue addOperation:downloadOperation];
+}
+
+- (void)cancelDownloadForPodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode {
+    [self.downloadQueue cancelDownloadForEpisode:episode];
+    episode.downloadPercentage = 0;
+}
+
+- (void)deletePodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode {
+    
+    if (!self.deleteQueue) {
+        self.deleteQueue = [NSOperationQueue new];
+    }
+    
+    TMDeleteOperation *deleteOperation = [[TMDeleteOperation alloc] initWithEpisode:episode];
+    
+    [self.deleteQueue addOperation:deleteOperation];
+    
+}
 @end
