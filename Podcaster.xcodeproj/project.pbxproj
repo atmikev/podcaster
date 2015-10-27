@@ -12,6 +12,7 @@
 		2F1FA8531B13DA3D00170CA3 /* TMRating.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F1FA8521B13DA3D00170CA3 /* TMRating.m */; };
 		2F40FC2F1B51990A00903F63 /* TMDeleteOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F40FC2E1B51990A00903F63 /* TMDeleteOperation.m */; };
 		2F40FC331B51AE9900903F63 /* TMDownloadOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F40FC321B51AE9900903F63 /* TMDownloadOperationQueue.m */; };
+		2F89CA0C1B5218B000A70908 /* TMCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F89CA0B1B5218B000A70908 /* TMCoreDataManager.m */; };
 		2FB2BCFE1B1420BE00F2FA20 /* AppIcon.appiconset in Resources */ = {isa = PBXBuildFile; fileRef = 2FB2BCFD1B1420BE00F2FA20 /* AppIcon.appiconset */; };
 		2FB2BD021B14210100F2FA20 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2FB2BD011B14210100F2FA20 /* Media.xcassets */; };
 		2FDF7E151B473B3E006B312B /* TMAppilcation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2FDF7E141B473B3E006B312B /* TMAppilcation.m */; };
@@ -81,6 +82,8 @@
 		2F40FC2E1B51990A00903F63 /* TMDeleteOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMDeleteOperation.m; sourceTree = "<group>"; };
 		2F40FC311B51AE9900903F63 /* TMDownloadOperationQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMDownloadOperationQueue.h; sourceTree = "<group>"; };
 		2F40FC321B51AE9900903F63 /* TMDownloadOperationQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMDownloadOperationQueue.m; sourceTree = "<group>"; };
+		2F89CA0A1B5218B000A70908 /* TMCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMCoreDataManager.h; sourceTree = "<group>"; };
+		2F89CA0B1B5218B000A70908 /* TMCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TMCoreDataManager.m; sourceTree = "<group>"; };
 		2FB2BCFD1B1420BE00F2FA20 /* AppIcon.appiconset */ = {isa = PBXFileReference; lastKnownFileType = folder; path = AppIcon.appiconset; sourceTree = "<group>"; };
 		2FB2BD011B14210100F2FA20 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		2FDF7E131B473B3E006B312B /* TMAppilcation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TMAppilcation.h; sourceTree = "<group>"; };
@@ -457,6 +460,8 @@
 		C3E0493D1AA9335F00EB63E3 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				2F89CA0A1B5218B000A70908 /* TMCoreDataManager.h */,
+				2F89CA0B1B5218B000A70908 /* TMCoreDataManager.m */,
 				C3CE48521AAA71E900085513 /* TMAudioPlayerManager.h */,
 				C3CE48531AAA71E900085513 /* TMAudioPlayerManager.m */,
 				C3CE48551AABEE2300085513 /* TMPodcastsManager.h */,
@@ -623,6 +628,7 @@
 				C37D27AE1AD0A4C9009AE39A /* TMPodcastEpisodeHeaderTableViewCell.m in Sources */,
 				C3B8B5E41AEAC9B200192328 /* TMSubscribedPodcast.m in Sources */,
 				C3A47B0A1AACF7A200613E6F /* TMDownloadUtilities.m in Sources */,
+				2F89CA0C1B5218B000A70908 /* TMCoreDataManager.m in Sources */,
 				2F1FA8501B11794F00170CA3 /* TMAllEpisodesTableViewDataSourceAndDelegate.m in Sources */,
 				2F1FA84B1B116D8C00170CA3 /* TMLatestEpisodesTableViewDataSourceAndDelegate.m in Sources */,
 				C3CE48651AAC0E0600085513 /* TMPodcastEpisodesTableViewController.m in Sources */,

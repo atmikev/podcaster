@@ -16,7 +16,6 @@
 #import "TMSearchResultsTableViewController.h"
 #import "TMSubscribedPodcast.h"
 #import "TMSubscribedEpisode.h"
-#import "AppDelegate.h"
 #import "TMDownloadUtilities.h"
 #import "TMLatestEpisodesTableViewDataSourceAndDelegate.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
@@ -24,6 +23,7 @@
 #import "TMAllEpisodesTableViewDataSourceAndDelegate.h"
 #import "NSManagedObject+EntityName.h"
 #import "TMPodcastEpisodeDownloadDelegate.h"
+#import "TMCoreDataManager.h"
 
 static NSString * const kEpisodesViewControllerSegue = @"episodesViewControllerSegue";
 static NSString * const kAudioPlayerViewControllerSegue = @"audioPlayerViewControllerSegue";
@@ -62,10 +62,9 @@ static CGFloat const kEpisodeButtonFontHeight = 14;
     //start out on the latestEpisodesTableViewDataSource
     [self setNewDataSource:self.latestEpisodesTableViewDataSourceAndDelegate andDelegate:self.latestEpisodesTableViewDataSourceAndDelegate];
     
-    //poor form, come back to this
-    AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    self.managedObjectContext = [appDelegate managedObjectContext];
-    
+    self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    self.managedObjectContext.parentContext = [[TMCoreDataManager sharedInstance] mainThreadManagedObjectContext];
+
     self.title = @"My Podcasts";
 }
 

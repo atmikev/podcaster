@@ -119,12 +119,12 @@ const NSInteger kSeekInterval = 15;
     NSURL *fileURL = nil;
     if (episode.fileLocation) {
         fileURL = [NSURL fileURLWithPath:episode.fileLocation];
-        
-        NSString* saveFileName = [episode.fileLocation lastPathComponent];
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-        NSString *documentsDirectory = [paths objectAtIndex:0];
-        NSString *path = [documentsDirectory stringByAppendingPathComponent:saveFileName];
-        fileURL = [NSURL fileURLWithPath:path];
+//        
+//        NSString* saveFileName = [episode.fileLocation lastPathComponent];
+//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+//        NSString *documentsDirectory = [paths objectAtIndex:0];
+//        NSString *path = [documentsDirectory stringByAppendingPathComponent:saveFileName];
+//        fileURL = [NSURL fileURLWithPath:path];
 
     } else if (episode.downloadURLString) {
         fileURL = [NSURL URLWithString:episode.downloadURLString];
@@ -187,10 +187,13 @@ const NSInteger kSeekInterval = 15;
         self.episode.lastPlayLocation = @(0);
         
         if ([self.episode isKindOfClass:[TMSubscribedEpisode class]]) {
-            NSError *error;
-            if ([self.managedObjectContext save:&error] == NO) {
-                NSLog(@"Error: %@",error.debugDescription);
-            }
+            [self.managedObjectContext performBlock:^{
+                NSError *error;
+                if ([self.managedObjectContext save:&error] == NO) {
+                    NSLog(@"Error: %@",error.debugDescription);
+                }
+            }];
+
         }
     }
 }
@@ -415,8 +418,10 @@ const NSInteger kSeekInterval = 15;
     
     //mark the last played time (can this be optimized?)
     self.episode.lastPlayLocation = [NSNumber numberWithDouble:[self currentTime]];
-    //this is probably going to block the main thread, ugh. need to make a background thread
-    [self.managedObjectContext save:nil];
+
+    [self.managedObjectContext performBlock:^{
+        [self.managedObjectContext save:nil];
+    }];
     
     [self updateDelegateTimeInfo];
     

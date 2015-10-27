@@ -8,6 +8,9 @@
 
 #import "TMDeleteOperation.h"
 #import "TMPodcastEpisodeProtocol.h"
+#import "TMCoreDataManager.h"
+#import "TMSubscribedEpisode.h"
+@import CoreData;
 
 @interface TMDeleteOperation()
 @property (strong, nonatomic) NSObject<TMPodcastEpisodeDelegate> *episode;
@@ -39,10 +42,40 @@
         if (deleteError) {
             NSLog(@"Error deleting episode: %@", deleteError.debugDescription);
         } else {
-            self.episode.fileLocation = nil;
+            [self deleteFileLocation];
         }
     }
     
+}
+
+- (void)deleteFileLocation {
+    //get the episode from the db, erase the file location, and save
+    NSManagedObjectContext *temporaryContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    temporaryContext.parentContext = [[TMCoreDataManager sharedInstance] mainThreadManagedObjectContext];
+    
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+    NSEntityDescription *entity = [NSEntityDescription
+                                   entityForName:@"TMSubscribedEpisode" inManagedObjectContext:temporaryContext];
+    [fetchRequest setEntity:entity];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"fileLocation == %@",self.episode.fileLocation];
+    [fetchRequest setPredicate:predicate];
+    
+    NSError *fetchError;
+    NSArray *results = [temporaryContext executeFetchRequest:fetchRequest error:&fetchError];
+    
+    if (results.count > 0) {
+        TMSubscribedEpisode *episodeToDeleteDownload = [results firstObject];
+        episodeToDeleteDownload.fileLocation = nil;
+        
+        [temporaryContext performBlock:^{
+            NSError *saveError;
+            if (![temporaryContext save:&saveError]) {
+                NSLog(@"Error saving episode after removing its fileLocation: %@", saveError.debugDescription);
+            }
+        }];
+        
+    }
 }
 
 

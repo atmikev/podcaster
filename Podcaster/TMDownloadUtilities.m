@@ -10,7 +10,7 @@
 #import "TMPodcast.h"
 #import "TMPodcastEpisodeProtocol.h"
 
-@interface TMDownloadUtilities ()<NSURLSessionDownloadDelegate>
+@interface TMDownloadUtilities ()
 
 @property (strong, nonatomic) NSString *fileName;
 @property (strong, nonatomic) NSURLSessionDownloadTask *fileDownloadTask;
