@@ -14,5 +14,6 @@
 @property (strong, nonatomic) UIImage *podcastImage;
 @property (strong, nonatomic) NSSet *episodes;
 @property (strong, nonatomic) NSString *title;
+@property (strong, nonatomic) NSNumber *collectionId;
 
 @end

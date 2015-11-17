@@ -26,6 +26,7 @@
 @property (strong, nonatomic) UIImage *podcast170Image;
 @property (strong, nonatomic) UIImage *podcast600Image;
 @property (strong, nonatomic) NSSet *episodes;
+@property (strong, nonatomic) NSNumber *collectionId;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (instancetype)initWithiTunesResponse:(TMiTunesResponse *)iTunesResponse;

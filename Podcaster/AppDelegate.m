@@ -13,17 +13,50 @@
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
 #import <FBSDKLoginKit/FBSDKLoginKit.h>
 #import "TMAudioPlayerManager.h"
+#import "TMAudioPlayerViewController.h"
+#import "TMPodcastsManager.h"
+#import "TMPodcast.h"
+#import "TMPodcastEpisode.h"
+#import "TMDeeplinkManager.h"
+#import "TMMainTabBarController.h"
 
 @interface AppDelegate ()
+
+@property (strong, nonatomic) TMAudioPlayerViewController *audioPlayerViewController;
+@property (strong, nonatomic) TMPodcastsManager *podcastsManager;
+@property (strong, nonatomic) TMDeeplinkManager *deeplinkManager;
+@property (strong, nonatomic) NSArray *episodes;
 
 @end
 
 @implementation AppDelegate
 
+- (TMPodcastsManager *)podcastsManager {
+    if (!_podcastsManager) {
+        _podcastsManager = [[TMPodcastsManager alloc] init];
+    }
+    
+    return _podcastsManager;
+}
+
+- (TMDeeplinkManager *)deeplinkManager {
+    if (!_deeplinkManager) {
+        _deeplinkManager = [[TMDeeplinkManager alloc] init];
+    }
+    
+    return _deeplinkManager;
+}
+
+
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
+
+    NSNumber *collectionId = [url host];
+    NSString *episodeTitle = [NSString stringWithFormat:@"%@", [url lastPathComponent]];
+    [self.deeplinkManager searchForPodcast:collectionId forTitle:episodeTitle];
+    
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                                           openURL:url
                                                 sourceApplication:sourceApplication
@@ -31,13 +64,14 @@
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [self setWindowAndMainController];
     
     [self setupAudioSession];
     
     [self setupNavBarAttributes];
     
     // Initialize Parse.
-#warning Add parse key in
+    #warning Add parse key in
     NSAssert(YES,@"You need to add in your own parse keys");
     [Parse setApplicationId:nil
                   clientKey:nil];
@@ -57,6 +91,7 @@
     
     return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -78,6 +113,15 @@
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+-(void)setWindowAndMainController {
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    self.audioPlayerViewController = [storyboard instantiateViewControllerWithIdentifier:@"TMAudioPlayerViewController"];
+    self.mainTabController = [storyboard instantiateViewControllerWithIdentifier:@"mainTabController"];
+    self.window.rootViewController = self.mainTabController;
+    [self.window makeKeyAndVisible];
 }
 
 - (void)setupAudioSession {

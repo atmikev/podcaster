@@ -108,6 +108,7 @@ static NSString * const kAudioPlayerSegue = @"audioPlayerSegue";
     } else {
         TMPodcastEpisodesTableViewCell *episodeCell = [tableView dequeueReusableCellWithIdentifier:kEpisodeCellReuseIdentifier forIndexPath:indexPath];
         TMPodcastEpisode *episode = [self.episodes objectAtIndex:indexPath.row];
+        episode.collectionId = self.podcast.collectionId;
         [episodeCell setEpisode:episode];
         cellToReturn = episodeCell;
     }
