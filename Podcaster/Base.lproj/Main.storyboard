@@ -12,16 +12,16 @@
             <objects>
                 <tableViewController id="ovy-uC-JdO" customClass="TMPodcastEpisodesTableViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="92" sectionHeaderHeight="22" sectionFooterHeight="22" id="cw8-qk-NJk">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EpisodeHeaderCell" rowHeight="120" id="T6g-NB-qOc" userLabel="PodcastEpisodeHeaderCell" customClass="TMPodcastEpisodeHeaderTableViewCell">
-                                <rect key="frame" x="0.0" y="22" width="600" height="120"/>
+                                <rect key="frame" x="0.0" y="86" width="414" height="120"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="T6g-NB-qOc" id="guv-Hn-uL1">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="119.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="119.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="s4j-sR-SRv">
@@ -105,10 +105,10 @@
                                 </connections>
                             </tableViewCell>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="EpisodeCell" rowHeight="92" id="2fr-48-g2N" userLabel="PodcastEpisodeCell" customClass="TMPodcastEpisodesTableViewCell">
-                                <rect key="frame" x="0.0" y="142" width="600" height="92"/>
+                                <rect key="frame" x="0.0" y="206" width="414" height="92"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2fr-48-g2N" id="Jpf-6O-rVo">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="91.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="91.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" placeholderIntrinsicWidth="infinite" placeholderIntrinsicHeight="17" text="&lt;Title&gt;" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bic-2c-deI">
@@ -862,7 +862,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AqX-pi-dcK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2739" y="-323.25"/>
+            <point key="canvasLocation" x="2511" y="404"/>
         </scene>
         <!--Main Tab Bar Controller-->
         <scene sceneID="sSk-ib-yOu">
@@ -1607,7 +1607,7 @@
         <image name="rewind" width="600" height="700"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="KdK-nV-vnK"/>
-        <segue reference="Cn8-PX-1oX"/>
+        <segue reference="06K-lx-mmL"/>
+        <segue reference="L3R-qT-38v"/>
     </inferredMetricsTieBreakers>
 </document>

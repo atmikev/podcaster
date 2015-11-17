@@ -9,6 +9,7 @@
 #import "TMMainTabBarController.h"
 #import "TMSelectPodcastEpisodeProtocol.h"
 #import "TMPodcastEpisode.h"
+#import "TMPodcast.h"
 #import "TMAudioPlayerViewController.h"
 
 @interface TMMainTabBarController () <TMSelectPodcastEpisodeDelegate>
@@ -38,7 +39,9 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil] ;
     TMAudioPlayerViewController *audioPlayerViewController = [storyboard instantiateViewControllerWithIdentifier:@"TMAudioPlayerViewController"];
     audioPlayerViewController.episode = episode;
-    [self.viewControllers[0] presentViewController:audioPlayerViewController animated:true completion:nil];
+    UINavigationController *mainNavController = self.viewControllers[0];
+    [mainNavController pushViewController:audioPlayerViewController animated:true];
+    //[self.viewControllers[0] presentViewController:audioPlayerViewController animated:true completion:nil];
     
 }
 
