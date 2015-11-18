@@ -58,11 +58,11 @@
             
             
         }andFailureBlock:^(NSError *error) {
-            
+            NSLog(@"Error: Failed to get retrieve podcast episodes: %@", error.debugDescription);
         }];
         
     }andFailureBlock:^(NSError *error){
-     
+        NSLog(@"Error: Failed to get podcast details: %@", error.debugDescription);
     }];
     
     

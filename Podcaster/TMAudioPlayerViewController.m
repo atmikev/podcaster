@@ -289,10 +289,13 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     NSNumber *podcastID = episode.collectionId;
     //NSString *episodeNumber = [episode.title stringByReplacingOccurrencesOfString:@" " withString:@"-"];
     NSString *encodedString = [episode.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSString *deeplinkURL = [NSString stringWithFormat: @"podcaster://%@/%@",podcastID, encodedString];
+    NSURL *deeplinkURL = [NSURL URLWithString:[NSString stringWithFormat: @"podcaster://%@/%@",podcastID, encodedString]];
         SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:selection];
         // Configure Compose View Controller
-        [vc setInitialText: [NSString stringWithFormat: @"Check out this podcast! %@", deeplinkURL]];
+        [vc setInitialText: @"Check out this podcast!"];
+        [vc addURL:deeplinkURL];
+        [vc addImage:self.podcastImage];
+        NSLog(@"%@", deeplinkURL);
         // Present Compose View Controller
         [self presentViewController:vc animated:YES completion:nil];
     
