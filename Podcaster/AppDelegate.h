@@ -10,10 +10,11 @@
 #import <CoreData/CoreData.h>
 #import "TMPodcastProtocol.h"
 
+@class TMMainTabBarController;
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) UITabBarController *mainTabController;
+@property (strong, nonatomic) TMMainTabBarController *mainTabController;
 @property (strong, nonatomic) id<TMPodcastDelegate> podcast;
 
 @end

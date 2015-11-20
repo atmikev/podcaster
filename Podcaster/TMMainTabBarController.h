@@ -7,10 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TMSelectPodcastEpisodeProtocol.h"
+
+@class TMPodcastEpisode;
+@protocol TMSelectPodcastEpisodeDelegate;
 
 @interface TMMainTabBarController : UITabBarController <TMSelectPodcastEpisodeDelegate> 
 
 -(void)didSelectEpisode:(TMPodcastEpisode *)episode;
++(instancetype)mainTabBarController;
 
 @end

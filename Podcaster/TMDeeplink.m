@@ -7,6 +7,7 @@
 //
 
 #import "TMDeeplink.h"
+#import <Social/Social.h>
 
 @interface TMDeeplink ()
 
@@ -25,26 +26,18 @@
     return deeplink;
 }
 
--(void)shareDeeplink:(TMDeeplink *)deeplink withServiceType:(NSString *)serviceType withImage:(UIImage *)image withSuccessBlock:(void (^)(SLComposeViewController *))successBlock {
+-(void)shareDeeplink:(TMDeeplink *)deeplink withServiceType:(NSString *)serviceType withImage:(UIImage *)image withCompletionBlock:(void (^)(SLComposeViewController *))completionBlock {
     SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:serviceType];
     [vc setInitialText: @"Check out this podcast!"];
     [vc addURL:deeplink.deeplinkURL];
     [vc addImage:image];
-    successBlock(vc);
+    if (completionBlock) {
+        completionBlock(vc);
+    }
     
     
     
     
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end

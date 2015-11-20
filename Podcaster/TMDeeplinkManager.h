@@ -7,16 +7,20 @@
 //
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "TMPodcastProtocol.h"
+
 
 @protocol TMSelectPodcastEpisodeDelegate;
+@protocol TMPodcastDelegate;
 
 @interface TMDeeplinkManager : NSObject
 
-@property (strong, nonatomic) id<TMPodcastDelegate> podcast;
-@property (weak, nonatomic) id<TMSelectPodcastEpisodeDelegate> delegate;
+- (instancetype)initWithDelegate:(id<TMSelectPodcastEpisodeDelegate>)delegate;
 
--(void)searchForPodcast:(NSNumber *)collectionId forTitle:(NSString *)title;
+- (void)searchForPodcast:(NSNumber *)collectionId
+               forTitle:(NSString *)title;
 
++ (void)searchForPodcastWithCollectionID:(NSNumber *)collectionID
+                                   title:(NSString *)title
+                             andDelegate:(id<TMSelectPodcastEpisodeDelegate>)delegate;
 
 @end

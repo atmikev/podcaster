@@ -286,25 +286,12 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 }
 
 #pragma mark - Social Share Episode methods
-/*-(void)sharePodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode forSelection:(NSString *)selection {
-    NSNumber *podcastID = episode.collectionId;
-    //NSString *episodeNumber = [episode.title stringByReplacingOccurrencesOfString:@" " withString:@"-"];
-    NSString *encodedString = [episode.title stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL *deeplinkURL = [NSURL URLWithString:[NSString stringWithFormat: @"podcaster://%@/%@",podcastID, encodedString]];
-        SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:selection];
-        // Configure Compose View Controller
-        [vc setInitialText: @"Check out this podcast!"];
-        [vc addURL:deeplinkURL];
-        [vc addImage:self.podcastImage];
-        NSLog(@"%@", deeplinkURL);
-        // Present Compose View Controller
-        [self presentViewController:vc animated:YES completion:nil];
-    
-}*/
 -(void)sharePodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode forSelection:(NSString *)selection {
     TMDeeplink *deeplink = [TMDeeplink initWithPodcastData:episode.collectionId withEpisodeTitle:episode.title];
-    [deeplink shareDeeplink:deeplink withServiceType:selection withImage:self.podcastImage withSuccessBlock:^(SLComposeViewController *shareContent) {
-        [self presentViewController:shareContent animated:true completion:nil];
+    [deeplink shareDeeplink:deeplink withServiceType:selection withImage:self.podcastImage withCompletionBlock:^(SLComposeViewController *shareContent) {
+        if (shareContent) {
+            [self presentViewController:shareContent animated:true completion:nil];
+        }
         
     }];
     

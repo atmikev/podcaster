@@ -12,10 +12,9 @@
 #import "TMPodcast.h"
 #import "TMAudioPlayerViewController.h"
 
-@interface TMMainTabBarController () <TMSelectPodcastEpisodeDelegate>
+@interface TMMainTabBarController () <UINavigationControllerDelegate>
 
 @property (strong, nonatomic) id selectedItem;
-
 
 @end
 
@@ -34,29 +33,27 @@
 }
 
 -(void)didSelectEpisode:(TMPodcastEpisode *)episode {
-    NSLog(@"Delegate Called");
-    self.selectedItem = episode;
+    NSLog(@"Delegate called");
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil] ;
     TMAudioPlayerViewController *audioPlayerViewController = [storyboard instantiateViewControllerWithIdentifier:@"TMAudioPlayerViewController"];
     audioPlayerViewController.episode = episode;
     UINavigationController *mainNavController = self.viewControllers[0];
     [mainNavController pushViewController:audioPlayerViewController animated:true];
-    //[self.viewControllers[0] presentViewController:audioPlayerViewController animated:true completion:nil];
+    NSLog(@"finished");
+    NSLog(@"%@", mainNavController);
+    NSLog(@"%@", audioPlayerViewController);
     
 }
 
--(void)presentAudioPlayer:(TMPodcastEpisode *)episode {
+-(void)setMainTabBarController:(TMMainTabBarController *)tabBarController {
     
 }
 
-/*
-#pragma mark - Navigation
++(instancetype)mainTabBarController {
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    TMMainTabBarController *tabBarController = [storyboard instantiateInitialViewController];
+    return tabBarController;
 }
-*/
 
 @end

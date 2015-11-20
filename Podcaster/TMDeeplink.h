@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <Social/Social.h>
+
+@class SLComposeViewController;
 
 @interface TMDeeplink : NSObject
 
@@ -15,13 +16,13 @@
 @property (strong, nonatomic) NSString *unencodedEpisodeTitle;
 @property (strong, nonatomic) NSString *encodedEpisodeTitle;
 @property (strong, nonatomic) NSURL *deeplinkURL;
-@property (strong, nonatomic) SLComposeServiceViewController *shareViewController;
+@property (strong, nonatomic) SLComposeViewController *shareViewController;
 
 + (instancetype)initWithPodcastData:(NSNumber *)collectionId withEpisodeTitle:(NSString *)episodeTitle;
 
 -(void)shareDeeplink:(TMDeeplink *)deeplink
      withServiceType:(NSString *)serviceType
            withImage:(UIImage *)image
-    withSuccessBlock:(void(^)(SLComposeViewController *viewController))successBlock;
+    withCompletionBlock:(void(^)(SLComposeViewController *viewController))completionBlock;
 
 @end
