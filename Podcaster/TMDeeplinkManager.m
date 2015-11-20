@@ -45,7 +45,6 @@
                 if ([podcastEpisodeTitle isEqualToString:title]) {
                     NSLog(@"FOUND IT");
                     NSLog(@"%@", podcastEpisodeTitle);
-                    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
                     AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
                     TMMainTabBarController *mainTabBarController = (TMMainTabBarController *)appDelegate.window.rootViewController;
                     self.delegate = mainTabBarController;
@@ -71,8 +70,6 @@
 - (void)podcastFromPodcastCollectionId:(NSNumber *)collectionId
                         withSuccessBlock:(void (^)(TMPodcast *))successBlock
                          andFailureBlock:(void (^)(NSError *))failureBlock {
-    //probably should do this by podcast ID, but searching by the string that came back in the Browse response for now
-    
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", collectionId]];
     
     [[[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
