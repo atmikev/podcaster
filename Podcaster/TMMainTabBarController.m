@@ -18,8 +18,9 @@
 
 @end
 
-@implementation TMMainTabBarController
+static TMMainTabBarController *mainTabBarController = nil;
 
+@implementation TMMainTabBarController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -43,16 +44,16 @@
 }
 
 -(void)setMainTabBarController:(TMMainTabBarController *)tabBarController {
-    
+    mainTabBarController = tabBarController;
+}
+
+-(TMMainTabBarController *)getMainTabBarController {
+    return mainTabBarController;
 }
 
 +(instancetype)mainTabBarController {
-
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     
-    TMMainTabBarController *tabBarController = [storyboard instantiateInitialViewController];
-    
-    return tabBarController;
+    return mainTabBarController;
 }
 
 @end

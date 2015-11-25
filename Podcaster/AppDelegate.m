@@ -38,7 +38,7 @@
     
     [TMDeeplinkManager searchForPodcastWithCollectionID:collectionId
                                                   title:episodeTitle
-                                            andDelegate:self.mainTabController];
+                                            andDelegate:[TMMainTabBarController mainTabBarController]];
     
     return [[FBSDKApplicationDelegate sharedInstance] application:application
                                                           openURL:url
@@ -80,6 +80,7 @@
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     self.audioPlayerViewController = [storyboard instantiateViewControllerWithIdentifier:@"TMAudioPlayerViewController"];
     self.mainTabController = [storyboard instantiateViewControllerWithIdentifier:@"mainTabController"];
+    [self.mainTabController setMainTabBarController:self.mainTabController];
     self.window.rootViewController = self.mainTabController;
     [self.window makeKeyAndVisible];
 }

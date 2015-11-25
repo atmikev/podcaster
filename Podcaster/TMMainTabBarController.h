@@ -17,6 +17,8 @@
 
 -(void)setMainTabBarController:(TMMainTabBarController *)tabBarController;
 
+-(TMMainTabBarController *)getMainTabBarController;
+
 +(instancetype)mainTabBarController;
 
 @end
