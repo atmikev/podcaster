@@ -9,15 +9,14 @@
 #import "TMDeeplink.h"
 #import <Social/Social.h>
 
-@interface TMDeeplink ()
-
-@end
-
 @implementation TMDeeplink
 
 
-+ (instancetype)initWithPodcastData:(NSNumber *)collectionId withEpisodeTitle:(NSString *)episodeTitle {
++ (instancetype)initWithPodcastData:(NSNumber *)collectionId
+                   withEpisodeTitle:(NSString *)episodeTitle {
+    
     TMDeeplink *deeplink = [TMDeeplink new];
+    
     deeplink.podcastCollectionId = collectionId;
     deeplink.unencodedEpisodeTitle = episodeTitle;
     deeplink.encodedEpisodeTitle = [episodeTitle stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -26,17 +25,20 @@
     return deeplink;
 }
 
--(void)shareDeeplink:(TMDeeplink *)deeplink withServiceType:(NSString *)serviceType withImage:(UIImage *)image withCompletionBlock:(void (^)(SLComposeViewController *))completionBlock {
-    SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:serviceType];
-    [vc setInitialText: @"Check out this podcast!"];
-    [vc addURL:deeplink.deeplinkURL];
-    [vc addImage:image];
+-(void)shareDeeplink:(TMDeeplink *)deeplink
+     withServiceType:(NSString *)serviceType
+           withImage:(UIImage *)image
+ withCompletionBlock:(void (^)(SLComposeViewController *))completionBlock {
+    
+        SLComposeViewController *vc = [SLComposeViewController composeViewControllerForServiceType:serviceType];
+    
+        [vc setInitialText: @"Check out this podcast!"];
+        [vc addURL:deeplink.deeplinkURL];
+        [vc addImage:image];
+   
     if (completionBlock) {
         completionBlock(vc);
     }
-    
-    
-    
     
 }
 

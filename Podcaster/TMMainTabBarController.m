@@ -23,7 +23,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSLog(@"VIEW DID LOAD CALLED FROM MAIN TAB BAR CONTROLLER");
     // Do any additional setup after loading the view.
 }
 
@@ -33,15 +32,13 @@
 }
 
 -(void)didSelectEpisode:(TMPodcastEpisode *)episode {
-    NSLog(@"Delegate called");
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil] ;
     TMAudioPlayerViewController *audioPlayerViewController = [storyboard instantiateViewControllerWithIdentifier:@"TMAudioPlayerViewController"];
+    
     audioPlayerViewController.episode = episode;
+    
     UINavigationController *mainNavController = self.viewControllers[0];
     [mainNavController pushViewController:audioPlayerViewController animated:true];
-    NSLog(@"finished");
-    NSLog(@"%@", mainNavController);
-    NSLog(@"%@", audioPlayerViewController);
     
 }
 
@@ -52,7 +49,9 @@
 +(instancetype)mainTabBarController {
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
     TMMainTabBarController *tabBarController = [storyboard instantiateInitialViewController];
+    
     return tabBarController;
 }
 

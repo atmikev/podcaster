@@ -18,7 +18,9 @@
 @property (strong, nonatomic) NSURL *deeplinkURL;
 @property (strong, nonatomic) SLComposeViewController *shareViewController;
 
-+ (instancetype)initWithPodcastData:(NSNumber *)collectionId withEpisodeTitle:(NSString *)episodeTitle;
+
++ (instancetype)initWithPodcastData:(NSNumber *)collectionId
+                   withEpisodeTitle:(NSString *)episodeTitle;
 
 -(void)shareDeeplink:(TMDeeplink *)deeplink
      withServiceType:(NSString *)serviceType

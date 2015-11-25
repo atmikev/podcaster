@@ -45,25 +45,27 @@
                                    title:(NSString *)title
                              andDelegate:(id<TMSelectPodcastEpisodeDelegate>)delegate {
 
-    [self podcastFromPodcastCollectionId:collectionID withSuccessBlock:^(TMPodcast *podcast) {
+    [self podcastFromPodcastCollectionId:collectionID
+                        withSuccessBlock:^(TMPodcast *podcast) {
         
         NSString *decodedEpisodeTitle = [podcast.title stringByRemovingPercentEncoding];
+                            
         TMPodcastsManager *podcastsManager = [TMPodcastsManager new];
+                            
         [podcastsManager podcastEpisodesAtURL:podcast.feedURLString
                              withSuccessBlock:^(TMPodcast *podcast) {
                                  NSArray *episodes = podcast.episodes;
                           
                                  for (TMPodcastEpisode *episode in episodes) {
+                                     
                                     NSString *podcastEpisodeTitle = episode.title;
+                                     
                                     if ([podcastEpisodeTitle isEqualToString:title]) {
-                                        NSLog(@"FOUND IT");
+                                        
                                         [delegate didSelectEpisode:episode];
                                         
                                     }
-                                    
                                 }
-            
-            
             
         }andFailureBlock:^(NSError *error) {
             NSLog(@"Error: Failed to get retrieve podcast episodes: %@", error.debugDescription);
@@ -72,54 +74,17 @@
     }andFailureBlock:^(NSError *error){
         NSLog(@"Error: Failed to get podcast details: %@", error.debugDescription);
     }];
-    
     
 }
 
-/*
--(void)searchForPodcast:(NSNumber *)collectionId forTitle:(NSString *)title {
-    NSLog(@"%@", collectionId);
-    NSLog(@"%@", title);
-    [self podcastFromPodcastCollectionId:collectionId withSuccessBlock:^(TMPodcast *podcast) {
-    
-        NSString *decodedEpisodeTitle = [podcast.title stringByRemovingPercentEncoding];
-        NSLog(@"%@", decodedEpisodeTitle);
-        TMPodcastsManager *podcastsManager = [[TMPodcastsManager alloc] init];
-        [podcastsManager podcastEpisodesAtURL:podcast.feedURLString withSuccessBlock:^(TMPodcast *podcast) {
-            NSSortDescriptor *dateDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"publishDate" ascending:NO];
-            NSArray *episodes = [[podcast.episodes allObjects] sortedArrayUsingDescriptors:@[dateDescriptor]];
-            self.podcast.episodes = [NSSet setWithArray:self.episodes];
-            for (TMPodcastEpisode *episode in self.episodes) {
-                NSString *podcastEpisodeTitle = episode.title;
-                if ([podcastEpisodeTitle isEqualToString:title]) {
-                    NSLog(@"FOUND IT");
-                    NSLog(@"%@", podcastEpisodeTitle);
-
-                    [self.delegate didSelectEpisode:episode];
-                    
-                }
-                
-            }
-            
-            
-            
-        }andFailureBlock:^(NSError *error) {
-            NSLog(@"Error: Failed to get retrieve podcast episodes: %@", error.debugDescription);
-        }];
-        
-    }andFailureBlock:^(NSError *error){
-        NSLog(@"Error: Failed to get podcast details: %@", error.debugDescription);
-    }];
-    
-    
-}*/
-
 - (void)podcastFromPodcastCollectionId:(NSNumber *)collectionId
-                        withSuccessBlock:(void (^)(TMPodcast *))successBlock
-                         andFailureBlock:(void (^)(NSError *))failureBlock {
+                      withSuccessBlock:(void (^)(TMPodcast *))successBlock
+                       andFailureBlock:(void (^)(NSError *))failureBlock {
+    
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"https://itunes.apple.com/lookup?id=%@", collectionId]];
     
-    [[[NSURLSession sharedSession] dataTaskWithURL:url completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+    [[[NSURLSession sharedSession] dataTaskWithURL:url
+                                 completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
         
         if (error != nil && failureBlock) {
             failureBlock(error);
@@ -128,12 +93,15 @@
             if (data) {
                 NSError *jsonError;
                 NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:0 error:&jsonError];
+                
                 if (jsonError != nil && failureBlock) {
                     failureBlock(error);
                 } else {
+                    
                     NSDictionary *resultDictionary = [[responseDictionary objectForKey:@"results"] firstObject];
                     
                     TMiTunesResponse *iTunesResponse = [TMiTunesResponse iTunesResponseFromDictionary:resultDictionary];
+                    
                     TMPodcast *podcast = [TMPodcast initWithiTunesResponse:iTunesResponse];
                     
                     if (successBlock) {
@@ -144,8 +112,6 @@
             
         }
     }] resume];
-    
-    
 }
 
 + (void)podcastFromPodcastCollectionId:(NSNumber *)collectionId
@@ -178,8 +144,6 @@
             
         }
     }] resume];
-    
-    
 }
 
 

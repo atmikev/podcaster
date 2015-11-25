@@ -218,26 +218,25 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     [self showReviewVC:YES];
 }
 - (IBAction)shareButtonHandler:(id)sender {
-    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@""
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil
                                                                    message:@"Where do you want to share this epidose?"
                                                             preferredStyle:UIAlertControllerStyleActionSheet];
     
-    UIAlertAction* facebookAction = [UIAlertAction actionWithTitle:@"Facebook" style:UIAlertActionStyleDefault
+    UIAlertAction* facebookAction = [UIAlertAction actionWithTitle:@"Facebook"
+                                                             style:UIAlertActionStyleDefault
                                                            handler:^(UIAlertAction * action) {
-                                                               NSLog(@"success");
                                                                [self sharePodcastEpisode:self.episode forSelection:(NSString *)SLServiceTypeFacebook];
-                                                               
                                                            }];
     
-    UIAlertAction* twitterAction = [UIAlertAction actionWithTitle:@"Twitter" style:UIAlertActionStyleDefault
+    UIAlertAction* twitterAction = [UIAlertAction actionWithTitle:@"Twitter"
+                                                            style:UIAlertActionStyleDefault
                                                           handler:^(UIAlertAction * action) {
                                                               [self sharePodcastEpisode:self.episode forSelection:(NSString *)SLServiceTypeTwitter];
-                                                              
                                                           }];
     
-    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                         handler:^(UIAlertAction * action) {}];
-    
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
     
     [alert addAction:facebookAction];
     [alert addAction:twitterAction];
@@ -287,8 +286,13 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 
 #pragma mark - Social Share Episode methods
 -(void)sharePodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode forSelection:(NSString *)selection {
-    TMDeeplink *deeplink = [TMDeeplink initWithPodcastData:episode.collectionId withEpisodeTitle:episode.title];
-    [deeplink shareDeeplink:deeplink withServiceType:selection withImage:self.podcastImage withCompletionBlock:^(SLComposeViewController *shareContent) {
+    TMDeeplink *deeplink = [TMDeeplink initWithPodcastData:episode.collectionId
+                                          withEpisodeTitle:episode.title];
+    [deeplink shareDeeplink:deeplink
+            withServiceType:selection
+                  withImage:self.podcastImage
+        withCompletionBlock:^(SLComposeViewController *shareContent) {
+            
         if (shareContent) {
             [self presentViewController:shareContent animated:true completion:nil];
         }

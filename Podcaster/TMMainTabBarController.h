@@ -14,6 +14,9 @@
 @interface TMMainTabBarController : UITabBarController <TMSelectPodcastEpisodeDelegate> 
 
 -(void)didSelectEpisode:(TMPodcastEpisode *)episode;
+
+-(void)setMainTabBarController:(TMMainTabBarController *)tabBarController;
+
 +(instancetype)mainTabBarController;
 
 @end
