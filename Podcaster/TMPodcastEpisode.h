@@ -21,6 +21,7 @@
 @property (strong, nonatomic) NSString *episodeDescription;
 @property (strong, nonatomic) NSString *author;
 @property (strong, nonatomic) NSString *podcastURLString;
+@property (strong, nonatomic) NSNumber *collectionId;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary;
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast;

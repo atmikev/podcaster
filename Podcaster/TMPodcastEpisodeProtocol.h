@@ -21,6 +21,7 @@ static NSString * const kDownloadPercentageKey = @"downloadPercentage";
 @property (strong, nonatomic) NSDate *publishDate;
 @property (strong, nonatomic) NSString *title;
 @property (strong, nonatomic) NSNumber *lastPlayLocation;
+@property (strong, nonatomic) NSNumber *collectionId;
 @property (strong, nonatomic) id<TMPodcastDelegate> podcast;
 
 //This is a temporary hack to move download along.

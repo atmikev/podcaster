@@ -21,6 +21,7 @@
 @synthesize title;
 @synthesize lastPlayLocation;
 @synthesize downloadPercentage;
+@synthesize collectionId;
 
 
 + (NSSet *)episodesFromDictionariesArray:(NSArray *)dictionariesArray forPodcast:(TMPodcast *)podcast {
@@ -39,7 +40,6 @@
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     TMPodcastEpisode *episode = [TMPodcastEpisode new];
-    
     episode.title = dictionary[@"title"][@"text"];
     episode.episodeLinkURLString = dictionary[@"link"][@"text"];
     episode.episodeDescription = dictionary[@"description"][@"text"];

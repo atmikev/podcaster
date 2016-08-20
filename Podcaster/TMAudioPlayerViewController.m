@@ -14,7 +14,9 @@
 #import "TMPodcastEpisode.h"
 #import "TMSubscribedEpisode.h"
 #import "TMPodcastEpisodeProtocol.h"
+#import "TMDeeplink.h"
 #import <Parse/Parse.h>
+#import <Social/Social.h>
 
 static NSString * const kPlayImageString = @"play";
 static NSString * const kPauseImageString = @"pause";
@@ -37,6 +39,7 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 @property (weak, nonatomic) IBOutlet UILabel *timeTotalLabel;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *rateButton;
+@property (weak, nonatomic) IBOutlet UIButton *shareButton;
 
 - (IBAction)playPause:(id)sender;
 - (IBAction)timeSliderValueChanged:(id)sender;
@@ -83,6 +86,8 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     //start receiving remote control events
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
+
+
 
 - (void)viewDidDisappear:(BOOL)animated {
     [super viewDidDisappear:animated];
@@ -212,6 +217,34 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
 - (IBAction)rateButtonHandler:(id)sender {
     [self showReviewVC:YES];
 }
+- (IBAction)shareButtonHandler:(id)sender {
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:nil
+                                                                   message:@"Where do you want to share this epidose?"
+                                                            preferredStyle:UIAlertControllerStyleActionSheet];
+    
+    UIAlertAction* facebookAction = [UIAlertAction actionWithTitle:@"Facebook"
+                                                             style:UIAlertActionStyleDefault
+                                                           handler:^(UIAlertAction * action) {
+                                                               [self sharePodcastEpisode:self.episode forSelection:(NSString *)SLServiceTypeFacebook];
+                                                           }];
+    
+    UIAlertAction* twitterAction = [UIAlertAction actionWithTitle:@"Twitter"
+                                                            style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              [self sharePodcastEpisode:self.episode forSelection:(NSString *)SLServiceTypeTwitter];
+                                                          }];
+    
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel"
+                                                           style:UIAlertActionStyleCancel
+                                                         handler:nil];
+    
+    [alert addAction:facebookAction];
+    [alert addAction:twitterAction];
+    [alert addAction:cancelAction];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+
+}
 
 #pragma mark - Gesture Recognizer methods
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
@@ -249,5 +282,22 @@ static NSString * const kReviewViewControllerSegueString = @"reviewViewControlle
     
     //pause the player and reset it to the beginning of the episode
     [self.audioPlayerManager seekToPosition:0 andPlay:NO];
+}
+
+#pragma mark - Social Share Episode methods
+-(void)sharePodcastEpisode:(id<TMPodcastEpisodeDelegate>)episode forSelection:(NSString *)selection {
+    TMDeeplink *deeplink = [TMDeeplink initWithPodcastData:episode.collectionId
+                                          withEpisodeTitle:episode.title];
+    [deeplink shareDeeplink:deeplink
+            withServiceType:selection
+                  withImage:self.podcastImage
+        withCompletionBlock:^(SLComposeViewController *shareContent) {
+            
+        if (shareContent) {
+            [self presentViewController:shareContent animated:true completion:nil];
+        }
+        
+    }];
+    
 }
 @end

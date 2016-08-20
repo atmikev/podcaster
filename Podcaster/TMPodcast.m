@@ -17,6 +17,7 @@
 @synthesize podcastImage;
 @synthesize episodes;
 @synthesize title;
+@synthesize collectionId;
 
 + (instancetype)initWithDictionary:(NSDictionary *)dictionary {
     TMPodcast *podcast = [TMPodcast new];
@@ -34,6 +35,8 @@
     podcast.author = iTunesResponse.artistName;
     podcast.imageURL = iTunesResponse.artworkUrl100;
     podcast.image600URL = iTunesResponse.artworkUrl600;
+    podcast.collectionId = [NSNumber numberWithInteger:iTunesResponse.collectionId];
+
     
     return podcast;
 }
@@ -41,7 +44,6 @@
 - (void)populateFromXMLDictionary:(NSDictionary *)xmlDictionary {
     
     NSDictionary *podcastDictionary = xmlDictionary[@"rss"][@"channel"];
-    
     self.title = podcastDictionary[@"title"][@"text"];
     self.podcastDescription = podcastDictionary[@"description"][@"text"];
     self.language = podcastDictionary[@"language"][@"text"];
@@ -49,7 +51,6 @@
     self.author = podcastDictionary[@"itunes:author"][@"text"];
     self.subtitle = podcastDictionary[@"itunes:subtitle"][@"text"];
     self.imageURL = [NSURL URLWithString:podcastDictionary[@"itunes:image"][@"href"]];
-    
     self.episodes = [self episodesFromXMLDictionary:podcastDictionary];
 }
 

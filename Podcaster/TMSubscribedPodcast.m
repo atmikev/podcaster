@@ -18,7 +18,7 @@
 @end
 
 @implementation TMSubscribedPodcast
-
+@synthesize collectionId = _collectionId;
 @synthesize podcastDescription = _podcastDescription;
 @synthesize episodes = _episodes;
 @synthesize podcastImage = _podcastImage;
@@ -35,6 +35,7 @@
         //otherwise make a new one
         if (subscribedPodcast == nil) {
             subscribedPodcast = [NSEntityDescription insertNewObjectForEntityForName:[self entityName] inManagedObjectContext:context];
+            subscribedPodcast.collectionId = podcast.collectionId;
             subscribedPodcast.title = podcast.title;
             subscribedPodcast.feedURLString = podcast.feedURLString;
             subscribedPodcast.podcastDescription = podcast.podcastDescription;
